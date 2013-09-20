@@ -53,7 +53,7 @@ void system_log(const char* format, ...)
     char message[1024] = {0};
     va_start(args, format);
     vsnprintf(message, sizeof(message), format, args);
-    
+
     NSLog(@"%s", message);
     va_end(args);
 }

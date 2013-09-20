@@ -31,7 +31,7 @@ size_t load_file_contents(const char* filename, void* buffer, size_t buffer_size
     AAsset* file = AAssetManager_open(_asset_manager, filename, AASSET_MODE_UNKNOWN);
     if(file) {
         off_t file_size = AAsset_getLength(file);
-        buffer_size = min(file_size, buffer_size);
+        buffer_size = min((size_t)file_size, buffer_size);
         AAsset_read(file, buffer, buffer_size);
         AAsset_close(file);
         system_log("Loaded %d bytes\n", buffer_size);
@@ -46,6 +46,6 @@ void system_log(const char* format, ...)
     char message[2048] = {0};
     va_start(args, format);
     vsnprintf(message, sizeof(message), format, args);
-    __android_log_print(ANDROID_LOG_INFO, "HelloGL", "%s", message);
+    __android_log_print(ANDROID_LOG_INFO, "DeferredGLES", "%s", message);
     va_end(args);
 }

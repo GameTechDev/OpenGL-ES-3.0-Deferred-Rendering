@@ -5,18 +5,13 @@
 #ifndef __timer_h__
 #define __timer_h__
 
-#include <stdint.h>
+typedef struct Timer Timer;
 
-typedef struct Timer
-{
-    uint64_t    start_time;
-    uint64_t    prev_time;
-    double      frequency;
-} Timer;
+Timer* create_timer(void);
+void destroy_timer(Timer* timer);
 
-void init_timer(Timer* timer);
 void reset_timer(Timer* timer);
-double delta_time(Timer* timer);
-double running_time(Timer* timer);
+double get_delta_time(Timer* timer);
+double get_running_time(Timer* timer);
 
 #endif /* include guard */

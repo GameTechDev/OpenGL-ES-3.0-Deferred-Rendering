@@ -5,9 +5,12 @@
 
 #include "graphics.h"
 
+#include "timer.h"
+
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 @interface ViewController () {
     Graphics*   _graphics;
+    Timer*      _timer;
 }
 @property (strong, nonatomic) EAGLContext *context;
 
@@ -23,24 +26,24 @@
     GLKView *view = nil;
 
     [super viewDidLoad];
-    
+
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 
     if (!self.context) {
         NSLog(@"Failed to create ES context");
     }
-    
+
     view = (GLKView *)self.view;
     view.context = self.context;
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
-    
+
     [self setupGL];
 }
 
 - (void)dealloc
-{    
+{
     [self tearDownGL];
-    
+
     if ([EAGLContext currentContext] == self.context) {
         [EAGLContext setCurrentContext:nil];
     }
@@ -52,9 +55,9 @@
 
     if ([self isViewLoaded] && ([[self view] window] == nil)) {
         self.view = nil;
-        
+
         [self tearDownGL];
-        
+
         if ([EAGLContext currentContext] == self.context) {
             [EAGLContext setCurrentContext:nil];
         }
@@ -70,18 +73,26 @@
 
     _graphics = create_graphics((int)(self.view.frame.size.width*self.view.contentScaleFactor),
                                 (int)(self.view.frame.size.height*self.view.contentScaleFactor));
+    _timer = create_timer();
 }
 
 - (void)tearDownGL
 {
     [EAGLContext setCurrentContext:self.context];
     destroy_graphics(_graphics);
+    destroy_timer(_timer);
 }
 
 #pragma mark - GLKView and GLKViewController delegate methods
 
 - (void)update
 {
+    static double time = 0.0f;
+    time += get_delta_time(_timer);
+    if(time > 1.0f) {
+        NSLog(@"%f\n", get_running_time(_timer));
+        time -= 1.0f;
+    }
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
