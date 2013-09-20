@@ -19,6 +19,7 @@
 		2715E75717ECB63400442391 /* SimpleFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 2715E75517ECB63400442391 /* SimpleFragment.glsl */; };
 		2715E75817ECB63400442391 /* SimpleVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 2715E75617ECB63400442391 /* SimpleVertex.glsl */; };
 		2715E75B17ECC60100442391 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2715E75917ECC60100442391 /* timer.c */; };
+		2715E76117ECF23E00442391 /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 2715E75F17ECF23E00442391 /* game.c */; };
 		27F3529517EBC3F600FF4D22 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529417EBC3F600FF4D22 /* Foundation.framework */; };
 		27F3529717EBC3F600FF4D22 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */; };
 		27F3529917EBC3F600FF4D22 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529817EBC3F600FF4D22 /* UIKit.framework */; };
@@ -47,6 +48,8 @@
 		2715E75617ECB63400442391 /* SimpleVertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SimpleVertex.glsl; sourceTree = "<group>"; };
 		2715E75917ECC60100442391 /* timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timer.c; sourceTree = "<group>"; };
 		2715E75A17ECC60100442391 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
+		2715E75F17ECF23E00442391 /* game.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = game.c; sourceTree = "<group>"; };
+		2715E76017ECF23E00442391 /* game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = game.h; sourceTree = "<group>"; };
 		27F3529117EBC3F600FF4D22 /* deferred gles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "deferred gles.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27F3529417EBC3F600FF4D22 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -100,6 +103,8 @@
 				2715E75A17ECC60100442391 /* timer.h */,
 				2715E74D17ECB2A700442391 /* vec_math.h */,
 				2715E75117ECB2CA00442391 /* ios */,
+				2715E75F17ECF23E00442391 /* game.c */,
+				2715E76017ECF23E00442391 /* game.h */,
 			);
 			name = src;
 			path = ../../src;
@@ -230,6 +235,7 @@
 			files = (
 				2715E74F17ECB2A700442391 /* graphics.c in Sources */,
 				2715E73D17ECADFA00442391 /* main.m in Sources */,
+				2715E76117ECF23E00442391 /* game.c in Sources */,
 				2715E73917ECADFA00442391 /* AppDelegate.m in Sources */,
 				2715E75317ECB2CA00442391 /* system_ios.m in Sources */,
 				2715E74217ECADFA00442391 /* ViewController.m in Sources */,

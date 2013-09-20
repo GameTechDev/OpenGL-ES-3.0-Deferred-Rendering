@@ -3,14 +3,11 @@
  */
 #import "ViewController.h"
 
-#include "graphics.h"
-
-#include "timer.h"
+#include "game.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 @interface ViewController () {
-    Graphics*   _graphics;
-    Timer*      _timer;
+    Game*   _game;
 }
 @property (strong, nonatomic) EAGLContext *context;
 
@@ -71,33 +68,24 @@
 {
     [EAGLContext setCurrentContext:self.context];
 
-    _graphics = create_graphics((int)(self.view.frame.size.width*self.view.contentScaleFactor),
+    _game = create_game((int)(self.view.frame.size.width*self.view.contentScaleFactor),
                                 (int)(self.view.frame.size.height*self.view.contentScaleFactor));
-    _timer = create_timer();
 }
 
 - (void)tearDownGL
 {
     [EAGLContext setCurrentContext:self.context];
-    destroy_graphics(_graphics);
-    destroy_timer(_timer);
+    destroy_game(_game);
 }
-
-#pragma mark - GLKView and GLKViewController delegate methods
 
 - (void)update
 {
-    static double time = 0.0f;
-    time += get_delta_time(_timer);
-    if(time > 1.0f) {
-        NSLog(@"%f\n", get_running_time(_timer));
-        time -= 1.0f;
-    }
+    game_update(_game);
 }
-
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-    render(_graphics);
+    game_render(_game);
+
     (void)sizeof(view);
     (void)sizeof(rect);
 }

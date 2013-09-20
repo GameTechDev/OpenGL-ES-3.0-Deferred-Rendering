@@ -10,6 +10,8 @@
 /** @return Bytes read from file. 0 if failure
  */
 size_t load_file_contents(const char* filename, void* buffer, size_t buffer_size);
+/** Prints a message to the systems log
+ */
 void system_log(const char* format, ...);
 
 #endif /* include guard */

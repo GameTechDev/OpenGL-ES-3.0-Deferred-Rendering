@@ -11,7 +11,9 @@ Timer* create_timer(void);
 void destroy_timer(Timer* timer);
 
 void reset_timer(Timer* timer);
+/** @return The time since the last `get_delta_time` call, in seconds. */
 double get_delta_time(Timer* timer);
+/** @return The time since the last `reset_timer` call, in seconds. */
 double get_running_time(Timer* timer);
 
 #endif /* include guard */
