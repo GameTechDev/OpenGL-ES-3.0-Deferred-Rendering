@@ -224,3 +224,4 @@ pip-log.txt
 *.xcworkspace
 *.xcuserdata
 *.xcuserdatad
+gen/
