@@ -14,10 +14,10 @@
 		2715E73E17ECADFA00442391 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2715E73217ECADFA00442391 /* Main_iPad.storyboard */; };
 		2715E73F17ECADFA00442391 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2715E73317ECADFA00442391 /* Main_iPhone.storyboard */; };
 		2715E74217ECADFA00442391 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2715E73817ECADFA00442391 /* ViewController.m */; };
-		2715E74317ECAE1600442391 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 2715E73517ECADFA00442391 /* Shader.fsh */; };
-		2715E74417ECAE1600442391 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 2715E73617ECADFA00442391 /* Shader.vsh */; };
 		2715E74F17ECB2A700442391 /* graphics.c in Sources */ = {isa = PBXBuildFile; fileRef = 2715E74917ECB2A700442391 /* graphics.c */; };
 		2715E75317ECB2CA00442391 /* system_ios.m in Sources */ = {isa = PBXBuildFile; fileRef = 2715E75217ECB2CA00442391 /* system_ios.m */; };
+		2715E75717ECB63400442391 /* SimpleFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 2715E75517ECB63400442391 /* SimpleFragment.glsl */; };
+		2715E75817ECB63400442391 /* SimpleVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 2715E75617ECB63400442391 /* SimpleVertex.glsl */; };
 		27F3529517EBC3F600FF4D22 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529417EBC3F600FF4D22 /* Foundation.framework */; };
 		27F3529717EBC3F600FF4D22 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */; };
 		27F3529917EBC3F600FF4D22 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529817EBC3F600FF4D22 /* UIKit.framework */; };
@@ -34,8 +34,6 @@
 		2715E73117ECADFA00442391 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2715E73217ECADFA00442391 /* Main_iPad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main_iPad.storyboard; sourceTree = "<group>"; };
 		2715E73317ECADFA00442391 /* Main_iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main_iPhone.storyboard; sourceTree = "<group>"; };
-		2715E73517ECADFA00442391 /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.fsh; sourceTree = "<group>"; };
-		2715E73617ECADFA00442391 /* Shader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.vsh; sourceTree = "<group>"; };
 		2715E73717ECADFA00442391 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		2715E73817ECADFA00442391 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		2715E74817ECB2A700442391 /* assert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = assert.h; sourceTree = "<group>"; };
@@ -44,6 +42,8 @@
 		2715E74C17ECB2A700442391 /* system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
 		2715E74D17ECB2A700442391 /* vec_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vec_math.h; sourceTree = "<group>"; };
 		2715E75217ECB2CA00442391 /* system_ios.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = system_ios.m; sourceTree = "<group>"; };
+		2715E75517ECB63400442391 /* SimpleFragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SimpleFragment.glsl; sourceTree = "<group>"; };
+		2715E75617ECB63400442391 /* SimpleVertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SimpleVertex.glsl; sourceTree = "<group>"; };
 		27F3529117EBC3F600FF4D22 /* deferred gles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "deferred gles.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27F3529417EBC3F600FF4D22 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -80,20 +80,10 @@
 				2715E73117ECADFA00442391 /* main.m */,
 				2715E73217ECADFA00442391 /* Main_iPad.storyboard */,
 				2715E73317ECADFA00442391 /* Main_iPhone.storyboard */,
-				2715E73417ECADFA00442391 /* Shaders */,
 				2715E73717ECADFA00442391 /* ViewController.h */,
 				2715E73817ECADFA00442391 /* ViewController.m */,
 			);
 			name = project;
-			sourceTree = "<group>";
-		};
-		2715E73417ECADFA00442391 /* Shaders */ = {
-			isa = PBXGroup;
-			children = (
-				2715E73517ECADFA00442391 /* Shader.fsh */,
-				2715E73617ECADFA00442391 /* Shader.vsh */,
-			);
-			path = Shaders;
 			sourceTree = "<group>";
 		};
 		2715E74517ECB2A700442391 /* src */ = {
@@ -118,9 +108,20 @@
 			path = ios;
 			sourceTree = "<group>";
 		};
+		2715E75417ECB63400442391 /* assets */ = {
+			isa = PBXGroup;
+			children = (
+				2715E75517ECB63400442391 /* SimpleFragment.glsl */,
+				2715E75617ECB63400442391 /* SimpleVertex.glsl */,
+			);
+			name = assets;
+			path = ../../assets;
+			sourceTree = "<group>";
+		};
 		27F3528817EBC3F600FF4D22 = {
 			isa = PBXGroup;
 			children = (
+				2715E75417ECB63400442391 /* assets */,
 				2715E74517ECB2A700442391 /* src */,
 				2715E72817ECADFA00442391 /* project */,
 				27F3529317EBC3F600FF4D22 /* Frameworks */,
@@ -206,12 +207,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2715E74317ECAE1600442391 /* Shader.fsh in Resources */,
-				2715E74417ECAE1600442391 /* Shader.vsh in Resources */,
 				2715E73E17ECADFA00442391 /* Main_iPad.storyboard in Resources */,
 				2715E73F17ECADFA00442391 /* Main_iPhone.storyboard in Resources */,
 				2715E73C17ECADFA00442391 /* InfoPlist.strings in Resources */,
 				2715E73B17ECADFA00442391 /* Images.xcassets in Resources */,
+				2715E75717ECB63400442391 /* SimpleFragment.glsl in Resources */,
+				2715E75817ECB63400442391 /* SimpleVertex.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

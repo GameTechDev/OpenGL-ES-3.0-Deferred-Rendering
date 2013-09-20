@@ -93,7 +93,7 @@ static const uint16_t kIndices[] = {
 
 /* Internal functions
  */
-GLuint load_shader(const char* filename, GLenum type)
+static GLuint _load_shader(const char* filename, GLenum type)
 {
     char        buffer[1024*16] = {0};
     const char* source = buffer;
@@ -169,8 +169,8 @@ static void _setup_framebuffer(Graphics* graphics)
 }
 static void _setup_program(Graphics* graphics)
 {
-    GLuint vertex_shader = load_shader("SimpleVertex.glsl", GL_VERTEX_SHADER);
-    GLuint fragment_shader = load_shader("SimpleFragment.glsl", GL_FRAGMENT_SHADER);
+    GLuint vertex_shader = _load_shader("SimpleVertex.glsl", GL_VERTEX_SHADER);
+    GLuint fragment_shader = _load_shader("SimpleFragment.glsl", GL_FRAGMENT_SHADER);
     GLint  link_status;
 
     /* Create program */
@@ -216,13 +216,13 @@ Graphics* create_graphics(int width, int height)
     system_log("OpenGL initialized\n");
 
     /* Perform other initialization */
-    _setup_framebuffer(graphics);
+    //_setup_framebuffer(graphics);
     _setup_program(graphics);
     graphics->vertex_buffer = _create_buffer(GL_ARRAY_BUFFER, kVertices, sizeof(kVertices));
     graphics->index_buffer = _create_buffer(GL_ELEMENT_ARRAY_BUFFER, kIndices, sizeof(kIndices));
 
     /* Bind color buffer for resizing */
-    glBindRenderbuffer(GL_RENDERBUFFER, graphics->color_renderbuffer);
+    //glBindRenderbuffer(GL_RENDERBUFFER, graphics->color_renderbuffer);
 
     CheckGLError();
     return graphics;
@@ -230,7 +230,7 @@ Graphics* create_graphics(int width, int height)
 void render(Graphics* graphics)
 {
     /* Bind buffers */
-    glBindRenderbuffer(GL_RENDERBUFFER, graphics->color_renderbuffer);
+    //glBindRenderbuffer(GL_RENDERBUFFER, graphics->color_renderbuffer);
     //glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
     CheckGLError();
 

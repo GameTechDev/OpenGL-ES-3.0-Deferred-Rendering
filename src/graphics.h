@@ -9,8 +9,6 @@
 
 typedef struct Graphics Graphics;
 
-unsigned int load_shader(const char* filename, unsigned int type);
-
 Graphics* create_graphics(int width, int height);
 void render(Graphics* graphics);
 void destroy_graphics(Graphics* graphics);
