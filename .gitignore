@@ -220,3 +220,7 @@ pip-log.txt
 #################
 *.o
 *.lib
+*.xcworkspacedata
+*.xcworkspace
+*.xcuserdata
+*.xcuserdatad

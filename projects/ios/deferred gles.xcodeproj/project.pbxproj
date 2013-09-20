@@ -1,0 +1,323 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		27F3529517EBC3F600FF4D22 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529417EBC3F600FF4D22 /* Foundation.framework */; };
+		27F3529717EBC3F600FF4D22 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */; };
+		27F3529917EBC3F600FF4D22 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529817EBC3F600FF4D22 /* UIKit.framework */; };
+		27F3529B17EBC3F600FF4D22 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529A17EBC3F600FF4D22 /* GLKit.framework */; };
+		27F3529D17EBC3F600FF4D22 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529C17EBC3F600FF4D22 /* OpenGLES.framework */; };
+		27F352FA17EBC60300FF4D22 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 27F352ED17EBC60300FF4D22 /* AppDelegate.m */; };
+		27F352FB17EBC60300FF4D22 /* deferred gles-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 27F352EE17EBC60300FF4D22 /* deferred gles-Info.plist */; };
+		27F352FC17EBC60300FF4D22 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 27F352F017EBC60300FF4D22 /* Images.xcassets */; };
+		27F352FD17EBC60300FF4D22 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 27F352F117EBC60300FF4D22 /* InfoPlist.strings */; };
+		27F352FE17EBC60300FF4D22 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 27F352F217EBC60300FF4D22 /* Main_iPad.storyboard */; };
+		27F352FF17EBC60300FF4D22 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 27F352F317EBC60300FF4D22 /* Main_iPhone.storyboard */; };
+		27F3530017EBC60300FF4D22 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 27F352F417EBC60300FF4D22 /* main.m */; };
+		27F3530317EBC60300FF4D22 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27F352F917EBC60300FF4D22 /* ViewController.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		27F3529117EBC3F600FF4D22 /* deferred gles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "deferred gles.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		27F3529417EBC3F600FF4D22 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		27F3529817EBC3F600FF4D22 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		27F3529A17EBC3F600FF4D22 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		27F3529C17EBC3F600FF4D22 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		27F352BE17EBC3F600FF4D22 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		27F352EC17EBC60300FF4D22 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = SOURCE_ROOT; };
+		27F352ED17EBC60300FF4D22 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = SOURCE_ROOT; };
+		27F352EE17EBC60300FF4D22 /* deferred gles-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "deferred gles-Info.plist"; sourceTree = SOURCE_ROOT; };
+		27F352EF17EBC60300FF4D22 /* deferred gles-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "deferred gles-Prefix.pch"; sourceTree = SOURCE_ROOT; };
+		27F352F017EBC60300FF4D22 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = SOURCE_ROOT; };
+		27F352F117EBC60300FF4D22 /* InfoPlist.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = SOURCE_ROOT; };
+		27F352F217EBC60300FF4D22 /* Main_iPad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main_iPad.storyboard; sourceTree = SOURCE_ROOT; };
+		27F352F317EBC60300FF4D22 /* Main_iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main_iPhone.storyboard; sourceTree = SOURCE_ROOT; };
+		27F352F417EBC60300FF4D22 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = SOURCE_ROOT; };
+		27F352F617EBC60300FF4D22 /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.fsh; sourceTree = "<group>"; };
+		27F352F717EBC60300FF4D22 /* Shader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.vsh; sourceTree = "<group>"; };
+		27F352F817EBC60300FF4D22 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = SOURCE_ROOT; };
+		27F352F917EBC60300FF4D22 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		27F3528E17EBC3F600FF4D22 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				27F3529D17EBC3F600FF4D22 /* OpenGLES.framework in Frameworks */,
+				27F3529717EBC3F600FF4D22 /* CoreGraphics.framework in Frameworks */,
+				27F3529917EBC3F600FF4D22 /* UIKit.framework in Frameworks */,
+				27F3529B17EBC3F600FF4D22 /* GLKit.framework in Frameworks */,
+				27F3529517EBC3F600FF4D22 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		27F3528817EBC3F600FF4D22 = {
+			isa = PBXGroup;
+			children = (
+				27F3529E17EBC3F600FF4D22 /* src */,
+				27F3529317EBC3F600FF4D22 /* Frameworks */,
+				27F3529217EBC3F600FF4D22 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		27F3529217EBC3F600FF4D22 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				27F3529117EBC3F600FF4D22 /* deferred gles.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		27F3529317EBC3F600FF4D22 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				27F3529417EBC3F600FF4D22 /* Foundation.framework */,
+				27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */,
+				27F3529817EBC3F600FF4D22 /* UIKit.framework */,
+				27F3529A17EBC3F600FF4D22 /* GLKit.framework */,
+				27F3529C17EBC3F600FF4D22 /* OpenGLES.framework */,
+				27F352BE17EBC3F600FF4D22 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		27F3529E17EBC3F600FF4D22 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				27F352EC17EBC60300FF4D22 /* AppDelegate.h */,
+				27F352ED17EBC60300FF4D22 /* AppDelegate.m */,
+				27F352EE17EBC60300FF4D22 /* deferred gles-Info.plist */,
+				27F352EF17EBC60300FF4D22 /* deferred gles-Prefix.pch */,
+				27F352F017EBC60300FF4D22 /* Images.xcassets */,
+				27F352F117EBC60300FF4D22 /* InfoPlist.strings */,
+				27F352F217EBC60300FF4D22 /* Main_iPad.storyboard */,
+				27F352F317EBC60300FF4D22 /* Main_iPhone.storyboard */,
+				27F352F417EBC60300FF4D22 /* main.m */,
+				27F352F517EBC60300FF4D22 /* Shaders */,
+				27F352F817EBC60300FF4D22 /* ViewController.h */,
+				27F352F917EBC60300FF4D22 /* ViewController.m */,
+			);
+			name = src;
+			path = "deferred gles";
+			sourceTree = "<group>";
+		};
+		27F352F517EBC60300FF4D22 /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				27F352F617EBC60300FF4D22 /* Shader.fsh */,
+				27F352F717EBC60300FF4D22 /* Shader.vsh */,
+			);
+			path = Shaders;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		27F3529017EBC3F600FF4D22 /* deferred gles */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 27F352CE17EBC3F600FF4D22 /* Build configuration list for PBXNativeTarget "deferred gles" */;
+			buildPhases = (
+				27F3528D17EBC3F600FF4D22 /* Sources */,
+				27F3528E17EBC3F600FF4D22 /* Frameworks */,
+				27F3528F17EBC3F600FF4D22 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "deferred gles";
+			productName = "deferred gles";
+			productReference = 27F3529117EBC3F600FF4D22 /* deferred gles.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		27F3528917EBC3F600FF4D22 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = Intel;
+			};
+			buildConfigurationList = 27F3528C17EBC3F600FF4D22 /* Build configuration list for PBXProject "deferred gles" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 27F3528817EBC3F600FF4D22;
+			productRefGroup = 27F3529217EBC3F600FF4D22 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				27F3529017EBC3F600FF4D22 /* deferred gles */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		27F3528F17EBC3F600FF4D22 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				27F352FB17EBC60300FF4D22 /* deferred gles-Info.plist in Resources */,
+				27F352FE17EBC60300FF4D22 /* Main_iPad.storyboard in Resources */,
+				27F352FF17EBC60300FF4D22 /* Main_iPhone.storyboard in Resources */,
+				27F352FD17EBC60300FF4D22 /* InfoPlist.strings in Resources */,
+				27F352FC17EBC60300FF4D22 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		27F3528D17EBC3F600FF4D22 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				27F3530017EBC60300FF4D22 /* main.m in Sources */,
+				27F352FA17EBC60300FF4D22 /* AppDelegate.m in Sources */,
+				27F3530317EBC60300FF4D22 /* ViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		27F352CC17EBC3F600FF4D22 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		27F352CD17EBC3F600FF4D22 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		27F352CF17EBC3F600FF4D22 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "deferred gles-Prefix.pch";
+				INFOPLIST_FILE = "deferred gles-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		27F352D017EBC3F600FF4D22 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "deferred gles-Prefix.pch";
+				INFOPLIST_FILE = "deferred gles-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		27F3528C17EBC3F600FF4D22 /* Build configuration list for PBXProject "deferred gles" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				27F352CC17EBC3F600FF4D22 /* Debug */,
+				27F352CD17EBC3F600FF4D22 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		27F352CE17EBC3F600FF4D22 /* Build configuration list for PBXNativeTarget "deferred gles" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				27F352CF17EBC3F600FF4D22 /* Debug */,
+				27F352D017EBC3F600FF4D22 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 27F3528917EBC3F600FF4D22 /* Project object */;
+}
