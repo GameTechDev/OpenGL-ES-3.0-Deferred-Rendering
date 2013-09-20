@@ -221,19 +221,11 @@ Graphics* create_graphics(int width, int height)
     graphics->vertex_buffer = _create_buffer(GL_ARRAY_BUFFER, kVertices, sizeof(kVertices));
     graphics->index_buffer = _create_buffer(GL_ELEMENT_ARRAY_BUFFER, kIndices, sizeof(kIndices));
 
-    /* Bind color buffer for resizing */
-    //glBindRenderbuffer(GL_RENDERBUFFER, graphics->color_renderbuffer);
-
     CheckGLError();
     return graphics;
 }
 void render(Graphics* graphics)
 {
-    /* Bind buffers */
-    //glBindRenderbuffer(GL_RENDERBUFFER, graphics->color_renderbuffer);
-    //glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
-    CheckGLError();
-
     glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -266,7 +258,9 @@ void render(Graphics* graphics)
     glVertexAttribPointer(graphics->color_input, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(float)*3));
 
     glDrawElements(GL_TRIANGLES, sizeof(kIndices)/sizeof(kIndices[0]), GL_UNSIGNED_SHORT, NULL);
-    glFlush();
+
+    
+    CheckGLError();
 }
 void destroy_graphics(Graphics* graphics)
 {
