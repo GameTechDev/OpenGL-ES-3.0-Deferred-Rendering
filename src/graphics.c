@@ -7,7 +7,7 @@
     #include <OpenGLES/ES3/gl.h>
     #include <OpenGLES/ES3/glext.h>
 #elif defined(__ANDROID__)
-    #include <GLES2/gl2.h>
+    #include <GLES3/gl3.h>
 #else
     #error Need an OpenGL implementation
 #endif
@@ -105,7 +105,7 @@ static GLuint _load_shader(const char* filename, GLenum type)
     file_size = (int)load_file_contents(filename, buffer, sizeof(buffer));
     if(file_size == 0)
         system_log("Loading shader %s failed", filename);
-    assert(file_size && file_size < sizeof(buffer));
+    assert(file_size && file_size < (int)sizeof(buffer));
 
     shader = glCreateShader(type);
     glShaderSource(shader, 1, &source, &file_size);
@@ -216,7 +216,7 @@ Graphics* create_graphics(int width, int height)
     system_log("OpenGL initialized\n");
 
     /* Perform other initialization */
-    //_setup_framebuffer(graphics);
+    _setup_framebuffer(graphics);
     _setup_program(graphics);
     graphics->vertex_buffer = _create_buffer(GL_ARRAY_BUFFER, kVertices, sizeof(kVertices));
     graphics->index_buffer = _create_buffer(GL_ELEMENT_ARRAY_BUFFER, kIndices, sizeof(kIndices));
@@ -244,8 +244,8 @@ void render(Graphics* graphics)
     {
         static int count = 0;
         Transform t = {
-            quat_from_euler(count/30.0f, count/30.0f*1.01, 0.0f),
-            vec3_create(sin(count/30.0f), sin(count/30.0f*1.1), 7.0f),
+            quat_from_euler(count/30.0f, count/30.0f*1.01f, 0.0f),
+            vec3_create(sinf(count/30.0f), sinf(count/30.0f*1.1f), 7.0f),
             1.0f };
         Mat4 model = transform_get_matrix(t);
         Mat4 view = mat4_identity;
