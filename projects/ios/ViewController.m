@@ -80,11 +80,11 @@
 
 - (void)update
 {
-    game_update(_game);
+    update_game(_game);
 }
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-    game_render(_game);
+    render_game(_game);
 
     (void)sizeof(view);
     (void)sizeof(rect);

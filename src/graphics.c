@@ -224,7 +224,7 @@ Graphics* create_graphics(int width, int height)
     CheckGLError();
     return graphics;
 }
-void render(Graphics* graphics)
+void render_graphics(Graphics* graphics)
 {
     glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

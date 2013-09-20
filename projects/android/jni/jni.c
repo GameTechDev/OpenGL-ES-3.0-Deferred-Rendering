@@ -24,8 +24,8 @@ JNIEXPORT void JNICALL Java_com_intel_deferredgles_JNIWrapper_init_1asset_1manag
 }
 JNIEXPORT void JNICALL Java_com_intel_deferredgles_JNIWrapper_frame(JNIEnv * env, jobject obj)
 {
-    game_update(_game);
-    game_render(_game);
+    update_game(_game);
+    render_game(_game);
 
     UNUSED_PARAMETER(env);
     UNUSED_PARAMETER(obj);

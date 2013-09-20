@@ -10,7 +10,7 @@
 typedef struct Graphics Graphics;
 
 Graphics* create_graphics(int width, int height);
-void render(Graphics* graphics);
+void render_graphics(Graphics* graphics);
 void destroy_graphics(Graphics* graphics);
 
 #endif /* include guard */

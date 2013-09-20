@@ -43,7 +43,7 @@ void destroy_game(Game* game)
     destroy_graphics(game->graphics);
     destroy_game(game);
 }
-void game_update(Game* game)
+void update_game(Game* game)
 {
     static float time = 0.0f;
     float delta_time = (float)get_delta_time(game->timer);
@@ -53,7 +53,7 @@ void game_update(Game* game)
         time -= 1.0f;
     }
 }
-void game_render(Game* game)
+void render_game(Game* game)
 {
-    render(game->graphics);
+    render_graphics(game->graphics);
 }
