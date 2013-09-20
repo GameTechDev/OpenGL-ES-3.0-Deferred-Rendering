@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 
+#include "graphics.h"
+
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 // Uniform index.
