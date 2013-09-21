@@ -21,7 +21,7 @@
     do {                                \
         GLenum _glError = glGetError(); \
         if(_glError != GL_NO_ERROR) {   \
-            system_log("OpenGL Error: %d\n", _glError);\
+            system_log("%s:%d:  OpenGL Error: %d\n", __FILE__, __LINE__, _glError);\
         }                               \
         assert(_glError == GL_NO_ERROR);\
     } while(__LINE__ == 0)
@@ -45,6 +45,16 @@ struct Graphics
 
     int width;
     int height;
+
+    GLuint  fullscreen_vertex_buffer;
+    GLuint  fullscreen_index_buffer;
+    GLuint  fullscreen_program;
+    GLuint  fullscreen_position_input;
+    GLuint  fullscreen_texcoord_input;
+    GLuint  fullscreen_texture_uniform;
+
+    GLuint  texture;
+
 };
 
 typedef struct Vertex
@@ -52,9 +62,26 @@ typedef struct Vertex
     float position[3];
     float color[4];
 } Vertex;
+typedef struct PosTexVertex
+{
+    Vec3    pos;
+    Vec2    tex;
+} PosTexVertex;
 
 /* Constants
  */
+static const PosTexVertex kQuadVertices[] =
+{
+    { {  1.0f,  1.0f, 0.0f }, { 1.0f, 1.0f }, },
+    { { -1.0f,  1.0f, 0.0f }, { 0.0f, 1.0f }, },
+    { { -1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f }, },
+    { {  1.0f, -1.0f, 0.0f }, { 1.0f, 0.0f }, },
+};
+static const uint16_t kQuadIndices[] =
+{
+    0, 1, 2,
+    0, 2, 3,
+};
 
 static const Vertex kVertices[] = {
     { { 1, -1,  1}, {1, 0, 0, 1}},
@@ -132,6 +159,7 @@ static GLuint _create_buffer(GLenum type, const void* data, size_t size)
 static void _setup_framebuffer(Graphics* graphics)
 {
     /* Color buffer */
+    #if 0
     glGenRenderbuffers(1, &graphics->color_renderbuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, graphics->color_renderbuffer);
     glRenderbufferStorage(  GL_RENDERBUFFER,
@@ -140,6 +168,23 @@ static void _setup_framebuffer(Graphics* graphics)
                             graphics->height);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
     CheckGLError();
+    #else
+    glGenTextures(1, &graphics->color_renderbuffer);
+    glBindTexture(GL_TEXTURE_2D, graphics->color_renderbuffer);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    {
+        uint8_t* tex = malloc(graphics->width*graphics->height*4);
+        int ii=0;
+        for(;ii<graphics->width*graphics->height*4;++ii)
+            tex[ii] = 64;
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, graphics->width, graphics->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex);
+        free(tex);
+    }
+
+    #endif
     system_log("Created color buffer\n");
 
     /* Depth buffer */
@@ -156,14 +201,38 @@ static void _setup_framebuffer(Graphics* graphics)
     /* Framebuffer */
     glGenFramebuffers(1, &graphics->framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, graphics->color_renderbuffer);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER,
-                              GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
-                              graphics->color_renderbuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, graphics->color_renderbuffer, 0);
+//    glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+//                              GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+//                              graphics->color_renderbuffer);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER,
                               GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
                               graphics->depth_renderbuffer);
+{
+    GLenum framebufferStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
+    switch (framebufferStatus) {
+        case GL_FRAMEBUFFER_COMPLETE: break;
+        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+            system_log("Framebuffer Object %d Error: Attachment Point Unconnected", graphics->framebuffer);
+            break;
+        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+            system_log("Framebuffer Object %d Error: Missing Attachment", graphics->framebuffer);
+            break;
+        case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+            system_log("Framebuffer Object %d Error: Dimensions do not match", graphics->framebuffer);
+            break;
+        case GL_FRAMEBUFFER_UNSUPPORTED:
+            system_log("Framebuffer Object %d Error: Unsupported Framebuffer Configuration", graphics->framebuffer);
+            break;
+        default:
+            system_log("Framebuffer Object %d Error: Unkown Framebuffer Object Failure", graphics->framebuffer);
+            break;
+    }
+    }
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
     CheckGLError();
     system_log("Created framebuffer\n");
 }
@@ -196,6 +265,36 @@ static void _setup_program(Graphics* graphics)
     graphics->position_input = glGetAttribLocation(graphics->program, "Position");
     graphics->color_input = glGetAttribLocation(graphics->program, "SourceColor");
     system_log("Created program\n");
+
+    /* Fullscreen time */
+    vertex_shader = _load_shader("fullscreen_vertex.glsl", GL_VERTEX_SHADER);
+    fragment_shader = _load_shader("fullscreen_fragment.glsl", GL_FRAGMENT_SHADER);
+
+    graphics->fullscreen_program = glCreateProgram();
+    glAttachShader(graphics->fullscreen_program, vertex_shader);
+    glAttachShader(graphics->fullscreen_program, fragment_shader);
+    glLinkProgram(graphics->fullscreen_program);
+    glGetProgramiv(graphics->fullscreen_program, GL_LINK_STATUS, &link_status);
+    if(link_status == GL_FALSE) {
+        char message[1024];
+        glGetProgramInfoLog(graphics->fullscreen_program, sizeof(message), 0, message);
+        system_log(message);
+        assert(link_status != GL_FALSE);
+    }
+    glDetachShader(graphics->fullscreen_program, fragment_shader);
+    glDetachShader(graphics->fullscreen_program, vertex_shader);
+    glDeleteShader(fragment_shader);
+    glDeleteShader(vertex_shader);
+    CheckGLError();
+
+    graphics->fullscreen_texture_uniform = glGetUniformLocation(graphics->fullscreen_program, "s_diffuse");
+    CheckGLError();
+    graphics->fullscreen_position_input = glGetAttribLocation(graphics->fullscreen_program, "a_position");
+    CheckGLError();
+    graphics->fullscreen_texcoord_input = glGetAttribLocation(graphics->fullscreen_program, "a_texcoord");
+    CheckGLError();
+    system_log("Created fullscreen program\n");
+    CheckGLError();
 }
 
 /* External functions
@@ -213,6 +312,7 @@ Graphics* create_graphics(int width, int height)
     /* Perform GL initialization */
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height);
+    glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
     system_log("OpenGL initialized\n");
 
     /* Perform other initialization */
@@ -221,17 +321,43 @@ Graphics* create_graphics(int width, int height)
     graphics->vertex_buffer = _create_buffer(GL_ARRAY_BUFFER, kVertices, sizeof(kVertices));
     graphics->index_buffer = _create_buffer(GL_ELEMENT_ARRAY_BUFFER, kIndices, sizeof(kIndices));
 
+    graphics->fullscreen_vertex_buffer = _create_buffer(GL_ARRAY_BUFFER, kQuadVertices, sizeof(kQuadVertices));
+    graphics->fullscreen_index_buffer = _create_buffer(GL_ELEMENT_ARRAY_BUFFER, kQuadIndices, sizeof(kQuadIndices));
+
+    glGenTextures(1, &graphics->texture);
+    glBindTexture(GL_TEXTURE_2D, graphics->texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    {
+        uint8_t* tex = malloc(512*512*4);
+        int ii=0;
+        for(;ii<512*512*4;++ii)
+            tex[ii] = 128;
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex);
+        free(tex);
+    }
+
     CheckGLError();
+    system_log("Graphics initialized\n");
     return graphics;
 }
 void render_graphics(Graphics* graphics)
 {
+    GLint defaultFBO;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
+    #if 1
+    /* Bind framebuffer */
+    glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
+    CheckGLError();
+
     glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    CheckGLError();
 
     glUseProgram(graphics->program);
     glBindBuffer(GL_ARRAY_BUFFER, graphics->vertex_buffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphics->index_buffer);
+    CheckGLError();
 
     {
         static int count = 0;
@@ -246,20 +372,59 @@ void render_graphics(Graphics* graphics)
 
         Mat4 model_view = mat4_multiply(model, view);
 
+    CheckGLError();
         glUniformMatrix4fv(graphics->modelview_uniform, 1, GL_FALSE, (float*)&model_view);
+    CheckGLError();
         glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&proj);
+    CheckGLError();
 
         count++;
     }
+    CheckGLError();
 
     glEnableVertexAttribArray(graphics->position_input);
     glEnableVertexAttribArray(graphics->color_input);
+    CheckGLError();
     glVertexAttribPointer(graphics->position_input, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
     glVertexAttribPointer(graphics->color_input, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(float)*3));
 
     glDrawElements(GL_TRIANGLES, sizeof(kIndices)/sizeof(kIndices[0]), GL_UNSIGNED_SHORT, NULL);
 
-    
+    CheckGLError();
+    #endif
+
+    #if 1
+    /* Back to default */
+    glBindFramebuffer(GL_FRAMEBUFFER, defaultFBO);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glUseProgram(graphics->fullscreen_program);
+    glEnableVertexAttribArray(graphics->fullscreen_position_input);
+    glEnableVertexAttribArray(graphics->fullscreen_texcoord_input);
+
+    CheckGLError();
+    glBindBuffer(GL_ARRAY_BUFFER, graphics->fullscreen_vertex_buffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphics->fullscreen_index_buffer);
+
+    CheckGLError();
+    glVertexAttribPointer(graphics->fullscreen_position_input, 3, GL_FLOAT, GL_FALSE, sizeof(PosTexVertex), 0);
+    glVertexAttribPointer(graphics->fullscreen_texcoord_input, 2, GL_FLOAT, GL_FALSE, sizeof(PosTexVertex), (void*)(sizeof(float)*3));
+
+    CheckGLError();
+    glActiveTexture(GL_TEXTURE0);
+    CheckGLError();
+    glBindTexture(GL_TEXTURE_2D, graphics->color_renderbuffer);
+    CheckGLError();
+    glUniform1i(graphics->fullscreen_texture_uniform, 0);
+    CheckGLError();
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+    CheckGLError();
+
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    #endif
+
     CheckGLError();
 }
 void destroy_graphics(Graphics* graphics)

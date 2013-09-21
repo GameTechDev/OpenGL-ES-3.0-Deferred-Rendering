@@ -20,6 +20,8 @@
 		2715E75817ECB63400442391 /* SimpleVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 2715E75617ECB63400442391 /* SimpleVertex.glsl */; };
 		2715E75B17ECC60100442391 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2715E75917ECC60100442391 /* timer.c */; };
 		2715E76117ECF23E00442391 /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 2715E75F17ECF23E00442391 /* game.c */; };
+		2715E76317ED087000442391 /* fullscreen_vertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 2715E76217ED087000442391 /* fullscreen_vertex.glsl */; };
+		2715E76517ED088800442391 /* fullscreen_fragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 2715E76417ED088800442391 /* fullscreen_fragment.glsl */; };
 		27F3529517EBC3F600FF4D22 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529417EBC3F600FF4D22 /* Foundation.framework */; };
 		27F3529717EBC3F600FF4D22 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */; };
 		27F3529917EBC3F600FF4D22 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529817EBC3F600FF4D22 /* UIKit.framework */; };
@@ -50,6 +52,8 @@
 		2715E75A17ECC60100442391 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
 		2715E75F17ECF23E00442391 /* game.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = game.c; sourceTree = "<group>"; };
 		2715E76017ECF23E00442391 /* game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = game.h; sourceTree = "<group>"; };
+		2715E76217ED087000442391 /* fullscreen_vertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fullscreen_vertex.glsl; sourceTree = "<group>"; };
+		2715E76417ED088800442391 /* fullscreen_fragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fullscreen_fragment.glsl; sourceTree = "<group>"; };
 		27F3529117EBC3F600FF4D22 /* deferred gles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "deferred gles.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27F3529417EBC3F600FF4D22 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -123,6 +127,8 @@
 			children = (
 				2715E75517ECB63400442391 /* SimpleFragment.glsl */,
 				2715E75617ECB63400442391 /* SimpleVertex.glsl */,
+				2715E76217ED087000442391 /* fullscreen_vertex.glsl */,
+				2715E76417ED088800442391 /* fullscreen_fragment.glsl */,
 			);
 			name = assets;
 			path = ../../assets;
@@ -217,6 +223,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2715E76317ED087000442391 /* fullscreen_vertex.glsl in Resources */,
+				2715E76517ED088800442391 /* fullscreen_fragment.glsl in Resources */,
 				2715E73E17ECADFA00442391 /* Main_iPad.storyboard in Resources */,
 				2715E73F17ECADFA00442391 /* Main_iPhone.storyboard in Resources */,
 				2715E73C17ECADFA00442391 /* InfoPlist.strings in Resources */,
