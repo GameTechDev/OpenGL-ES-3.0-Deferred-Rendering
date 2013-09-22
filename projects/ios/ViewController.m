@@ -69,7 +69,7 @@
     [EAGLContext setCurrentContext:self.context];
 
     _game = create_game((int)(self.view.frame.size.width*self.view.contentScaleFactor),
-                                (int)(self.view.frame.size.height*self.view.contentScaleFactor));
+                        (int)(self.view.frame.size.height*self.view.contentScaleFactor));
 }
 
 - (void)tearDownGL

@@ -52,9 +52,6 @@ struct Graphics
     GLuint  fullscreen_position_input;
     GLuint  fullscreen_texcoord_input;
     GLuint  fullscreen_texture_uniform;
-
-    GLuint  texture;
-
 };
 
 typedef struct Vertex
@@ -236,30 +233,37 @@ static void _setup_framebuffer(Graphics* graphics)
     CheckGLError();
     system_log("Created framebuffer\n");
 }
-static void _setup_program(Graphics* graphics)
+static GLuint _create_program(const char* vertex_shader_file, const char* fragment_shader_file)
 {
-    GLuint vertex_shader = _load_shader("SimpleVertex.glsl", GL_VERTEX_SHADER);
-    GLuint fragment_shader = _load_shader("SimpleFragment.glsl", GL_FRAGMENT_SHADER);
+    GLuint vertex_shader = _load_shader(vertex_shader_file, GL_VERTEX_SHADER);
+    GLuint fragment_shader = _load_shader(fragment_shader_file, GL_FRAGMENT_SHADER);
+    GLuint program;
     GLint  link_status;
 
     /* Create program */
-    graphics->program = glCreateProgram();
-    glAttachShader(graphics->program, vertex_shader);
-    glAttachShader(graphics->program, fragment_shader);
-    glLinkProgram(graphics->program);
-    glGetProgramiv(graphics->program, GL_LINK_STATUS, &link_status);
+    program = glCreateProgram();
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, fragment_shader);
+    glLinkProgram(program);
+    glGetProgramiv(program, GL_LINK_STATUS, &link_status);
     if(link_status == GL_FALSE) {
         char message[1024];
-        glGetProgramInfoLog(graphics->program, sizeof(message), 0, message);
+        glGetProgramInfoLog(program, sizeof(message), 0, message);
         system_log(message);
         assert(link_status != GL_FALSE);
     }
-    glDetachShader(graphics->program, fragment_shader);
-    glDetachShader(graphics->program, vertex_shader);
+    glDetachShader(program, fragment_shader);
+    glDetachShader(program, vertex_shader);
     glDeleteShader(fragment_shader);
     glDeleteShader(vertex_shader);
 
-    /* Get program data */
+    return program;
+}
+static void _setup_programs(Graphics* graphics)
+{
+    /* Create 3D program */
+    graphics->program = _create_program("SimpleVertex.glsl", "SimpleFragment.glsl");
+
     graphics->projection_uniform = glGetUniformLocation(graphics->program, "Projection");
     graphics->modelview_uniform = glGetUniformLocation(graphics->program, "ModelView");
     graphics->position_input = glGetAttribLocation(graphics->program, "Position");
@@ -267,32 +271,11 @@ static void _setup_program(Graphics* graphics)
     system_log("Created program\n");
 
     /* Fullscreen time */
-    vertex_shader = _load_shader("fullscreen_vertex.glsl", GL_VERTEX_SHADER);
-    fragment_shader = _load_shader("fullscreen_fragment.glsl", GL_FRAGMENT_SHADER);
-
-    graphics->fullscreen_program = glCreateProgram();
-    glAttachShader(graphics->fullscreen_program, vertex_shader);
-    glAttachShader(graphics->fullscreen_program, fragment_shader);
-    glLinkProgram(graphics->fullscreen_program);
-    glGetProgramiv(graphics->fullscreen_program, GL_LINK_STATUS, &link_status);
-    if(link_status == GL_FALSE) {
-        char message[1024];
-        glGetProgramInfoLog(graphics->fullscreen_program, sizeof(message), 0, message);
-        system_log(message);
-        assert(link_status != GL_FALSE);
-    }
-    glDetachShader(graphics->fullscreen_program, fragment_shader);
-    glDetachShader(graphics->fullscreen_program, vertex_shader);
-    glDeleteShader(fragment_shader);
-    glDeleteShader(vertex_shader);
-    CheckGLError();
+    graphics->fullscreen_program = _create_program("fullscreen_vertex.glsl", "fullscreen_fragment.glsl");
 
     graphics->fullscreen_texture_uniform = glGetUniformLocation(graphics->fullscreen_program, "s_diffuse");
-    CheckGLError();
     graphics->fullscreen_position_input = glGetAttribLocation(graphics->fullscreen_program, "a_position");
-    CheckGLError();
     graphics->fullscreen_texcoord_input = glGetAttribLocation(graphics->fullscreen_program, "a_texcoord");
-    CheckGLError();
     system_log("Created fullscreen program\n");
     CheckGLError();
 }
@@ -317,24 +300,12 @@ Graphics* create_graphics(int width, int height)
 
     /* Perform other initialization */
     _setup_framebuffer(graphics);
-    _setup_program(graphics);
+    _setup_programs(graphics);
     graphics->vertex_buffer = _create_buffer(GL_ARRAY_BUFFER, kVertices, sizeof(kVertices));
     graphics->index_buffer = _create_buffer(GL_ELEMENT_ARRAY_BUFFER, kIndices, sizeof(kIndices));
 
     graphics->fullscreen_vertex_buffer = _create_buffer(GL_ARRAY_BUFFER, kQuadVertices, sizeof(kQuadVertices));
     graphics->fullscreen_index_buffer = _create_buffer(GL_ELEMENT_ARRAY_BUFFER, kQuadIndices, sizeof(kQuadIndices));
-
-    glGenTextures(1, &graphics->texture);
-    glBindTexture(GL_TEXTURE_2D, graphics->texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    {
-        uint8_t* tex = malloc(512*512*4);
-        int ii=0;
-        for(;ii<512*512*4;++ii)
-            tex[ii] = 128;
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex);
-        free(tex);
-    }
 
     CheckGLError();
     system_log("Graphics initialized\n");
