@@ -28,6 +28,13 @@
 
 /* Types
  */
+typedef struct Mesh
+{
+    GLuint  vertex_buffer;
+    GLuint  index_buffer;
+    int     index_count;
+} Mesh;
+
 struct Graphics
 {
     GLuint  program;
@@ -38,6 +45,7 @@ struct Graphics
 
     GLuint  vertex_buffer;
     GLuint  index_buffer;
+    Mesh  cube_mesh;
 
     GLuint  color_renderbuffer;
     GLuint  depth_renderbuffer;
@@ -187,10 +195,10 @@ static void _setup_framebuffer(Graphics* graphics)
     /* Depth buffer */
     glGenRenderbuffers(1, &graphics->depth_renderbuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, graphics->depth_renderbuffer);
-    glRenderbufferStorage(  GL_RENDERBUFFER,
-                            GL_DEPTH_COMPONENT16,
-                            graphics->width,
-                            graphics->height);
+    glRenderbufferStorage(GL_RENDERBUFFER,
+                          GL_DEPTH_COMPONENT16,
+                          graphics->width,
+                          graphics->height);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
     CheckGLError();
     system_log("Created depth buffer\n");
@@ -199,33 +207,33 @@ static void _setup_framebuffer(Graphics* graphics)
     glGenFramebuffers(1, &graphics->framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, graphics->color_renderbuffer, 0);
-//    glFramebufferRenderbuffer(GL_FRAMEBUFFER,
-//                              GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
-//                              graphics->color_renderbuffer);
+    //    glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+    //                              GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+    //                              graphics->color_renderbuffer);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER,
                               GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
                               graphics->depth_renderbuffer);
-{
-    GLenum framebufferStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    {
+        GLenum framebufferStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
-    switch (framebufferStatus) {
-        case GL_FRAMEBUFFER_COMPLETE: break;
-        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-            system_log("Framebuffer Object %d Error: Attachment Point Unconnected", graphics->framebuffer);
-            break;
-        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-            system_log("Framebuffer Object %d Error: Missing Attachment", graphics->framebuffer);
-            break;
-        case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
-            system_log("Framebuffer Object %d Error: Dimensions do not match", graphics->framebuffer);
-            break;
-        case GL_FRAMEBUFFER_UNSUPPORTED:
-            system_log("Framebuffer Object %d Error: Unsupported Framebuffer Configuration", graphics->framebuffer);
-            break;
-        default:
-            system_log("Framebuffer Object %d Error: Unkown Framebuffer Object Failure", graphics->framebuffer);
-            break;
-    }
+        switch (framebufferStatus) {
+            case GL_FRAMEBUFFER_COMPLETE: break;
+            case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+                system_log("Framebuffer Object %d Error: Attachment Point Unconnected", graphics->framebuffer);
+                break;
+            case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+                system_log("Framebuffer Object %d Error: Missing Attachment", graphics->framebuffer);
+                break;
+            case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+                system_log("Framebuffer Object %d Error: Dimensions do not match", graphics->framebuffer);
+                break;
+            case GL_FRAMEBUFFER_UNSUPPORTED:
+                system_log("Framebuffer Object %d Error: Unsupported Framebuffer Configuration", graphics->framebuffer);
+                break;
+            default:
+                system_log("Framebuffer Object %d Error: Unkown Framebuffer Object Failure", graphics->framebuffer);
+                break;
+        }
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -258,6 +266,17 @@ static GLuint _create_program(const char* vertex_shader_file, const char* fragme
     glDeleteShader(vertex_shader);
 
     return program;
+}
+static Mesh _create_mesh(const void* vertex_data, size_t vertex_size,
+                         const void* index_data, size_t index_size,
+                         int index_count)
+{
+    Mesh mesh = {
+        _create_buffer(GL_ARRAY_BUFFER, vertex_data, vertex_size),
+        _create_buffer(GL_ELEMENT_ARRAY_BUFFER, index_data, index_size),
+        index_count
+    };
+    return mesh;
 }
 static void _setup_programs(Graphics* graphics)
 {
@@ -304,6 +323,8 @@ Graphics* create_graphics(int width, int height)
     graphics->vertex_buffer = _create_buffer(GL_ARRAY_BUFFER, kVertices, sizeof(kVertices));
     graphics->index_buffer = _create_buffer(GL_ELEMENT_ARRAY_BUFFER, kIndices, sizeof(kIndices));
 
+    graphics->cube_mesh = _create_mesh(kVertices, sizeof(kVertices), kIndices, sizeof(kIndices), sizeof(kIndices)/sizeof(kIndices[0]));
+
     graphics->fullscreen_vertex_buffer = _create_buffer(GL_ARRAY_BUFFER, kQuadVertices, sizeof(kQuadVertices));
     graphics->fullscreen_index_buffer = _create_buffer(GL_ELEMENT_ARRAY_BUFFER, kQuadIndices, sizeof(kQuadIndices));
 
@@ -326,8 +347,8 @@ void render_graphics(Graphics* graphics)
     CheckGLError();
 
     glUseProgram(graphics->program);
-    glBindBuffer(GL_ARRAY_BUFFER, graphics->vertex_buffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphics->index_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, graphics->cube_mesh.vertex_buffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphics->cube_mesh.index_buffer);
     CheckGLError();
 
     {
@@ -359,7 +380,7 @@ void render_graphics(Graphics* graphics)
     glVertexAttribPointer(graphics->position_input, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
     glVertexAttribPointer(graphics->color_input, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(float)*3));
 
-    glDrawElements(GL_TRIANGLES, sizeof(kIndices)/sizeof(kIndices[0]), GL_UNSIGNED_SHORT, NULL);
+    glDrawElements(GL_TRIANGLES, graphics->cube_mesh.index_count, GL_UNSIGNED_SHORT, NULL);
 
     CheckGLError();
     #endif
