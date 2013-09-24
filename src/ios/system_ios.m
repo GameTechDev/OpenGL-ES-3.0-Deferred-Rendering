@@ -58,15 +58,3 @@ void system_log(const char* format, ...)
     va_end(args);
 }
 
-// CGImageRef spriteImage = [UIImage imageNamed:fileName].CGImage;
-//    if (!spriteImage) 
-//    {
-//        NSLog(@"Failed to load image %@", fileName);
-//        exit(1);
-//    }
-//    size_t width = CGImageGetWidth(spriteImage);
-//    size_t height = CGImageGetHeight(spriteImage);
-//    GLubyte * spriteData = (GLubyte *) calloc(width*height*4, sizeof(GLubyte));
-//    CGContextRef spriteContext = CGBitmapContextCreate(spriteData, width, height, 8,     width*4,CGImageGetColorSpace(spriteImage), kCGImageAlphaPremultipliedLast);    
-//    CGContextDrawImage(spriteContext, CGRectMake(0, 0, width, height), spriteImage);
-//    CGContextRelease(spriteContext);

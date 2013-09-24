@@ -273,9 +273,10 @@ static void _setup_programs(Graphics* graphics)
     { /* Create 3D program */
         AttributeSlot slots[] = {
             kPositionSlot,
-            kColorSlot
+            kNormalSlot,
+            kTexCoordSlot
         };
-        graphics->program = _create_program("SimpleVertex.glsl", "SimpleFragment.glsl", slots, 2);
+        graphics->program = _create_program("SimpleVertex.glsl", "SimpleFragment.glsl", slots, 3);
 
         graphics->projection_uniform = glGetUniformLocation(graphics->program, "Projection");
         graphics->modelview_uniform = glGetUniformLocation(graphics->program, "ModelView");
@@ -381,10 +382,10 @@ void render_graphics(Graphics* graphics)
         count++;
     }
 
-    _draw_mesh(&graphics->cube_mesh);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, graphics->texture);
     glUniform1i(graphics->diffuse_uniform, 0);
+    _draw_mesh(&graphics->cube_mesh);
 
     CheckGLError();
 

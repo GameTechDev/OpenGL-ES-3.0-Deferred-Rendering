@@ -25,6 +25,7 @@
 		2779293417F255630090932F /* SimpleFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 2779292F17F255630090932F /* SimpleFragment.glsl */; };
 		2779293517F255630090932F /* SimpleVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 2779293017F255630090932F /* SimpleVertex.glsl */; };
 		2779293617F255630090932F /* texture.png in Resources */ = {isa = PBXBuildFile; fileRef = 2779293117F255630090932F /* texture.png */; };
+		2779293817F25B2E0090932F /* gl_helper_ios.m in Sources */ = {isa = PBXBuildFile; fileRef = 2779293717F25B2E0090932F /* gl_helper_ios.m */; };
 		27F3529517EBC3F600FF4D22 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529417EBC3F600FF4D22 /* Foundation.framework */; };
 		27F3529717EBC3F600FF4D22 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */; };
 		27F3529917EBC3F600FF4D22 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529817EBC3F600FF4D22 /* UIKit.framework */; };
@@ -63,6 +64,7 @@
 		2779292F17F255630090932F /* SimpleFragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SimpleFragment.glsl; sourceTree = "<group>"; };
 		2779293017F255630090932F /* SimpleVertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SimpleVertex.glsl; sourceTree = "<group>"; };
 		2779293117F255630090932F /* texture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = texture.png; sourceTree = "<group>"; };
+		2779293717F25B2E0090932F /* gl_helper_ios.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = gl_helper_ios.m; sourceTree = "<group>"; };
 		27F3529117EBC3F600FF4D22 /* deferred gles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "deferred gles.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27F3529417EBC3F600FF4D22 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -132,6 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				2715E75217ECB2CA00442391 /* system_ios.m */,
+				2779293717F25B2E0090932F /* gl_helper_ios.m */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -257,6 +260,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2779293817F25B2E0090932F /* gl_helper_ios.m in Sources */,
 				2715E74F17ECB2A700442391 /* graphics.c in Sources */,
 				2715E73D17ECADFA00442391 /* main.m in Sources */,
 				2715E76117ECF23E00442391 /* game.c in Sources */,
