@@ -2,11 +2,14 @@ uniform mat4 Projection;
 uniform mat4 ModelView;
 
 attribute vec4 a_Position;
-attribute vec4 a_Color;
+attribute vec3 a_Normal;
+attribute vec3 a_TexCoord;
 
-varying vec4 v_Color;
+varying vec3 v_Normal;
+varying vec3 v_TexCoord;
 
 void main(void) {
-    v_Color = a_Color;
+    v_Normal = a_Normal;
+    v_TexCoord = a_TexCoord;
     gl_Position = Projection * ModelView * a_Position;
 }

@@ -57,6 +57,7 @@
 		2715E76417ED088800442391 /* fullscreen_fragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fullscreen_fragment.glsl; sourceTree = "<group>"; };
 		2779292017F24E6E0090932F /* gl_helper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gl_helper.c; sourceTree = "<group>"; };
 		2779292117F24E6E0090932F /* gl_helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gl_helper.h; sourceTree = "<group>"; };
+		2779292317F24FD40090932F /* geometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = geometry.h; sourceTree = "<group>"; };
 		27F3529117EBC3F600FF4D22 /* deferred gles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "deferred gles.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27F3529417EBC3F600FF4D22 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -114,6 +115,7 @@
 				2715E76017ECF23E00442391 /* game.h */,
 				2779292017F24E6E0090932F /* gl_helper.c */,
 				2779292117F24E6E0090932F /* gl_helper.h */,
+				2779292317F24FD40090932F /* geometry.h */,
 			);
 			name = src;
 			path = ../../src;

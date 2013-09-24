@@ -12,6 +12,7 @@
     #error Need an OpenGL implementation
 #endif
 #include "gl_helper.h"
+#include "geometry.h"
 #include "system.h"
 #include "assert.h"
 #include "vec_math.h"
@@ -24,11 +25,13 @@
 typedef enum AttributeSlot
 {
     kPositionSlot   = 0,
-    kTexCoordSlot   = 1,
-    kColorSlot      = 2
+    kNormalSlot,
+    kTexCoordSlot,
+    kColorSlot
 } AttributeSlot;
 typedef enum VertexType
 {
+    kPosNormTexVertex,
     kPosColorVertex,
     kPosTexVertex,
 
@@ -55,6 +58,7 @@ struct Graphics
     GLuint  program;
     GLuint  projection_uniform;
     GLuint  modelview_uniform;
+    GLuint  diffuse_uniform;
 
     Mesh  cube_mesh;
     Mesh  quad_mesh;
@@ -70,27 +74,24 @@ struct Graphics
     GLuint  fullscreen_texture_uniform;
 };
 
-typedef struct PosColorVertex
-{
-    float position[3];
-    float color[4];
-} PosColorVertex;
-typedef struct PosTexVertex
-{
-    Vec3    pos;
-    Vec2    tex;
-} PosTexVertex;
 
 /* Constants
  */
 static const char* kAttributeSlotNames[] =
 {
     "a_Position", /* kPositionSlot */
+    "a_Normal",   /* kNormalSlot */
     "a_TexCoord", /* kTexCoordSlot */
     "a_Color", /* kColorSlot */
 };
 static const VertexDescription kVertexDescriptions[kNUM_VERTEX_TYPES][16] =
 {
+    { /* kPosNormTexVertex */
+        { kPositionSlot,  3, },
+        { kNormalSlot,    3, },
+        { kTexCoordSlot,  2, },
+        { 0, 0 }
+    },
     { /* kPosColorVertex */
         { kPositionSlot,  3, },
         { kColorSlot,     4, },
@@ -101,18 +102,6 @@ static const VertexDescription kVertexDescriptions[kNUM_VERTEX_TYPES][16] =
         { kTexCoordSlot,  2, },
         { 0, 0 }
     }
-};
-static const PosTexVertex kQuadVertices[] =
-{
-    { {  1.0f,  1.0f, 0.0f }, { 1.0f, 1.0f }, },
-    { { -1.0f,  1.0f, 0.0f }, { 0.0f, 1.0f }, },
-    { { -1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f }, },
-    { {  1.0f, -1.0f, 0.0f }, { 1.0f, 0.0f }, },
-};
-static const uint16_t kQuadIndices[] =
-{
-    0, 1, 2,
-    0, 2, 3,
 };
 
 static const PosColorVertex kVertices[] = {
@@ -288,6 +277,7 @@ static void _setup_programs(Graphics* graphics)
 
         graphics->projection_uniform = glGetUniformLocation(graphics->program, "Projection");
         graphics->modelview_uniform = glGetUniformLocation(graphics->program, "ModelView");
+        graphics->diffuse_uniform = glGetUniformLocation(graphics->program, "s_Diffuse");
         system_log("Created program\n");
     }
 
@@ -346,7 +336,7 @@ Graphics* create_graphics(int width, int height)
     graphics->quad_mesh = _create_mesh(kQuadVertices, sizeof(kQuadVertices),
                                        kQuadIndices, sizeof(kQuadIndices),
                                        sizeof(kQuadIndices)/sizeof(kQuadIndices[0]),
-                                       sizeof(kQuadVertices[0]), kPosTexVertex);
+                                       sizeof(kQuadVertices[0]), kPosNormTexVertex);
 
     CheckGLError();
     system_log("Graphics initialized\n");
