@@ -11,20 +11,13 @@
 #else
     #error Need an OpenGL implementation
 #endif
+#include "gl_helper.h"
 #include "system.h"
 #include "assert.h"
 #include "vec_math.h"
 
 /* Defines
  */
-#define CheckGLError()                  \
-    do {                                \
-        GLenum _glError = glGetError(); \
-        if(_glError != GL_NO_ERROR) {   \
-            system_log("%s:%d:  OpenGL Error: %d\n", __FILE__, __LINE__, _glError);\
-        }                               \
-        assert(_glError == GL_NO_ERROR);\
-    } while(__LINE__ == 0)
 
 /* Types
  */
@@ -60,12 +53,11 @@ typedef struct Mesh
 struct Graphics
 {
     GLuint  program;
-    GLuint  position_input;
-    GLuint  color_input;
     GLuint  projection_uniform;
     GLuint  modelview_uniform;
 
     Mesh  cube_mesh;
+    Mesh  quad_mesh;
 
     GLuint  color_renderbuffer;
     GLuint  depth_renderbuffer;
@@ -74,11 +66,7 @@ struct Graphics
     int width;
     int height;
 
-    GLuint  fullscreen_vertex_buffer;
-    GLuint  fullscreen_index_buffer;
     GLuint  fullscreen_program;
-    GLuint  fullscreen_position_input;
-    GLuint  fullscreen_texcoord_input;
     GLuint  fullscreen_texture_uniform;
 };
 
@@ -164,42 +152,6 @@ static const uint16_t kIndices[] = {
 
 /* Internal functions
  */
-static GLuint _load_shader(const char* filename, GLenum type)
-{
-    char        buffer[1024*16] = {0};
-    const char* source = buffer;
-    GLuint      shader = 0;
-    GLint       compile_status = 0;
-    int         file_size = 0;
-
-    system_log("Attempting to load shader %s\n", filename);
-    file_size = (int)load_file_contents(filename, buffer, sizeof(buffer));
-    if(file_size == 0)
-        system_log("Loading shader %s failed", filename);
-    assert(file_size && file_size < (int)sizeof(buffer));
-
-    shader = glCreateShader(type);
-    glShaderSource(shader, 1, &source, &file_size);
-    glCompileShader(shader);
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status);
-    if(compile_status == GL_FALSE) {
-        char message[1024] = {0};
-        glGetShaderInfoLog(shader, sizeof(message), 0, message);
-        system_log(message);
-        return 0;
-    }
-
-    return shader;
-}
-static GLuint _create_buffer(GLenum type, const void* data, size_t size)
-{
-    GLuint buffer;
-    glGenBuffers(1, &buffer);
-    glBindBuffer(type, buffer);
-    glBufferData(type, size, data, GL_STATIC_DRAW);
-    glBindBuffer(type, 0);
-    return buffer;
-}
 static void _setup_framebuffer(Graphics* graphics)
 {
     /* Color buffer */
@@ -283,8 +235,8 @@ static void _setup_framebuffer(Graphics* graphics)
 static GLuint _create_program(const char* vertex_shader_file, const char* fragment_shader_file,
                               const AttributeSlot* attribute_slots, int num_attributes )
 {
-    GLuint vertex_shader = _load_shader(vertex_shader_file, GL_VERTEX_SHADER);
-    GLuint fragment_shader = _load_shader(fragment_shader_file, GL_FRAGMENT_SHADER);
+    GLuint vertex_shader = load_shader(vertex_shader_file, GL_VERTEX_SHADER);
+    GLuint fragment_shader = load_shader(fragment_shader_file, GL_FRAGMENT_SHADER);
     GLuint program;
     GLint  link_status;
     int ii;
@@ -317,8 +269,8 @@ static Mesh _create_mesh(const void* vertex_data, size_t vertex_data_size,
                          int index_count, int vertex_size, VertexType type)
 {
     Mesh mesh = {
-        _create_buffer(GL_ARRAY_BUFFER, vertex_data, vertex_data_size),
-        _create_buffer(GL_ELEMENT_ARRAY_BUFFER, index_data, index_data_size),
+        create_buffer(GL_ARRAY_BUFFER, vertex_data, vertex_data_size),
+        create_buffer(GL_ELEMENT_ARRAY_BUFFER, index_data, index_data_size),
         index_count,
         vertex_size,
         type
@@ -336,8 +288,6 @@ static void _setup_programs(Graphics* graphics)
 
         graphics->projection_uniform = glGetUniformLocation(graphics->program, "Projection");
         graphics->modelview_uniform = glGetUniformLocation(graphics->program, "ModelView");
-        graphics->position_input = glGetAttribLocation(graphics->program, "a_Position");
-        graphics->color_input = glGetAttribLocation(graphics->program, "a_Color");
         system_log("Created program\n");
     }
 
@@ -349,8 +299,6 @@ static void _setup_programs(Graphics* graphics)
         graphics->fullscreen_program = _create_program("fullscreen_vertex.glsl", "fullscreen_fragment.glsl", slots, 2);
 
         graphics->fullscreen_texture_uniform = glGetUniformLocation(graphics->fullscreen_program, "s_Diffuse");
-        graphics->fullscreen_position_input = glGetAttribLocation(graphics->fullscreen_program, "a_Position");
-        graphics->fullscreen_texcoord_input = glGetAttribLocation(graphics->fullscreen_program, "a_TexCoord");
         system_log("Created fullscreen program\n");
     }
     CheckGLError();
@@ -361,11 +309,10 @@ static void _draw_mesh(const Mesh* mesh)
     intptr_t ptr = 0;
     glBindBuffer(GL_ARRAY_BUFFER, mesh->vertex_buffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->index_buffer);
-    while(desc->count) {
+    do {
         glVertexAttribPointer(desc->slot, desc->count, GL_FLOAT, GL_FALSE, mesh->vertex_size, (void*)ptr);
-        ptr += sizeof(float)*desc->count;
-        desc++;
-    }
+        ptr += sizeof(float) * desc->count;
+    } while((++desc)->count);
     glDrawElements(GL_TRIANGLES, mesh->index_count, GL_UNSIGNED_SHORT, NULL);
 }
 
@@ -396,8 +343,10 @@ Graphics* create_graphics(int width, int height)
                                        sizeof(kIndices)/sizeof(kIndices[0]),
                                        sizeof(kVertices[0]), kPosColorVertex);
 
-    graphics->fullscreen_vertex_buffer = _create_buffer(GL_ARRAY_BUFFER, kQuadVertices, sizeof(kQuadVertices));
-    graphics->fullscreen_index_buffer = _create_buffer(GL_ELEMENT_ARRAY_BUFFER, kQuadIndices, sizeof(kQuadIndices));
+    graphics->quad_mesh = _create_mesh(kQuadVertices, sizeof(kQuadVertices),
+                                       kQuadIndices, sizeof(kQuadIndices),
+                                       sizeof(kQuadIndices)/sizeof(kQuadIndices[0]),
+                                       sizeof(kQuadVertices[0]), kPosTexVertex);
 
     CheckGLError();
     system_log("Graphics initialized\n");
@@ -407,12 +356,10 @@ void render_graphics(Graphics* graphics)
 {
     GLint defaultFBO;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
-    #if 1
+
+
     /* Bind framebuffer */
     glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
-    CheckGLError();
-
-    glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     CheckGLError();
@@ -430,7 +377,6 @@ void render_graphics(Graphics* graphics)
             1.0f };
         Mat4 model = transform_get_matrix(t);
         Mat4 view = mat4_identity;
-        //Mat4 proj = mat4_perspective(2, 3, 1.0f, 1000.0f);
         Mat4 proj = mat4_perspective_fov(kPiDiv2, graphics->width/(float)graphics->height, 1.0f, 1000.0f);
 
         Mat4 model_view = mat4_multiply(model, view);
@@ -441,43 +387,25 @@ void render_graphics(Graphics* graphics)
     }
 
     _draw_mesh(&graphics->cube_mesh);
-    
-    //glDrawElements(GL_TRIANGLES, graphics->cube_mesh.index_count, GL_UNSIGNED_SHORT, NULL);
 
     CheckGLError();
-    #endif
 
-    #if 1
     /* Back to default */
     glBindFramebuffer(GL_FRAMEBUFFER, defaultFBO);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glUseProgram(graphics->fullscreen_program);
-    glEnableVertexAttribArray(graphics->fullscreen_position_input);
-    glEnableVertexAttribArray(graphics->fullscreen_texcoord_input);
-
-    CheckGLError();
-    glBindBuffer(GL_ARRAY_BUFFER, graphics->fullscreen_vertex_buffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphics->fullscreen_index_buffer);
-
-    CheckGLError();
-    glVertexAttribPointer(graphics->fullscreen_position_input, 3, GL_FLOAT, GL_FALSE, sizeof(PosTexVertex), 0);
-    glVertexAttribPointer(graphics->fullscreen_texcoord_input, 2, GL_FLOAT, GL_FALSE, sizeof(PosTexVertex), (void*)(sizeof(float)*3));
-
-    CheckGLError();
+    glEnableVertexAttribArray(kPositionSlot );
+    glEnableVertexAttribArray(kTexCoordSlot);
     glActiveTexture(GL_TEXTURE0);
-    CheckGLError();
     glBindTexture(GL_TEXTURE_2D, graphics->color_renderbuffer);
-    CheckGLError();
     glUniform1i(graphics->fullscreen_texture_uniform, 0);
     CheckGLError();
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-    CheckGLError();
 
+    _draw_mesh(&graphics->quad_mesh);
 
     glBindTexture(GL_TEXTURE_2D, 0);
-    #endif
 
     CheckGLError();
 }
