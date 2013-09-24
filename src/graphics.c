@@ -378,9 +378,11 @@ void render_graphics(Graphics* graphics)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphics->cube_mesh.index_buffer);
     glEnableVertexAttribArray(graphics->position_input);
     glEnableVertexAttribArray(graphics->color_input);
+
     CheckGLError();
     glVertexAttribPointer(graphics->position_input, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
     glVertexAttribPointer(graphics->color_input, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(float)*3));
+    CheckGLError();
 
     _draw_mesh(&graphics->cube_mesh);
 

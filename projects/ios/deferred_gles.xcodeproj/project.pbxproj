@@ -309,9 +309,11 @@
 					"../../src/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				OBJROOT = ./obj;
 				ONLY_ACTIVE_ARCH = YES;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
+				SYMROOT = ./bin;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -365,8 +367,10 @@
 					"../../src/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				OBJROOT = ./obj;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
+				SYMROOT = ./bin;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};

@@ -1,0 +1,23 @@
+{
+	"folders":
+	[
+		{
+			"path": "..",
+			"file_exclude_patterns":
+            [
+	            "*.d",
+	           	"*.o",
+	           	"*.a",
+	           	"test_unit_test",
+	           	"*.sublime-workspace"
+            ],
+            "folder_exclude_patterns" :
+            [
+            	"bin",
+            	"obj",
+                "libs",
+                "gen"
+            ]
+		}
+	]
+}
