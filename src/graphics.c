@@ -130,7 +130,7 @@ static const PosColorVertex kVertices[] = {
     { {-1, -1,  1}, {0, 1, 1, 1}},
     { { 1, -1, -1}, {1, 0, 1, 1}},
     { { 1,  1, -1}, {1, 1, 0, 1}},
-    { {-1,  1, -1}, {0, 1, 1, 1}},
+    { {-1,  1, -1}, {0, 0, 0, 1}},
     { {-1, -1, -1}, {1, 1, 1, 1}}
 };
 
@@ -276,22 +276,21 @@ static void _setup_framebuffer(Graphics* graphics)
     CheckGLError();
     system_log("Created framebuffer\n");
 }
-static GLuint _create_program(const char* vertex_shader_file, const char* fragment_shader_file)
+static GLuint _create_program(const char* vertex_shader_file, const char* fragment_shader_file,
+                              const AttributeSlot* attribute_slots, int num_attributes )
 {
     GLuint vertex_shader = _load_shader(vertex_shader_file, GL_VERTEX_SHADER);
     GLuint fragment_shader = _load_shader(fragment_shader_file, GL_FRAGMENT_SHADER);
     GLuint program;
     GLint  link_status;
+    int ii;
 
     /* Create program */
     program = glCreateProgram();
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
-    if(vertex_shader_file[0] == 'S') {
-        glBindAttribLocation(program, 0, "Position");
-        CheckGLError();
-        glBindAttribLocation(program, 1, "SourceColor");
-        CheckGLError();
+    for(ii=0;ii<num_attributes;++ii) {
+        glBindAttribLocation(program, attribute_slots[ii], kAttributeSlotNames[ii]);
     }
     glLinkProgram(program);
     glGetProgramiv(program, GL_LINK_STATUS, &link_status);
@@ -305,6 +304,7 @@ static GLuint _create_program(const char* vertex_shader_file, const char* fragme
     glDetachShader(program, vertex_shader);
     glDeleteShader(fragment_shader);
     glDeleteShader(vertex_shader);
+    CheckGLError();
 
     return program;
 }
@@ -321,22 +321,32 @@ static Mesh _create_mesh(const void* vertex_data, size_t vertex_size,
 }
 static void _setup_programs(Graphics* graphics)
 {
-    /* Create 3D program */
-    graphics->program = _create_program("SimpleVertex.glsl", "SimpleFragment.glsl");
+    { /* Create 3D program */
+        AttributeSlot slots[] = {
+            kPositionSlot,
+            kColorSlot
+        };
+        graphics->program = _create_program("SimpleVertex.glsl", "SimpleFragment.glsl", slots, 2);
 
-    graphics->projection_uniform = glGetUniformLocation(graphics->program, "Projection");
-    graphics->modelview_uniform = glGetUniformLocation(graphics->program, "ModelView");
-    graphics->position_input = glGetAttribLocation(graphics->program, "Position");
-    graphics->color_input = glGetAttribLocation(graphics->program, "SourceColor");
-    system_log("Created program\n");
+        graphics->projection_uniform = glGetUniformLocation(graphics->program, "Projection");
+        graphics->modelview_uniform = glGetUniformLocation(graphics->program, "ModelView");
+        graphics->position_input = glGetAttribLocation(graphics->program, "a_Position");
+        graphics->color_input = glGetAttribLocation(graphics->program, "a_Color");
+        system_log("Created program\n");
+    }
 
-    /* Fullscreen time */
-    graphics->fullscreen_program = _create_program("fullscreen_vertex.glsl", "fullscreen_fragment.glsl");
+    { /* Fullscreen time */
+        AttributeSlot slots[] = {
+            kPositionSlot,
+            kTexCoordSlot
+        };
+        graphics->fullscreen_program = _create_program("fullscreen_vertex.glsl", "fullscreen_fragment.glsl", slots, 2);
 
-    graphics->fullscreen_texture_uniform = glGetUniformLocation(graphics->fullscreen_program, "s_diffuse");
-    graphics->fullscreen_position_input = glGetAttribLocation(graphics->fullscreen_program, "a_position");
-    graphics->fullscreen_texcoord_input = glGetAttribLocation(graphics->fullscreen_program, "a_texcoord");
-    system_log("Created fullscreen program\n");
+        graphics->fullscreen_texture_uniform = glGetUniformLocation(graphics->fullscreen_program, "s_Diffuse");
+        graphics->fullscreen_position_input = glGetAttribLocation(graphics->fullscreen_program, "a_Position");
+        graphics->fullscreen_texcoord_input = glGetAttribLocation(graphics->fullscreen_program, "a_TexCoord");
+        system_log("Created fullscreen program\n");
+    }
     CheckGLError();
 }
 static void _draw_mesh(const Mesh* mesh)
