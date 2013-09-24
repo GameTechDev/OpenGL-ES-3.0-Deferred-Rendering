@@ -28,6 +28,26 @@
 
 /* Types
  */
+typedef enum AttributeSlot
+{
+    kPositionSlot = 0,
+    kTexCoordSlot,
+    kColorSlot
+} AttributeSlot;
+typedef enum VertexTypes
+{
+    kPosColorVertex,
+    kPosTexVertex,
+
+    kNUM_VERTEX_TYPES
+} VertexTypes;
+
+typedef struct VertexDescription
+{
+    AttributeSlot   slot;
+    int             count;
+} VertexDescription;
+
 typedef struct Mesh
 {
     GLuint  vertex_buffer;
@@ -60,11 +80,11 @@ struct Graphics
     GLuint  fullscreen_texture_uniform;
 };
 
-typedef struct Vertex
+typedef struct PosColorVertex
 {
     float position[3];
     float color[4];
-} Vertex;
+} PosColorVertex;
 typedef struct PosTexVertex
 {
     Vec3    pos;
@@ -73,6 +93,23 @@ typedef struct PosTexVertex
 
 /* Constants
  */
+static const char* kAttributeSlotNames[] =
+{
+    "a_Position", /* kPositionSlot */
+    "a_TexCoord", /* kTexCoordSlot */
+    "a_Color", /* kColorSlot */
+};
+static const VertexDescription kVertexDescriptions[kNUM_VERTEX_TYPES][16] =
+{
+    { /* kPosColorVertex */
+        { kPositionSlot,  3, },
+        { kColorSlot,     4, },
+    },
+    { /* kPosTexVertex */
+        { kPositionSlot,  3, },
+        { kTexCoordSlot,  2, },
+    }
+};
 static const PosTexVertex kQuadVertices[] =
 {
     { {  1.0f,  1.0f, 0.0f }, { 1.0f, 1.0f }, },
@@ -86,7 +123,7 @@ static const uint16_t kQuadIndices[] =
     0, 2, 3,
 };
 
-static const Vertex kVertices[] = {
+static const PosColorVertex kVertices[] = {
     { { 1, -1,  1}, {1, 0, 0, 1}},
     { { 1,  1,  1}, {0, 1, 0, 1}},
     { {-1,  1,  1}, {0, 0, 1, 1}},
@@ -250,6 +287,12 @@ static GLuint _create_program(const char* vertex_shader_file, const char* fragme
     program = glCreateProgram();
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
+    if(vertex_shader_file[0] == 'S') {
+        glBindAttribLocation(program, 0, "Position");
+        CheckGLError();
+        glBindAttribLocation(program, 1, "SourceColor");
+        CheckGLError();
+    }
     glLinkProgram(program);
     glGetProgramiv(program, GL_LINK_STATUS, &link_status);
     if(link_status == GL_FALSE) {
@@ -298,8 +341,8 @@ static void _setup_programs(Graphics* graphics)
 }
 static void _draw_mesh(const Mesh* mesh)
 {
-    glBindBuffer(GL_ARRAY_BUFFER, mesh->vertex_buffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->index_buffer);
+    //glBindBuffer(GL_ARRAY_BUFFER, mesh->vertex_buffer);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->index_buffer);
     glDrawElements(GL_TRIANGLES, mesh->index_count, GL_UNSIGNED_SHORT, NULL);
 }
 
@@ -380,11 +423,15 @@ void render_graphics(Graphics* graphics)
     glEnableVertexAttribArray(graphics->color_input);
 
     CheckGLError();
-    glVertexAttribPointer(graphics->position_input, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-    glVertexAttribPointer(graphics->color_input, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(float)*3));
+    //glVertexAttribPointer(graphics->position_input, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+    //glVertexAttribPointer(graphics->color_input, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(float)*3));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(PosColorVertex), 0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(PosColorVertex), (GLvoid*)(sizeof(float)*3));
     CheckGLError();
 
     _draw_mesh(&graphics->cube_mesh);
+    
+    //glDrawElements(GL_TRIANGLES, graphics->cube_mesh.index_count, GL_UNSIGNED_SHORT, NULL);
 
     CheckGLError();
     #endif
