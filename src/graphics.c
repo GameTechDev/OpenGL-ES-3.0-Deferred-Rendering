@@ -63,6 +63,8 @@ struct Graphics
     Mesh  cube_mesh;
     Mesh  quad_mesh;
 
+    GLuint  texture;
+
     GLuint  color_renderbuffer;
     GLuint  depth_renderbuffer;
     GLuint  framebuffer;
@@ -328,15 +330,17 @@ Graphics* create_graphics(int width, int height)
     _setup_framebuffer(graphics);
     _setup_programs(graphics);
 
-    graphics->cube_mesh = _create_mesh(kVertices, sizeof(kVertices),
-                                       kIndices, sizeof(kIndices),
-                                       sizeof(kIndices)/sizeof(kIndices[0]),
-                                       sizeof(kVertices[0]), kPosColorVertex);
+    graphics->cube_mesh = _create_mesh(kCubeVertices, sizeof(kCubeVertices),
+                                       kCubeIndices, sizeof(kCubeIndices),
+                                       sizeof(kCubeIndices)/sizeof(kCubeIndices[0]),
+                                       sizeof(kCubeVertices[0]), kPosNormTexVertex);
 
     graphics->quad_mesh = _create_mesh(kQuadVertices, sizeof(kQuadVertices),
                                        kQuadIndices, sizeof(kQuadIndices),
                                        sizeof(kQuadIndices)/sizeof(kQuadIndices[0]),
                                        sizeof(kQuadVertices[0]), kPosNormTexVertex);
+
+    graphics->texture = load_texture("texture.png");
 
     CheckGLError();
     system_log("Graphics initialized\n");
@@ -356,7 +360,8 @@ void render_graphics(Graphics* graphics)
 
     glUseProgram(graphics->program);
     glEnableVertexAttribArray(kPositionSlot);
-    glEnableVertexAttribArray(kColorSlot);
+    glEnableVertexAttribArray(kNormalSlot);
+    glEnableVertexAttribArray(kTexCoordSlot);
     CheckGLError();
 
     {
@@ -377,6 +382,9 @@ void render_graphics(Graphics* graphics)
     }
 
     _draw_mesh(&graphics->cube_mesh);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, graphics->texture);
+    glUniform1i(graphics->diffuse_uniform, 0);
 
     CheckGLError();
 

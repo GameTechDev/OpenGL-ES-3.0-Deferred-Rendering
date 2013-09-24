@@ -26,5 +26,6 @@
 
 GLuint create_buffer(GLenum type, const void* data, size_t size);
 GLuint load_shader(const char* filename, GLenum type);
+GLuint load_texture(const char* filename);
 
 #endif /* include guard */

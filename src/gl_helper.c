@@ -2,8 +2,10 @@
  *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
  */
 #include "gl_helper.h"
+#include <stdlib.h>
 #include "assert.h"
 #include "system.h"
+#include "stb_image.h"
 
 /* Defines
  */
@@ -57,4 +59,59 @@ GLuint load_shader(const char* filename, GLenum type)
     }
 
     return shader;
+}
+GLuint load_texture(const char* filename)
+{
+    void* file_data;
+    size_t data_size;
+    int width, height, components;
+    void* tex_data;
+    GLenum format = GL_RGB;
+    GLuint texture;
+
+    data_size = 1024*1024*4;
+    file_data = calloc(1, data_size);
+    data_size = load_file_contents(filename, file_data, data_size);
+    assert(data_size);
+
+    tex_data = stbi_load_from_memory(file_data, data_size, &width, &height, &components, 0);
+    assert(tex_data);
+
+    glGenTextures(1, &texture);
+    CheckGLError();
+    glBindTexture(GL_TEXTURE_2D, texture);
+    CheckGLError();
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    switch(components)
+    {
+    case 4:
+        format = GL_RGBA;
+        components = GL_RGBA;
+        break;
+    case 3:
+        format = GL_RGB;
+        components = GL_RGB;
+        break;
+    default:
+        assert(0);
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, components, width, height, 0, format, GL_UNSIGNED_BYTE, tex_data);
+    CheckGLError();
+    glGenerateMipmap(GL_TEXTURE_2D);
+    CheckGLError();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    CheckGLError();
+
+    stbi_image_free(tex_data);
+    free(file_data);
+
+    return texture;
 }
