@@ -30,17 +30,17 @@
  */
 typedef enum AttributeSlot
 {
-    kPositionSlot = 0,
-    kTexCoordSlot,
-    kColorSlot
+    kPositionSlot   = 0,
+    kTexCoordSlot   = 1,
+    kColorSlot      = 2
 } AttributeSlot;
-typedef enum VertexTypes
+typedef enum VertexType
 {
     kPosColorVertex,
     kPosTexVertex,
 
     kNUM_VERTEX_TYPES
-} VertexTypes;
+} VertexType;
 
 typedef struct VertexDescription
 {
@@ -50,9 +50,11 @@ typedef struct VertexDescription
 
 typedef struct Mesh
 {
-    GLuint  vertex_buffer;
-    GLuint  index_buffer;
-    int     index_count;
+    GLuint      vertex_buffer;
+    GLuint      index_buffer;
+    int         index_count;
+    int         vertex_size;
+    VertexType  type;
 } Mesh;
 
 struct Graphics
@@ -104,10 +106,12 @@ static const VertexDescription kVertexDescriptions[kNUM_VERTEX_TYPES][16] =
     { /* kPosColorVertex */
         { kPositionSlot,  3, },
         { kColorSlot,     4, },
+        { 0, 0 }
     },
     { /* kPosTexVertex */
         { kPositionSlot,  3, },
         { kTexCoordSlot,  2, },
+        { 0, 0 }
     }
 };
 static const PosTexVertex kQuadVertices[] =
@@ -290,7 +294,7 @@ static GLuint _create_program(const char* vertex_shader_file, const char* fragme
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     for(ii=0;ii<num_attributes;++ii) {
-        glBindAttribLocation(program, attribute_slots[ii], kAttributeSlotNames[ii]);
+        glBindAttribLocation(program, attribute_slots[ii], kAttributeSlotNames[attribute_slots[ii]]);
     }
     glLinkProgram(program);
     glGetProgramiv(program, GL_LINK_STATUS, &link_status);
@@ -308,14 +312,16 @@ static GLuint _create_program(const char* vertex_shader_file, const char* fragme
 
     return program;
 }
-static Mesh _create_mesh(const void* vertex_data, size_t vertex_size,
-                         const void* index_data, size_t index_size,
-                         int index_count)
+static Mesh _create_mesh(const void* vertex_data, size_t vertex_data_size,
+                         const void* index_data, size_t index_data_size,
+                         int index_count, int vertex_size, VertexType type)
 {
     Mesh mesh = {
-        _create_buffer(GL_ARRAY_BUFFER, vertex_data, vertex_size),
-        _create_buffer(GL_ELEMENT_ARRAY_BUFFER, index_data, index_size),
-        index_count
+        _create_buffer(GL_ARRAY_BUFFER, vertex_data, vertex_data_size),
+        _create_buffer(GL_ELEMENT_ARRAY_BUFFER, index_data, index_data_size),
+        index_count,
+        vertex_size,
+        type
     };
     return mesh;
 }
@@ -351,8 +357,15 @@ static void _setup_programs(Graphics* graphics)
 }
 static void _draw_mesh(const Mesh* mesh)
 {
-    //glBindBuffer(GL_ARRAY_BUFFER, mesh->vertex_buffer);
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->index_buffer);
+    const VertexDescription* desc = kVertexDescriptions[mesh->type];
+    intptr_t ptr = 0;
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vertex_buffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->index_buffer);
+    while(desc->count) {
+        glVertexAttribPointer(desc->slot, desc->count, GL_FLOAT, GL_FALSE, mesh->vertex_size, (void*)ptr);
+        ptr += sizeof(float)*desc->count;
+        desc++;
+    }
     glDrawElements(GL_TRIANGLES, mesh->index_count, GL_UNSIGNED_SHORT, NULL);
 }
 
@@ -378,7 +391,10 @@ Graphics* create_graphics(int width, int height)
     _setup_framebuffer(graphics);
     _setup_programs(graphics);
 
-    graphics->cube_mesh = _create_mesh(kVertices, sizeof(kVertices), kIndices, sizeof(kIndices), sizeof(kIndices)/sizeof(kIndices[0]));
+    graphics->cube_mesh = _create_mesh(kVertices, sizeof(kVertices),
+                                       kIndices, sizeof(kIndices),
+                                       sizeof(kIndices)/sizeof(kIndices[0]),
+                                       sizeof(kVertices[0]), kPosColorVertex);
 
     graphics->fullscreen_vertex_buffer = _create_buffer(GL_ARRAY_BUFFER, kQuadVertices, sizeof(kQuadVertices));
     graphics->fullscreen_index_buffer = _create_buffer(GL_ELEMENT_ARRAY_BUFFER, kQuadIndices, sizeof(kQuadIndices));
@@ -402,6 +418,8 @@ void render_graphics(Graphics* graphics)
     CheckGLError();
 
     glUseProgram(graphics->program);
+    glEnableVertexAttribArray(kPositionSlot);
+    glEnableVertexAttribArray(kColorSlot);
     CheckGLError();
 
     {
@@ -416,28 +434,11 @@ void render_graphics(Graphics* graphics)
         Mat4 proj = mat4_perspective_fov(kPiDiv2, graphics->width/(float)graphics->height, 1.0f, 1000.0f);
 
         Mat4 model_view = mat4_multiply(model, view);
-
-    CheckGLError();
         glUniformMatrix4fv(graphics->modelview_uniform, 1, GL_FALSE, (float*)&model_view);
-    CheckGLError();
         glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&proj);
-    CheckGLError();
 
         count++;
     }
-    CheckGLError();
-
-    glBindBuffer(GL_ARRAY_BUFFER, graphics->cube_mesh.vertex_buffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphics->cube_mesh.index_buffer);
-    glEnableVertexAttribArray(graphics->position_input);
-    glEnableVertexAttribArray(graphics->color_input);
-
-    CheckGLError();
-    //glVertexAttribPointer(graphics->position_input, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-    //glVertexAttribPointer(graphics->color_input, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(float)*3));
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(PosColorVertex), 0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(PosColorVertex), (GLvoid*)(sizeof(float)*3));
-    CheckGLError();
 
     _draw_mesh(&graphics->cube_mesh);
     
