@@ -43,8 +43,6 @@ struct Graphics
     GLuint  projection_uniform;
     GLuint  modelview_uniform;
 
-    GLuint  vertex_buffer;
-    GLuint  index_buffer;
     Mesh  cube_mesh;
 
     GLuint  color_renderbuffer;
@@ -298,6 +296,12 @@ static void _setup_programs(Graphics* graphics)
     system_log("Created fullscreen program\n");
     CheckGLError();
 }
+static void _draw_mesh(const Mesh* mesh)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vertex_buffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->index_buffer);
+    glDrawElements(GL_TRIANGLES, mesh->index_count, GL_UNSIGNED_SHORT, NULL);
+}
 
 /* External functions
  */
@@ -320,8 +324,6 @@ Graphics* create_graphics(int width, int height)
     /* Perform other initialization */
     _setup_framebuffer(graphics);
     _setup_programs(graphics);
-    graphics->vertex_buffer = _create_buffer(GL_ARRAY_BUFFER, kVertices, sizeof(kVertices));
-    graphics->index_buffer = _create_buffer(GL_ELEMENT_ARRAY_BUFFER, kIndices, sizeof(kIndices));
 
     graphics->cube_mesh = _create_mesh(kVertices, sizeof(kVertices), kIndices, sizeof(kIndices), sizeof(kIndices)/sizeof(kIndices[0]));
 
@@ -347,8 +349,6 @@ void render_graphics(Graphics* graphics)
     CheckGLError();
 
     glUseProgram(graphics->program);
-    glBindBuffer(GL_ARRAY_BUFFER, graphics->cube_mesh.vertex_buffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphics->cube_mesh.index_buffer);
     CheckGLError();
 
     {
@@ -374,13 +374,15 @@ void render_graphics(Graphics* graphics)
     }
     CheckGLError();
 
+    glBindBuffer(GL_ARRAY_BUFFER, graphics->cube_mesh.vertex_buffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, graphics->cube_mesh.index_buffer);
     glEnableVertexAttribArray(graphics->position_input);
     glEnableVertexAttribArray(graphics->color_input);
     CheckGLError();
     glVertexAttribPointer(graphics->position_input, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
     glVertexAttribPointer(graphics->color_input, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(float)*3));
 
-    glDrawElements(GL_TRIANGLES, graphics->cube_mesh.index_count, GL_UNSIGNED_SHORT, NULL);
+    _draw_mesh(&graphics->cube_mesh);
 
     CheckGLError();
     #endif
