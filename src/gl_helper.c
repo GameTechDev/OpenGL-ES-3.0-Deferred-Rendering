@@ -24,7 +24,7 @@
 
 /* External functions
  */
-GLuint create_buffer(GLenum type, const void* data, size_t size)
+GLuint gl_create_buffer(GLenum type, const void* data, size_t size)
 {
     GLuint buffer;
     glGenBuffers(1, &buffer);
@@ -33,7 +33,7 @@ GLuint create_buffer(GLenum type, const void* data, size_t size)
     glBindBuffer(type, 0);
     return buffer;
 }
-GLuint load_shader(const char* filename, GLenum type)
+GLuint gl_load_shader(const char* filename, GLenum type)
 {
     void*   data = NULL;
     size_t  data_size = 0;
@@ -66,7 +66,7 @@ GLuint load_shader(const char* filename, GLenum type)
 
     return shader;
 }
-GLuint load_texture(const char* filename)
+GLuint gl_load_texture(const char* filename)
 {
     void*   file_data = NULL;
     size_t  file_size = 0;

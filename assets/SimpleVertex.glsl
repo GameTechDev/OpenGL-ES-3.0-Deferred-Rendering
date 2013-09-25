@@ -3,10 +3,10 @@ uniform mat4 ModelView;
 
 attribute vec4 a_Position;
 attribute vec3 a_Normal;
-attribute vec3 a_TexCoord;
+attribute vec2 a_TexCoord;
 
 varying vec3 v_Normal;
-varying vec3 v_TexCoord;
+varying vec2 v_TexCoord;
 
 void main(void) {
     v_Normal = a_Normal;

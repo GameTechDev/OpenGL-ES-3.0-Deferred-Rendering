@@ -25,8 +25,8 @@
     } while(__LINE__ == 0)
 
 
-GLuint create_buffer(GLenum type, const void* data, size_t size);
-GLuint load_shader(const char* filename, GLenum type);
-GLuint load_texture(const char* filename);
+GLuint gl_create_buffer(GLenum type, const void* data, size_t size);
+GLuint gl_load_shader(const char* filename, GLenum type);
+GLuint gl_load_texture(const char* filename);
 
 #endif /* include guard */

@@ -21,6 +21,7 @@
 /* Defines
  */
 #define MAX_MESHES 32
+#define MAX_TEXTURES 64
 #define MAX_RENDER_COMMANDS 1024
 
 /* Types
@@ -48,7 +49,7 @@ struct Graphics
     GLuint  modelview_uniform;
     GLuint  diffuse_uniform;
 
-    GLuint  texture;
+    TextureID  texture;
 
     GLuint  color_renderbuffer;
     GLuint  depth_renderbuffer;
@@ -64,6 +65,9 @@ struct Graphics
 
     Mesh    meshes[MAX_MESHES];
     int     num_meshes;
+
+    GLuint  textures[MAX_TEXTURES];
+    int     num_textures;
 
     MeshID  cube_mesh;
     MeshID  quad_mesh;
@@ -149,8 +153,8 @@ static void _setup_framebuffer(Graphics* graphics)
 static GLuint _create_program(const char* vertex_shader_file, const char* fragment_shader_file,
                               const AttributeSlot* attribute_slots, int num_attributes )
 {
-    GLuint vertex_shader = load_shader(vertex_shader_file, GL_VERTEX_SHADER);
-    GLuint fragment_shader = load_shader(fragment_shader_file, GL_FRAGMENT_SHADER);
+    GLuint vertex_shader = gl_load_shader(vertex_shader_file, GL_VERTEX_SHADER);
+    GLuint fragment_shader = gl_load_shader(fragment_shader_file, GL_FRAGMENT_SHADER);
     GLuint program;
     GLint  link_status;
     int ii;
@@ -183,8 +187,8 @@ static Mesh _create_mesh(const void* vertex_data, size_t vertex_data_size,
                          int index_count, int vertex_size, VertexType type)
 {
     Mesh mesh = {
-        create_buffer(GL_ARRAY_BUFFER, vertex_data, vertex_data_size),
-        create_buffer(GL_ELEMENT_ARRAY_BUFFER, index_data, index_data_size),
+        gl_create_buffer(GL_ARRAY_BUFFER, vertex_data, vertex_data_size),
+        gl_create_buffer(GL_ELEMENT_ARRAY_BUFFER, index_data, index_data_size),
         index_count,
         vertex_size,
         type
@@ -256,7 +260,7 @@ Graphics* create_graphics(int width, int height)
 
     graphics->projection_matrix = mat4_perspective_fov(kPiDiv2,
                                                        width/(float)height,
-                                                       1.0f,
+                                                       0.1f,
                                                        1000.0f);
 
     graphics->cube_mesh = _new_mesh_id(graphics);
@@ -272,7 +276,7 @@ Graphics* create_graphics(int width, int height)
                                                           sizeof(kQuadIndices)/sizeof(kQuadIndices[0]),
                                                           sizeof(kQuadVertices[0]), kPosNormTexVertex);
     
-    graphics->texture = load_texture("texture.png");
+    graphics->texture = load_texture(graphics, "texture.png");
 
     CheckGLError();
     system_log("Graphics initialized\n");
@@ -299,6 +303,7 @@ void render_graphics(Graphics* graphics)
 
     /* Bind framebuffer */
     glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
+    glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     CheckGLError();
@@ -311,7 +316,7 @@ void render_graphics(Graphics* graphics)
     glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&graphics->projection_matrix);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, graphics->texture);
+    glBindTexture(GL_TEXTURE_2D, graphics->textures[graphics->texture]);
     glUniform1i(graphics->diffuse_uniform, 0);
 
     /* Loop through render commands */
@@ -328,6 +333,7 @@ void render_graphics(Graphics* graphics)
     /* Back to default */
     glBindFramebuffer(GL_FRAMEBUFFER, defaultFBO);
 
+    glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glUseProgram(graphics->fullscreen_program);
@@ -338,7 +344,7 @@ void render_graphics(Graphics* graphics)
     glUniform1i(graphics->fullscreen_texture_uniform, 0);
     CheckGLError();
 
-    _draw_mesh(&graphics->meshes[graphics->cube_mesh]);
+    _draw_mesh(&graphics->meshes[graphics->quad_mesh]);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -363,4 +369,12 @@ void add_render_command(Graphics* graphics, MeshID mesh, Transform transform)
     graphics->commands[index].mesh = mesh;
     graphics->commands[index].transform = transform;
 }
+TextureID load_texture(Graphics* graphics, const char* filename)
+{
+    int index = graphics->num_textures++;
+    assert(graphics->num_textures <= MAX_TEXTURES);
+    graphics->textures[index] = gl_load_texture(filename);
+    return index;
+}
+
 

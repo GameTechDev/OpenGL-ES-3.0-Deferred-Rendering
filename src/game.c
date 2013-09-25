@@ -55,6 +55,12 @@ void update_game(Game* game)
     rotate += delta_time;
 
     add_render_command(game->graphics, cube_mesh(game->graphics), t);
+
+    t.orientation = quat_from_euler(kPiDiv2, 0.0f, 0.0f);
+    t.position = vec3_create(0.0f, -5.0f, 15.0f);
+    t.scale = 20.0f;
+
+    add_render_command(game->graphics, quad_mesh(game->graphics), t);
 }
 void render_game(Game* game)
 {
