@@ -21,6 +21,7 @@ MeshID quad_mesh(Graphics* graphics);
 
 TextureID load_texture(Graphics* graphics, const char* filename);
 
+void set_view_transform(Graphics* graphics, Transform view);
 void add_render_command(Graphics* graphics, MeshID mesh, TextureID diffuse, Transform transform);
 
 #endif /* include guard */

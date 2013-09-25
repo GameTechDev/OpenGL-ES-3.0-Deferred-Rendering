@@ -60,7 +60,7 @@ struct Graphics
     int height;
 
     Mat4    projection_matrix;
-    Mat4    view_matrix;
+    Transform   view_transform;
 
     GLuint  fullscreen_program;
     GLuint  fullscreen_texture_uniform;
@@ -264,7 +264,7 @@ Graphics* create_graphics(int width, int height)
                                                        width/(float)height,
                                                        0.1f,
                                                        1000.0f);
-    graphics->view_matrix = mat4_identity;
+    graphics->view_transform = transform_zero;
 
     graphics->cube_mesh = _new_mesh_id(graphics);
     graphics->quad_mesh = _new_mesh_id(graphics);
@@ -296,23 +296,14 @@ Graphics* create_graphics(int width, int height)
 }
 void render_graphics(Graphics* graphics)
 {
+    Mat4 view_matrix;
     int ii;
 
     GLint defaultFBO;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
 
     {
-        static Transform view = transform_zero;
-        static float move = 0.0f;
-        static float rotate = 0.0f;
-        float delta_time = 1.0f/60.0f;
-
-        move += delta_time;
-        rotate += delta_time;
-
-        view.position.z = sinf(move);
-
-        graphics->view_matrix = transform_get_matrix(view);
+        view_matrix = mat4_inverse(transform_get_matrix(graphics->view_transform));
     }
 
 
@@ -329,7 +320,7 @@ void render_graphics(Graphics* graphics)
     glEnableVertexAttribArray(kTexCoordSlot);
     CheckGLError();
     glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&graphics->projection_matrix);
-    glUniformMatrix4fv(graphics->view_uniform, 1, GL_FALSE, (float*)&graphics->view_matrix);
+    glUniformMatrix4fv(graphics->view_uniform, 1, GL_FALSE, (float*)&view_matrix);
 
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(graphics->diffuse_uniform, 0);
@@ -392,6 +383,10 @@ TextureID load_texture(Graphics* graphics, const char* filename)
     assert(graphics->num_textures <= MAX_TEXTURES);
     graphics->textures[index] = gl_load_texture(filename);
     return index;
+}
+void set_view_transform(Graphics* graphics, Transform view)
+{
+    graphics->view_transform = view;
 }
 
 
