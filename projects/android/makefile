@@ -14,67 +14,71 @@ ANDROID_PACKAGE_NAME ?= "com.intel.deferredgles"
 
 # > make
 #
-# 1) clean
-# 2) install
-# 3) run
-all: clean install run
+# 1) install
+all: install
 
 # > make project
 #
 # Create Android project with the values defined above.
 # Also, create skeleton structure for native (JNI) code
 project:
-		android create project --name $(ANDROID_APP_NAME) \
-													 --target $(ANDROID_TARGET_ID) \
-													 --path $(ANDROID_APP_PATH) \
-													 --activity $(ANDROID_APP_ACTIVITY) \
-													 --package $(ANDROID_PACKAGE_NAME)
-		# add the native directory and initial files
-		mkdir jni
-		touch jni/Android.mk
-		touch jni/Application.mk
-		touch jni/$(ANDROID_APP_NAME)JNI.c
+	android create project --name $(ANDROID_APP_NAME) \
+												 --target $(ANDROID_TARGET_ID) \
+												 --path $(ANDROID_APP_PATH) \
+												 --activity $(ANDROID_APP_ACTIVITY) \
+												 --package $(ANDROID_PACKAGE_NAME)
+	# add the native directory and initial files
+	mkdir jni
+	touch jni/Android.mk
+	touch jni/Application.mk
+	touch jni/$(ANDROID_APP_NAME)JNI.c
 
 # > make init
 #
 # Update an existing Android project with values defined above
 init:
-		android update project --target $(ANDROID_TARGET_ID) \
-													 --path $(ANDROID_APP_PATH) \
+	android update project 	--target $(ANDROID_TARGET_ID) \
+						 	--path $(ANDROID_APP_PATH) \
 
 # > make clean
 #
 # Remove all the auto generated files
 clean:
-		ndk-build clean
-		ant clean
+	ndk-build clean
+	ant clean
 
 # > make native
 #
 # Only build the native (C and/or C++) code
 native:
-		ndk-build -j
+	ndk-build -j
 
 # > make debug
 #
 # Build the Java side and package everything into an APK.
 # Will trigger "make native" to build the native code
 debug: native
-		ant debug
+	ant debug
 
 # > make install
 #
 # Deploy the APK to a device (or emulator)
 # Will trigger "make debug" to build the APK
 install: debug
-		ant installd
+	ant installd
 
 # > make run
 #
 # Run main activity of the installed APK
 # Assuming the APK is installed...won't trigger a build/install
 run:
-		adb shell am start -n $(ANDROID_PACKAGE_NAME)/.$(ANDROID_APP_NAME)
+	adb shell am start -n $(ANDROID_PACKAGE_NAME)/.$(ANDROID_APP_NAME)
+
+# > make kill
+#
+# If the app is running, kills it
+kill:
+	adb shell am force-stop $(ANDROID_PACKAGE_NAME)
 
 GenerateHeaders:
-		javah -d ../src/include -classpath ./bin/classes/ $(ANDROID_PACKAGE_NAME).NativeLib
+	javah -d ../src/include -classpath ./bin/classes/ $(ANDROID_PACKAGE_NAME).NativeLib

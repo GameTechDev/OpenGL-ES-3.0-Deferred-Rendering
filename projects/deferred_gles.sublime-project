@@ -1,23 +1,49 @@
 {
-	"folders":
-	[
-		{
-			"path": "..",
-			"file_exclude_patterns":
+    "folders":
+    [
+        {
+            "path": "..",
+            "file_exclude_patterns":
             [
-	            "*.d",
-	           	"*.o",
-	           	"*.a",
-	           	"test_unit_test",
-	           	"*.sublime-workspace"
+                "*.d",
+                "*.o",
+                "*.a",
+                "test_unit_test",
+                "*.sublime-workspace"
             ],
             "folder_exclude_patterns" :
             [
-            	"bin",
-            	"obj",
+                "bin",
+                "obj",
                 "libs",
                 "gen"
             ]
-		}
-	]
+        }
+    ],
+    "build_systems":
+    [
+        {
+            "name" : "MyMake",
+            "cmd": ["make"],
+            "file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
+            "working_dir": "${project_path}/android",
+            "selector": "source.makefile",
+
+            "variants":
+            [
+                {
+                    "name": "Clean",
+                    "cmd": ["make", "clean"]
+                },
+                {
+                    "name": "Run",
+                    "cmd": ["make", "run"]
+                },
+                {
+                    "name": "Kill",
+                    "cmd": ["make", "kill"]
+                }
+            ]
+        }
+    ]
 }
