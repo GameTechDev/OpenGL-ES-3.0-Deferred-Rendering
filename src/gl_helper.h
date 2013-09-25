@@ -13,6 +13,7 @@
 #else
     #error Need an OpenGL implementation
 #endif
+#include "system.h"
 
 #define CheckGLError()                  \
     do {                                \

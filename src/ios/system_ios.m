@@ -4,6 +4,7 @@
 #include "system.h"
 #import <Foundation/Foundation.h>
 #include <stdlib.h>
+#include "assert.h"
 
 /* Defines
  */
@@ -23,29 +24,32 @@
 
 /* External functions
  */
-size_t load_file_contents(const char* filename, void* buffer, size_t buffer_size)
+int load_file_data(const char* filename, void** data, size_t* data_size)
 {
-    NSError* error;
-    NSString* filename_string = [[[NSString alloc] initWithUTF8String:filename] stringByDeletingPathExtension];
-    NSString* extension_string = [[[NSString alloc] initWithUTF8String:filename] pathExtension];
-    NSString* full_path = [[NSBundle mainBundle] pathForResource:filename_string
-                                                          ofType:extension_string];
-    NSData* file_contents = [NSData dataWithContentsOfFile:full_path options:NSDataReadingUncached error:&error];
-    size_t total_bytes = 0;
+    FILE*   file = NULL;
+    NSString* full_path = nil;
+    NSString* adjusted_relative_path = [@"/assets/" stringByAppendingString:[NSString stringWithUTF8String:filename]];
+    full_path = [[NSBundle mainBundle] pathForResource:adjusted_relative_path ofType:nil];
 
+    file = fopen([full_path UTF8String], "rb");
+    assert(file);
 
+    fseek(file, 0, SEEK_END);
+    *data_size = ftell(file);
+    fseek(file, 0, SEEK_SET);
 
-    if(file_contents == nil) {
-        NSLog(@"Error reading file %@.%@: %@",
-                filename_string,
-                extension_string,
-                [error localizedDescription]);
-        return 0;
-    }
+    *data = malloc(*data_size);
+    assert(*data);
 
-    total_bytes = min([file_contents length], buffer_size);
-    memcpy(buffer, [file_contents bytes], total_bytes);
-    return total_bytes;
+    fread(*data, *data_size, 1, file);
+    assert(ferror(file) == 0);
+    fclose(file);
+
+    return 0;
+}
+void free_file_data(void* data)
+{
+    free(data);
 }
 void system_log(const char* format, ...)
 {

@@ -35,20 +35,24 @@ GLuint create_buffer(GLenum type, const void* data, size_t size)
 }
 GLuint load_shader(const char* filename, GLenum type)
 {
-    char        buffer[1024*16] = {0};
-    const char* source = buffer;
-    GLuint      shader = 0;
-    GLint       compile_status = 0;
-    int         file_size = 0;
+    void*   data = NULL;
+    size_t  data_size = 0;
+    GLuint  shader = 0;
+    GLint   compile_status = 0;
+    int     result;
+    GLint   shader_size = 0;
 
     system_log("Attempting to load shader %s\n", filename);
-    file_size = (int)load_file_contents(filename, buffer, sizeof(buffer));
-    if(file_size == 0)
+    result = (int)load_file_data(filename, &data, &data_size);
+    if(result != 0) {
         system_log("Loading shader %s failed", filename);
-    assert(file_size && file_size < (int)sizeof(buffer));
+        return 0;
+    }
+    assert(result == 0);
+    shader_size = (GLint)data_size;
 
     shader = glCreateShader(type);
-    glShaderSource(shader, 1, &source, &file_size);
+    glShaderSource(shader, 1, (const char**)&data, &shader_size);
     glCompileShader(shader);
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status);
     if(compile_status == GL_FALSE) {
@@ -58,5 +62,75 @@ GLuint load_shader(const char* filename, GLenum type)
         return 0;
     }
 
+    free_file_data(data);
+
     return shader;
+}
+GLuint load_texture(const char* filename)
+{
+    void*   file_data = NULL;
+    size_t  file_size = 0;
+    uint8_t*    texture_data = NULL;
+    int width, height, components;
+    GLuint      texture;
+    GLenum      format;
+    int         result;
+
+    result = load_file_data(filename, &file_data, &file_size);
+    assert(result == 0);
+
+    texture_data = stbi_load_from_memory(file_data, (int)file_size, &width, &height, &components, 0);
+    assert(texture_data);
+
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    CheckGLError();
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    
+    switch( components ) {
+        case 1: {
+            // Gray
+            format = GL_LUMINANCE;
+            break;
+        }
+        case 2: {
+            // Gray and Alpha
+            format = GL_LUMINANCE_ALPHA;
+            break;
+        }
+        case 3: {
+            // RGB
+            format = GL_RGB;
+            break;
+        }
+        case 4: {
+            // RGBA
+            format = GL_RGBA;
+            break;
+        }
+        default: {
+            // Unknown format
+            assert(0);
+            return 0;
+        }
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, texture_data);
+    CheckGLError();
+    glGenerateMipmap(GL_TEXTURE_2D);
+    CheckGLError();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    CheckGLError();
+
+    stbi_image_free(texture_data);
+    free_file_data(file_data);
+
+    return texture;
 }

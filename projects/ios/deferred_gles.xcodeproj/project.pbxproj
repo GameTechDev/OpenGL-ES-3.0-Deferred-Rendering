@@ -19,13 +19,8 @@
 		2715E75B17ECC60100442391 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2715E75917ECC60100442391 /* timer.c */; };
 		2715E76117ECF23E00442391 /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 2715E75F17ECF23E00442391 /* game.c */; };
 		2779292217F24E6E0090932F /* gl_helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 2779292017F24E6E0090932F /* gl_helper.c */; };
-		2779292917F254720090932F /* stb_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 2779292717F254720090932F /* stb_image.c */; };
-		2779293217F255630090932F /* fullscreen_fragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 2779292D17F255630090932F /* fullscreen_fragment.glsl */; };
-		2779293317F255630090932F /* fullscreen_vertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 2779292E17F255630090932F /* fullscreen_vertex.glsl */; };
-		2779293417F255630090932F /* SimpleFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 2779292F17F255630090932F /* SimpleFragment.glsl */; };
-		2779293517F255630090932F /* SimpleVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 2779293017F255630090932F /* SimpleVertex.glsl */; };
-		2779293617F255630090932F /* texture.png in Resources */ = {isa = PBXBuildFile; fileRef = 2779293117F255630090932F /* texture.png */; };
-		2779293817F25B2E0090932F /* gl_helper_ios.m in Sources */ = {isa = PBXBuildFile; fileRef = 2779293717F25B2E0090932F /* gl_helper_ios.m */; };
+		27AB288817F2933E0011651F /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 27AB288717F2933E0011651F /* assets */; };
+		27AB28BB17F297BA0011651F /* stb_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 27AB28A917F297BA0011651F /* stb_image.c */; };
 		27F3529517EBC3F600FF4D22 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529417EBC3F600FF4D22 /* Foundation.framework */; };
 		27F3529717EBC3F600FF4D22 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */; };
 		27F3529917EBC3F600FF4D22 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529817EBC3F600FF4D22 /* UIKit.framework */; };
@@ -57,14 +52,9 @@
 		2779292017F24E6E0090932F /* gl_helper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gl_helper.c; sourceTree = "<group>"; };
 		2779292117F24E6E0090932F /* gl_helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gl_helper.h; sourceTree = "<group>"; };
 		2779292317F24FD40090932F /* geometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = geometry.h; sourceTree = "<group>"; };
-		2779292717F254720090932F /* stb_image.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stb_image.c; sourceTree = "<group>"; };
-		2779292817F254720090932F /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
-		2779292D17F255630090932F /* fullscreen_fragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fullscreen_fragment.glsl; sourceTree = "<group>"; };
-		2779292E17F255630090932F /* fullscreen_vertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fullscreen_vertex.glsl; sourceTree = "<group>"; };
-		2779292F17F255630090932F /* SimpleFragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SimpleFragment.glsl; sourceTree = "<group>"; };
-		2779293017F255630090932F /* SimpleVertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SimpleVertex.glsl; sourceTree = "<group>"; };
-		2779293117F255630090932F /* texture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = texture.png; sourceTree = "<group>"; };
-		2779293717F25B2E0090932F /* gl_helper_ios.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = gl_helper_ios.m; sourceTree = "<group>"; };
+		27AB288717F2933E0011651F /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../../assets; sourceTree = "<group>"; };
+		27AB28A917F297BA0011651F /* stb_image.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stb_image.c; sourceTree = "<group>"; };
+		27AB28AA17F297BA0011651F /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 		27F3529117EBC3F600FF4D22 /* deferred gles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "deferred gles.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27F3529417EBC3F600FF4D22 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -110,8 +100,7 @@
 		2715E74517ECB2A700442391 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				2779292717F254720090932F /* stb_image.c */,
-				2779292817F254720090932F /* stb_image.h */,
+				27AB289217F297BA0011651F /* external */,
 				2715E74817ECB2A700442391 /* assert.h */,
 				2715E74917ECB2A700442391 /* graphics.c */,
 				2715E74A17ECB2A700442391 /* graphics.h */,
@@ -134,28 +123,23 @@
 			isa = PBXGroup;
 			children = (
 				2715E75217ECB2CA00442391 /* system_ios.m */,
-				2779293717F25B2E0090932F /* gl_helper_ios.m */,
 			);
 			path = ios;
 			sourceTree = "<group>";
 		};
-		2779292C17F255630090932F /* assets */ = {
+		27AB289217F297BA0011651F /* external */ = {
 			isa = PBXGroup;
 			children = (
-				2779292D17F255630090932F /* fullscreen_fragment.glsl */,
-				2779292E17F255630090932F /* fullscreen_vertex.glsl */,
-				2779292F17F255630090932F /* SimpleFragment.glsl */,
-				2779293017F255630090932F /* SimpleVertex.glsl */,
-				2779293117F255630090932F /* texture.png */,
+				27AB28A917F297BA0011651F /* stb_image.c */,
+				27AB28AA17F297BA0011651F /* stb_image.h */,
 			);
-			name = assets;
-			path = ../../assets;
+			path = external;
 			sourceTree = "<group>";
 		};
 		27F3528817EBC3F600FF4D22 = {
 			isa = PBXGroup;
 			children = (
-				2779292C17F255630090932F /* assets */,
+				27AB288717F2933E0011651F /* assets */,
 				2715E74517ECB2A700442391 /* src */,
 				2715E72817ECADFA00442391 /* project */,
 				27F3529317EBC3F600FF4D22 /* Frameworks */,
@@ -241,14 +225,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2779293317F255630090932F /* fullscreen_vertex.glsl in Resources */,
-				2779293517F255630090932F /* SimpleVertex.glsl in Resources */,
+				27AB288817F2933E0011651F /* assets in Resources */,
 				2715E73E17ECADFA00442391 /* Main_iPad.storyboard in Resources */,
-				2779293617F255630090932F /* texture.png in Resources */,
-				2779293417F255630090932F /* SimpleFragment.glsl in Resources */,
 				2715E73F17ECADFA00442391 /* Main_iPhone.storyboard in Resources */,
 				2715E73C17ECADFA00442391 /* InfoPlist.strings in Resources */,
-				2779293217F255630090932F /* fullscreen_fragment.glsl in Resources */,
 				2715E73B17ECADFA00442391 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -260,7 +240,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2779293817F25B2E0090932F /* gl_helper_ios.m in Sources */,
 				2715E74F17ECB2A700442391 /* graphics.c in Sources */,
 				2715E73D17ECADFA00442391 /* main.m in Sources */,
 				2715E76117ECF23E00442391 /* game.c in Sources */,
@@ -269,7 +248,7 @@
 				2715E74217ECADFA00442391 /* ViewController.m in Sources */,
 				2779292217F24E6E0090932F /* gl_helper.c in Sources */,
 				2715E75B17ECC60100442391 /* timer.c in Sources */,
-				2779292917F254720090932F /* stb_image.c in Sources */,
+				27AB28BB17F297BA0011651F /* stb_image.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,9 +7,10 @@
 
 #include <stddef.h>
 
-/** @return Bytes read from file. 0 if failure
+/** @return 0 on success, -1 on failure
  */
-size_t load_file_contents(const char* filename, void* buffer, size_t buffer_size);
+int load_file_data(const char* filename, void** data, size_t* data_size);
+void free_file_data(void* data);
 /** Prints a message to the systems log
  */
 void system_log(const char* format, ...);
