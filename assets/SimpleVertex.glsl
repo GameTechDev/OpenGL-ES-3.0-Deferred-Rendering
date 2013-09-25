@@ -1,6 +1,6 @@
 uniform mat4 Projection;
 uniform mat4 View;
-uniform mat4 Model;
+uniform mat4 World;
 
 attribute vec4 a_Position;
 attribute vec3 a_Normal;
@@ -10,7 +10,9 @@ varying vec3 v_Normal;
 varying vec2 v_TexCoord;
 
 void main(void) {
-    v_Normal = a_Normal;
+    mat3 world3 = mat3(World);
     v_TexCoord = a_TexCoord;
-    gl_Position = Projection * View * Model * a_Position;
+    
+    v_Normal = world3 * a_Normal;
+    gl_Position = Projection * View * World * a_Position;
 }

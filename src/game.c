@@ -77,12 +77,15 @@ void update_game(Game* game)
 
     add_render_command(game->graphics, cube_mesh(game->graphics), game->color_tex, t);
 
-    t.orientation = quat_from_euler(kPiDiv2, 0.0f, 0.0f);
+    t.orientation = quat_from_euler(-kPiDiv2, 0.0f, 0.0f);
     t.position = vec3_create(0.0f, 0.0f, 0.0f);
     t.scale = 50.0f;
 
     add_render_command(game->graphics, quad_mesh(game->graphics), game->grass_tex, t);
 
+    set_view_transform(game->graphics, game->camera);
+    game->camera = transform_zero;
+    game->camera.position.y = 2.0f;
     set_view_transform(game->graphics, game->camera);
 }
 void render_game(Game* game)

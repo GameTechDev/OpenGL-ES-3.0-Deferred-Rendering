@@ -48,8 +48,9 @@ struct Graphics
     GLuint  program;
     GLuint  projection_uniform;
     GLuint  view_uniform;
-    GLuint  model_uniform;
+    GLuint  world_uniform;
     GLuint  diffuse_uniform;
+    GLuint  lightdir_uniform;
 
     GLuint  color_renderbuffer;
     GLuint  depth_renderbuffer;
@@ -206,8 +207,9 @@ static void _setup_programs(Graphics* graphics)
 
         graphics->projection_uniform = glGetUniformLocation(graphics->program, "Projection");
         graphics->view_uniform = glGetUniformLocation(graphics->program, "View");
-        graphics->model_uniform = glGetUniformLocation(graphics->program, "Model");
+        graphics->world_uniform = glGetUniformLocation(graphics->program, "World");
         graphics->diffuse_uniform = glGetUniformLocation(graphics->program, "s_Diffuse");
+        graphics->lightdir_uniform = glGetUniformLocation(graphics->program, "LightDir");
         system_log("Created program\n");
     }
 
@@ -296,16 +298,11 @@ Graphics* create_graphics(int width, int height)
 }
 void render_graphics(Graphics* graphics)
 {
-    Mat4 view_matrix;
+    Mat4 view_matrix = mat4_inverse(transform_get_matrix(graphics->view_transform));
     int ii;
 
     GLint defaultFBO;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
-
-    {
-        view_matrix = mat4_inverse(transform_get_matrix(graphics->view_transform));
-    }
-
 
     /* Bind framebuffer */
     glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
@@ -321,6 +318,10 @@ void render_graphics(Graphics* graphics)
     CheckGLError();
     glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&graphics->projection_matrix);
     glUniformMatrix4fv(graphics->view_uniform, 1, GL_FALSE, (float*)&view_matrix);
+    {
+        Vec4 light_dir = { 0.0f, -1.0f, 0.0f, 0.0f };
+        glUniform4fv(graphics->lightdir_uniform, 1, (float*)&light_dir);
+    }
 
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(graphics->diffuse_uniform, 0);
@@ -329,7 +330,7 @@ void render_graphics(Graphics* graphics)
     for(ii=0;ii<graphics->num_commands;++ii) {
         RenderCommand command = graphics->commands[ii];
         Mat4 model = transform_get_matrix(command.transform);
-        glUniformMatrix4fv(graphics->model_uniform, 1, GL_FALSE, (float*)&model);
+        glUniformMatrix4fv(graphics->world_uniform, 1, GL_FALSE, (float*)&model);
         glBindTexture(GL_TEXTURE_2D, graphics->textures[command.diffuse]);
         _draw_mesh(&graphics->meshes[command.mesh]);
     }
