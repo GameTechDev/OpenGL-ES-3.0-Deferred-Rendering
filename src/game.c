@@ -46,13 +46,15 @@ void destroy_game(Game* game)
 }
 void update_game(Game* game)
 {
-    static float time = 0.0f;
+    static float rotate = 0.0f;
     float delta_time = (float)get_delta_time(game->timer);
-    time += delta_time;
-    if(time > 1.0f) {
-        //system_log("%f\n", get_running_time(game->timer));
-        time -= 1.0f;
-    }
+    Transform t = {
+        quat_from_euler(rotate, rotate*1.01f, rotate*1.03f),
+        vec3_create(sinf(rotate), sinf(rotate*1.1f), 7.0f),
+        1.0f };
+    rotate += delta_time;
+
+    add_render_command(game->graphics, cube_mesh(game->graphics), t);
 }
 void render_game(Game* game)
 {

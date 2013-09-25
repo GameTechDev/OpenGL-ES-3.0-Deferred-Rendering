@@ -21,6 +21,7 @@
 /* Defines
  */
 #define MAX_MESHES 32
+#define MAX_RENDER_COMMANDS 1024
 
 /* Types
  */
@@ -34,15 +35,18 @@ typedef struct Mesh
     VertexType  type;
 } Mesh;
 
+typedef struct RenderCommand
+{
+    Transform   transform;
+    MeshID      mesh;
+} RenderCommand;
+
 struct Graphics
 {
     GLuint  program;
     GLuint  projection_uniform;
     GLuint  modelview_uniform;
     GLuint  diffuse_uniform;
-
-    //Mesh  cube_mesh;
-    //Mesh  quad_mesh;
 
     GLuint  texture;
 
@@ -53,6 +57,8 @@ struct Graphics
     int width;
     int height;
 
+    Mat4    projection_matrix;
+
     GLuint  fullscreen_program;
     GLuint  fullscreen_texture_uniform;
 
@@ -61,6 +67,9 @@ struct Graphics
 
     MeshID  cube_mesh;
     MeshID  quad_mesh;
+
+    RenderCommand   commands[MAX_RENDER_COMMANDS];
+    int num_commands;
 };
 
 
@@ -245,6 +254,11 @@ Graphics* create_graphics(int width, int height)
     _setup_framebuffer(graphics);
     _setup_programs(graphics);
 
+    graphics->projection_matrix = mat4_perspective_fov(kPiDiv2,
+                                                       width/(float)height,
+                                                       1.0f,
+                                                       1000.0f);
+
     graphics->cube_mesh = _new_mesh_id(graphics);
     graphics->quad_mesh = _new_mesh_id(graphics);
 
@@ -277,6 +291,8 @@ Graphics* create_graphics(int width, int height)
 }
 void render_graphics(Graphics* graphics)
 {
+    int ii;
+
     GLint defaultFBO;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
 
@@ -292,28 +308,20 @@ void render_graphics(Graphics* graphics)
     glEnableVertexAttribArray(kNormalSlot);
     glEnableVertexAttribArray(kTexCoordSlot);
     CheckGLError();
-
-    {
-        static int count = 0;
-        Transform t = {
-            quat_from_euler(count/30.0f, count/30.0f*1.01f, 0.0f),
-            vec3_create(sinf(count/30.0f), sinf(count/30.0f*1.1f), 7.0f),
-            1.0f };
-        Mat4 model = transform_get_matrix(t);
-        Mat4 view = mat4_identity;
-        Mat4 proj = mat4_perspective_fov(kPiDiv2, graphics->width/(float)graphics->height, 1.0f, 1000.0f);
-
-        Mat4 model_view = mat4_multiply(model, view);
-        glUniformMatrix4fv(graphics->modelview_uniform, 1, GL_FALSE, (float*)&model_view);
-        glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&proj);
-
-        count++;
-    }
+    glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&graphics->projection_matrix);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, graphics->texture);
     glUniform1i(graphics->diffuse_uniform, 0);
-    _draw_mesh(&graphics->meshes[graphics->cube_mesh]);
+
+    /* Loop through render commands */
+    for(ii=0;ii<graphics->num_commands;++ii) {
+        RenderCommand command = graphics->commands[ii];
+        Mat4 model = transform_get_matrix(command.transform);
+        glUniformMatrix4fv(graphics->modelview_uniform, 1, GL_FALSE, (float*)&model);
+        _draw_mesh(&graphics->meshes[command.mesh]);
+    }
+    graphics->num_commands = 0;
 
     CheckGLError();
 
@@ -340,3 +348,19 @@ void destroy_graphics(Graphics* graphics)
 {
     free(graphics);
 }
+MeshID cube_mesh(Graphics* graphics)
+{
+    return graphics->cube_mesh;
+}
+MeshID quad_mesh(Graphics* graphics)
+{
+    return graphics->quad_mesh;
+}
+void add_render_command(Graphics* graphics, MeshID mesh, Transform transform)
+{
+    int index = graphics->num_commands++;
+    assert(index < MAX_RENDER_COMMANDS);
+    graphics->commands[index].mesh = mesh;
+    graphics->commands[index].transform = transform;
+}
+
