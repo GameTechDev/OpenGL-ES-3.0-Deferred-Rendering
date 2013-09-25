@@ -34,6 +34,8 @@
     view.context = self.context;
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
 
+    self.preferredFramesPerSecond = 60;
+
     [self setupGL];
 }
 

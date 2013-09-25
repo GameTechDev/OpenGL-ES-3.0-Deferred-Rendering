@@ -258,7 +258,7 @@
 		27F352CC17EBC3F600FF4D22 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++98";
@@ -307,7 +307,6 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"../../src/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OBJROOT = ./obj;
@@ -316,13 +315,14 @@
 				SDKROOT = iphoneos;
 				SYMROOT = ./bin;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "../../src/**";
 			};
 			name = Debug;
 		};
 		27F352CD17EBC3F600FF4D22 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++98";
@@ -365,7 +365,6 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"../../src/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OBJROOT = ./obj;
@@ -373,6 +372,7 @@
 				SDKROOT = iphoneos;
 				SYMROOT = ./bin;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "../../src/**";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

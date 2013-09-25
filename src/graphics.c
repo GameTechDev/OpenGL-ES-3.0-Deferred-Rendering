@@ -47,17 +47,20 @@ struct Graphics
 {
     GLuint  program;
     GLuint  projection_uniform;
-    GLuint  modelview_uniform;
+    GLuint  view_uniform;
+    GLuint  model_uniform;
     GLuint  diffuse_uniform;
 
     GLuint  color_renderbuffer;
     GLuint  depth_renderbuffer;
+    GLuint  depth_texture;
     GLuint  framebuffer;
 
     int width;
     int height;
 
     Mat4    projection_matrix;
+    Mat4    view_matrix;
 
     GLuint  fullscreen_program;
     GLuint  fullscreen_texture_uniform;
@@ -96,31 +99,28 @@ static void _setup_framebuffer(Graphics* graphics)
     /* Color buffer */
     glGenTextures(1, &graphics->color_renderbuffer);
     glBindTexture(GL_TEXTURE_2D, graphics->color_renderbuffer);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, graphics->width, graphics->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-    system_log("Created color buffer\n");
+    CheckGLError();
 
     /* Depth buffer */
-    glGenRenderbuffers(1, &graphics->depth_renderbuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, graphics->depth_renderbuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER,
-                          GL_DEPTH_COMPONENT16,
-                          graphics->width,
-                          graphics->height);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glGenTextures(1, &graphics->depth_renderbuffer);
+    glBindTexture(GL_TEXTURE_2D, graphics->depth_renderbuffer);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, graphics->width, graphics->height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
     CheckGLError();
-    system_log("Created depth buffer\n");
 
     /* Framebuffer */
     glGenFramebuffers(1, &graphics->framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, graphics->color_renderbuffer, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER,
-                              GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
-                              graphics->depth_renderbuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, graphics->depth_renderbuffer, 0);
 
     framebuffer_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     switch (framebuffer_status) {
@@ -205,7 +205,8 @@ static void _setup_programs(Graphics* graphics)
         graphics->program = _create_program("SimpleVertex.glsl", "SimpleFragment.glsl", slots, 3);
 
         graphics->projection_uniform = glGetUniformLocation(graphics->program, "Projection");
-        graphics->modelview_uniform = glGetUniformLocation(graphics->program, "ModelView");
+        graphics->view_uniform = glGetUniformLocation(graphics->program, "View");
+        graphics->model_uniform = glGetUniformLocation(graphics->program, "Model");
         graphics->diffuse_uniform = glGetUniformLocation(graphics->program, "s_Diffuse");
         system_log("Created program\n");
     }
@@ -251,7 +252,9 @@ Graphics* create_graphics(int width, int height)
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height);
     glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
-    system_log("OpenGL initialized\n");
+    glClearDepthf(1.0f);
+    system_log("OpenGL version:\t%s\n", glGetString(GL_VERSION));
+    system_log("OpenGL renderer:\t%s\n", glGetString(GL_RENDERER));
 
     /* Perform other initialization */
     _setup_framebuffer(graphics);
@@ -261,6 +264,7 @@ Graphics* create_graphics(int width, int height)
                                                        width/(float)height,
                                                        0.1f,
                                                        1000.0f);
+    graphics->view_matrix = mat4_identity;
 
     graphics->cube_mesh = _new_mesh_id(graphics);
     graphics->quad_mesh = _new_mesh_id(graphics);
@@ -297,6 +301,20 @@ void render_graphics(Graphics* graphics)
     GLint defaultFBO;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
 
+    {
+        static Transform view = transform_zero;
+        static float move = 0.0f;
+        static float rotate = 0.0f;
+        float delta_time = 1.0f/60.0f;
+
+        move += delta_time;
+        rotate += delta_time;
+
+        view.position.z = sinf(move);
+
+        graphics->view_matrix = transform_get_matrix(view);
+    }
+
 
     /* Bind framebuffer */
     glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
@@ -311,6 +329,7 @@ void render_graphics(Graphics* graphics)
     glEnableVertexAttribArray(kTexCoordSlot);
     CheckGLError();
     glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&graphics->projection_matrix);
+    glUniformMatrix4fv(graphics->view_uniform, 1, GL_FALSE, (float*)&graphics->view_matrix);
 
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(graphics->diffuse_uniform, 0);
@@ -319,7 +338,7 @@ void render_graphics(Graphics* graphics)
     for(ii=0;ii<graphics->num_commands;++ii) {
         RenderCommand command = graphics->commands[ii];
         Mat4 model = transform_get_matrix(command.transform);
-        glUniformMatrix4fv(graphics->modelview_uniform, 1, GL_FALSE, (float*)&model);
+        glUniformMatrix4fv(graphics->model_uniform, 1, GL_FALSE, (float*)&model);
         glBindTexture(GL_TEXTURE_2D, graphics->textures[command.diffuse]);
         _draw_mesh(&graphics->meshes[command.mesh]);
     }

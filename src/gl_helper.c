@@ -42,7 +42,6 @@ GLuint gl_load_shader(const char* filename, GLenum type)
     int     result;
     GLint   shader_size = 0;
 
-    system_log("Attempting to load shader %s\n", filename);
     result = (int)load_file_data(filename, &data, &data_size);
     if(result != 0) {
         system_log("Loading shader %s failed", filename);

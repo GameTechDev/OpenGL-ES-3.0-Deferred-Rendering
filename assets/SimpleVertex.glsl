@@ -1,5 +1,6 @@
 uniform mat4 Projection;
-uniform mat4 ModelView;
+uniform mat4 View;
+uniform mat4 Model;
 
 attribute vec4 a_Position;
 attribute vec3 a_Normal;
@@ -11,5 +12,5 @@ varying vec2 v_TexCoord;
 void main(void) {
     v_Normal = a_Normal;
     v_TexCoord = a_TexCoord;
-    gl_Position = Projection * ModelView * a_Position;
+    gl_Position = Projection * View * Model * a_Position;
 }
