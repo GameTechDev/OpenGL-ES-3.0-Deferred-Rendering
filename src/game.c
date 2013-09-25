@@ -40,7 +40,7 @@ Game* create_game(int width, int height)
     game->timer = create_timer();
 
     game->color_tex = load_texture(game->graphics, "texture.png");
-    game->grass_tex = load_texture(game->graphics, "grass.jpg");
+    game->grass_tex = load_texture(game->graphics, "grass.jpg"); /* http://www.brusheezy.com/textures/20185-seamless-green-grass-textures */
 
     return game;
 }
