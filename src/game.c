@@ -17,6 +17,9 @@ struct Game
 {
     Timer*      timer;
     Graphics*   graphics;
+
+    TextureID   color_tex;
+    TextureID   grass_tex;
 };
 
 /* Constants
@@ -36,6 +39,9 @@ Game* create_game(int width, int height)
     game->graphics = create_graphics(width, height);
     game->timer = create_timer();
 
+    game->color_tex = load_texture(game->graphics, "texture.png");
+    game->grass_tex = load_texture(game->graphics, "grass.jpg");
+
     return game;
 }
 void destroy_game(Game* game)
@@ -54,13 +60,13 @@ void update_game(Game* game)
         1.0f };
     rotate += delta_time;
 
-    add_render_command(game->graphics, cube_mesh(game->graphics), t);
+    add_render_command(game->graphics, cube_mesh(game->graphics), game->color_tex, t);
 
     t.orientation = quat_from_euler(kPiDiv2, 0.0f, 0.0f);
     t.position = vec3_create(0.0f, -5.0f, 15.0f);
     t.scale = 20.0f;
 
-    add_render_command(game->graphics, quad_mesh(game->graphics), t);
+    add_render_command(game->graphics, quad_mesh(game->graphics), game->grass_tex, t);
 }
 void render_game(Game* game)
 {

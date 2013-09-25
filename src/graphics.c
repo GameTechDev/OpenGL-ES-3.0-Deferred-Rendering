@@ -40,6 +40,7 @@ typedef struct RenderCommand
 {
     Transform   transform;
     MeshID      mesh;
+    TextureID   diffuse;
 } RenderCommand;
 
 struct Graphics
@@ -48,8 +49,6 @@ struct Graphics
     GLuint  projection_uniform;
     GLuint  modelview_uniform;
     GLuint  diffuse_uniform;
-
-    TextureID  texture;
 
     GLuint  color_renderbuffer;
     GLuint  depth_renderbuffer;
@@ -275,8 +274,6 @@ Graphics* create_graphics(int width, int height)
                                                           kQuadIndices, sizeof(kQuadIndices),
                                                           sizeof(kQuadIndices)/sizeof(kQuadIndices[0]),
                                                           sizeof(kQuadVertices[0]), kPosNormTexVertex);
-    
-    graphics->texture = load_texture(graphics, "texture.png");
 
     CheckGLError();
     system_log("Graphics initialized\n");
@@ -316,7 +313,6 @@ void render_graphics(Graphics* graphics)
     glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&graphics->projection_matrix);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, graphics->textures[graphics->texture]);
     glUniform1i(graphics->diffuse_uniform, 0);
 
     /* Loop through render commands */
@@ -324,6 +320,7 @@ void render_graphics(Graphics* graphics)
         RenderCommand command = graphics->commands[ii];
         Mat4 model = transform_get_matrix(command.transform);
         glUniformMatrix4fv(graphics->modelview_uniform, 1, GL_FALSE, (float*)&model);
+        glBindTexture(GL_TEXTURE_2D, graphics->textures[command.diffuse]);
         _draw_mesh(&graphics->meshes[command.mesh]);
     }
     graphics->num_commands = 0;
@@ -362,12 +359,13 @@ MeshID quad_mesh(Graphics* graphics)
 {
     return graphics->quad_mesh;
 }
-void add_render_command(Graphics* graphics, MeshID mesh, Transform transform)
+void add_render_command(Graphics* graphics, MeshID mesh, TextureID diffuse, Transform transform)
 {
     int index = graphics->num_commands++;
     assert(index < MAX_RENDER_COMMANDS);
     graphics->commands[index].mesh = mesh;
     graphics->commands[index].transform = transform;
+    graphics->commands[index].diffuse = diffuse;
 }
 TextureID load_texture(Graphics* graphics, const char* filename)
 {
