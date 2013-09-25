@@ -319,7 +319,7 @@ void render_graphics(Graphics* graphics)
     glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&graphics->projection_matrix);
     glUniformMatrix4fv(graphics->view_uniform, 1, GL_FALSE, (float*)&view_matrix);
     {
-        Vec4 light_dir = { 0.0f, -1.0f, 0.0f, 0.0f };
+        Vec4 light_dir = { -0.3f, -1.0f, 0.0f, 0.0f };
         glUniform4fv(graphics->lightdir_uniform, 1, (float*)&light_dir);
     }
 
