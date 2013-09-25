@@ -26,19 +26,25 @@ AAssetManager* _asset_manager = NULL;
 
 /* External functions
  */
-size_t load_file_contents(const char* filename, void* buffer, size_t buffer_size)
+
+void free_file_data(void* data)
+{
+    free(data);
+}
+int load_file_data(const char* filename, void** data, size_t* data_size)
 {
     AAsset* file = AAssetManager_open(_asset_manager, filename, AASSET_MODE_UNKNOWN);
     if(file) {
         off_t file_size = AAsset_getLength(file);
-        buffer_size = min((size_t)file_size, buffer_size);
-        AAsset_read(file, buffer, buffer_size);
+        *data = malloc(file_size);
+        *data_size = file_size;
+        AAsset_read(file, *data, file_size);
         AAsset_close(file);
-        system_log("Loaded %d bytes\n", buffer_size);
+        system_log("Loaded %d bytes\n", *data_size);
     } else {
-        buffer_size = 0;
+        return -1;
     }
-    return buffer_size;
+    return 0;
 }
 void system_log(const char* format, ...)
 {

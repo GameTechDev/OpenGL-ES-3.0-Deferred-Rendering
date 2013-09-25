@@ -76,7 +76,7 @@
 #include <assert.h>
 #include <stdarg.h>
 
-#ifdef __GNUC__ 
+#ifdef __GNUC__
 #include <inttypes.h>
 #endif
 
@@ -97,7 +97,7 @@ typedef unsigned short uint16;
 typedef   signed short  int16;
 typedef unsigned int   uint32;
 typedef   signed int    int32;
-typedef unsigned int   uint;
+//typedef unsigned int   uint;
 
 // should produce compiler error if size is wrong
 typedef unsigned char validate_uint32[sizeof(uint32)==4 ? 1 : -1];
@@ -1467,11 +1467,11 @@ static uint8 *resample_row_generic(uint8 *out, uint8 *in_near, uint8 *in_far, in
 {
    // resample with nearest-neighbor
    int i,j;
-   in_far = in_far;
    for (i=0; i < w; ++i)
       for (j=0; j < hs; ++j)
          out[i*hs+j] = in_near[i];
    return out;
+   (void)sizeof(in_far);
 }
 
 #define float2fixed(x)  ((int) ((x) * 65536 + 0.5))
@@ -3910,7 +3910,8 @@ static uint8 *stbi_gif_load_next(stbi *s, stbi_gif *g, int *comp, int req_comp)
 static stbi_uc *stbi_gif_load(stbi *s, int *x, int *y, int *comp, int req_comp)
 {
    uint8 *u = 0;
-   stbi_gif g={0};
+   stbi_gif g;
+   memset(&g, 0, sizeof(g));
    intptr_t _t = 0x1;
 
    u = stbi_gif_load_next(s, &g, comp, req_comp);
