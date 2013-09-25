@@ -27,6 +27,60 @@ typedef struct PosNormTexVertex
     Vec2    tex;
 } PosNormTexVertex;
 
+typedef enum VertexType
+{
+    kPosNormTexVertex,
+    kPosColorVertex,
+    kPosTexVertex,
+
+    kNUM_VERTEX_TYPES
+} VertexType;
+
+
+typedef enum AttributeSlot
+{
+    kPositionSlot   = 0,
+    kNormalSlot,
+    kTexCoordSlot,
+    kColorSlot
+} AttributeSlot;
+
+static const char* kAttributeSlotNames[] =
+{
+    "a_Position", /* kPositionSlot */
+    "a_Normal",   /* kNormalSlot */
+    "a_TexCoord", /* kTexCoordSlot */
+    "a_Color",    /* kColorSlot */
+};
+
+/** Vertex Descriptions 
+ */
+typedef struct VertexDescription
+{
+    AttributeSlot   slot;
+    int             count;
+} VertexDescription;
+
+static const VertexDescription kVertexDescriptions[kNUM_VERTEX_TYPES][16] =
+{
+    { /* kPosNormTexVertex */
+        { kPositionSlot,  3, },
+        { kNormalSlot,    3, },
+        { kTexCoordSlot,  2, },
+        { 0, 0 }
+    },
+    { /* kPosColorVertex */
+        { kPositionSlot,  3, },
+        { kColorSlot,     4, },
+        { 0, 0 }
+    },
+    { /* kPosTexVertex */
+        { kPositionSlot,  3, },
+        { kTexCoordSlot,  2, },
+        { 0, 0 }
+    }
+};
+
 
 /* triangle vertices
  *
@@ -141,5 +195,6 @@ static const uint16_t kCubeIndices[] =
     16, 17, 18,  16, 18, 19,  /* bottom */
     20, 21, 22,  20, 22, 23,  /* back */
 };
+
 
 #endif /* include guard */

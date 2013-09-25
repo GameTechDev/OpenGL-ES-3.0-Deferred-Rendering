@@ -3911,8 +3911,8 @@ static stbi_uc *stbi_gif_load(stbi *s, int *x, int *y, int *comp, int req_comp)
 {
    uint8 *u = 0;
    stbi_gif g;
-   memset(&g, 0, sizeof(g));
    intptr_t _t = 0x1;
+   memset(&g, 0, sizeof(g));
 
    u = stbi_gif_load_next(s, &g, comp, req_comp);
    if (u == (void *)_t) u = 0;  // end of animated gif marker

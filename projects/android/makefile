@@ -71,7 +71,7 @@ install: debug
 #
 # Run main activity of the installed APK
 # Assuming the APK is installed...won't trigger a build/install
-run:
+run: install
 	adb shell am start -n $(ANDROID_PACKAGE_NAME)/.$(ANDROID_APP_NAME)
 
 # > make kill

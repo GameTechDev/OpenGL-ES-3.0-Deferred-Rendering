@@ -8,9 +8,12 @@
 #include <stdint.h>
 
 typedef struct Graphics Graphics;
+typedef int MeshID;
 
 Graphics* create_graphics(int width, int height);
-void render_graphics(Graphics* graphics);
 void destroy_graphics(Graphics* graphics);
+
+void render_graphics(Graphics* graphics);
+MeshID cube_mesh(Graphics* graphics);
 
 #endif /* include guard */

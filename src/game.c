@@ -6,6 +6,7 @@
 #include "system.h"
 #include "timer.h"
 #include "graphics.h"
+#include "vec_math.h"
 
 /* Defines
  */
@@ -49,7 +50,7 @@ void update_game(Game* game)
     float delta_time = (float)get_delta_time(game->timer);
     time += delta_time;
     if(time > 1.0f) {
-        system_log("%f\n", get_running_time(game->timer));
+        //system_log("%f\n", get_running_time(game->timer));
         time -= 1.0f;
     }
 }
