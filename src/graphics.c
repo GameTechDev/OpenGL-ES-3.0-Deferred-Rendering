@@ -29,9 +29,14 @@
 typedef struct RenderCommand
 {
     Transform   transform;
-    MeshID      mesh;
-    TextureID   diffuse;
+    Mesh*       mesh;
+    Texture*    diffuse;
 } RenderCommand;
+
+struct Texture
+{
+    GLuint  texture;
+};
 
 struct Graphics
 {
@@ -56,14 +61,8 @@ struct Graphics
     GLuint  fullscreen_program;
     GLuint  fullscreen_texture_uniform;
 
-    Mesh    meshes[MAX_MESHES];
-    int     num_meshes;
-
-    GLuint  textures[MAX_TEXTURES];
-    int     num_textures;
-
-    MeshID  cube_mesh;
-    MeshID  quad_mesh;
+    Mesh*  cube_mesh;
+    Mesh*  quad_mesh;
 
     RenderCommand   commands[MAX_RENDER_COMMANDS];
     int num_commands;
@@ -78,11 +77,6 @@ struct Graphics
 
 /* Internal functions
  */
-static MeshID _new_mesh_id(Graphics* graphics)
-{
-    assert(graphics->num_meshes < MAX_MESHES);
-    return graphics->num_meshes++;
-}
 static void _setup_framebuffer(Graphics* graphics)
 {
     GLenum framebuffer_status;
@@ -245,18 +239,15 @@ Graphics* create_graphics(int width, int height)
                                                        1000.0f);
     graphics->view_transform = transform_zero;
 
-    graphics->cube_mesh = _new_mesh_id(graphics);
-    graphics->quad_mesh = _new_mesh_id(graphics);
+    graphics->cube_mesh = gl_create_mesh(kCubeVertices, sizeof(kCubeVertices),
+                                         kCubeIndices, sizeof(kCubeIndices),
+                                         sizeof(kCubeIndices)/sizeof(kCubeIndices[0]),
+                                         sizeof(kCubeVertices[0]), kPosNormTexVertex);
 
-    graphics->meshes[graphics->cube_mesh] = gl_create_mesh(kCubeVertices, sizeof(kCubeVertices),
-                                                           kCubeIndices, sizeof(kCubeIndices),
-                                                           sizeof(kCubeIndices)/sizeof(kCubeIndices[0]),
-                                                           sizeof(kCubeVertices[0]), kPosNormTexVertex);
-
-    graphics->meshes[graphics->quad_mesh]  = gl_create_mesh(kQuadVertices, sizeof(kQuadVertices),
-                                                            kQuadIndices, sizeof(kQuadIndices),
-                                                            sizeof(kQuadIndices)/sizeof(kQuadIndices[0]),
-                                                            sizeof(kQuadVertices[0]), kPosNormTexVertex);
+    graphics->quad_mesh  = gl_create_mesh(kQuadVertices, sizeof(kQuadVertices),
+                                          kQuadIndices, sizeof(kQuadIndices),
+                                          sizeof(kQuadIndices)/sizeof(kQuadIndices[0]),
+                                          sizeof(kQuadVertices[0]), kPosNormTexVertex);
 
     CheckGLError();
     system_log("Graphics initialized\n");
@@ -308,8 +299,8 @@ void render_graphics(Graphics* graphics)
         RenderCommand command = graphics->commands[ii];
         Mat4 model = transform_get_matrix(command.transform);
         glUniformMatrix4fv(graphics->world_uniform, 1, GL_FALSE, (float*)&model);
-        glBindTexture(GL_TEXTURE_2D, graphics->textures[command.diffuse]);
-        _draw_mesh(&graphics->meshes[command.mesh]);
+        glBindTexture(GL_TEXTURE_2D, command.diffuse->texture);
+        _draw_mesh(command.mesh);
     }
     graphics->num_commands = 0;
 
@@ -329,7 +320,7 @@ void render_graphics(Graphics* graphics)
     glUniform1i(graphics->fullscreen_texture_uniform, 0);
     CheckGLError();
 
-    _draw_mesh(&graphics->meshes[graphics->quad_mesh]);
+    _draw_mesh(graphics->quad_mesh);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -339,15 +330,15 @@ void destroy_graphics(Graphics* graphics)
 {
     free(graphics);
 }
-MeshID cube_mesh(Graphics* graphics)
+Mesh* cube_mesh(Graphics* graphics)
 {
     return graphics->cube_mesh;
 }
-MeshID quad_mesh(Graphics* graphics)
+Mesh* quad_mesh(Graphics* graphics)
 {
     return graphics->quad_mesh;
 }
-void add_render_command(Graphics* graphics, MeshID mesh, TextureID diffuse, Transform transform)
+void add_render_command(Graphics* graphics, Mesh* mesh, Texture* diffuse, Transform transform)
 {
     int index = graphics->num_commands++;
     assert(index < MAX_RENDER_COMMANDS);
@@ -355,22 +346,32 @@ void add_render_command(Graphics* graphics, MeshID mesh, TextureID diffuse, Tran
     graphics->commands[index].transform = transform;
     graphics->commands[index].diffuse = diffuse;
 }
-TextureID load_texture(Graphics* graphics, const char* filename)
+Texture* load_texture(Graphics* graphics, const char* filename)
 {
-    int index = graphics->num_textures++;
-    assert(graphics->num_textures <= MAX_TEXTURES);
-    graphics->textures[index] = gl_load_texture(filename);
-    return index;
+    Texture* texture = (Texture*)calloc(1, sizeof(*texture));
+    texture->texture = gl_load_texture(filename);
+    return texture;
+    (void)sizeof(graphics);
 }
 void set_view_transform(Graphics* graphics, Transform view)
 {
     graphics->view_transform = view;
 }
-MeshID load_mesh(Graphics* graphics, const char* filename)
+Mesh* create_mesh(Graphics* graphics, const char* filename)
 {
-    MeshID index = _new_mesh_id(graphics);
-    graphics->meshes[index] = gl_load_mesh(filename);
-    return index;
+    return gl_load_mesh(filename);
+    (void)sizeof(graphics);
+}
+void destroy_mesh(Mesh* mesh)
+{
+    glDeleteBuffers(1, &mesh->vertex_buffer);
+    glDeleteBuffers(1, &mesh->index_buffer);
+    free(mesh);
+}
+void destroy_texture(Texture* texture)
+{
+    glDeleteTextures(1, &texture->texture);
+    free(texture);
 }
 
 

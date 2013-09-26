@@ -9,6 +9,7 @@ extern "C" {
 }
 #include <vector>
 #include <string>
+#include <stdlib.h>
 
 /* Constants
  */
@@ -97,10 +98,10 @@ extern "C" {
 static const char* get_line_from_buffer(char* line, size_t line_size, const char* buffer)
 {
     const char* line_end = line + line_size;
-    
+
     if(buffer == NULL || line == NULL || line_size == 0)
         return NULL;
-    
+
     while(line != line_end) {
         char current_char = *buffer;
         switch(current_char) {
@@ -124,24 +125,23 @@ static const char* get_line_from_buffer(char* line, size_t line_size, const char
                 break;
         }
     }
-    
+
     return buffer;
 }
 
 /* External functions
  */
-Mesh gl_create_mesh(const void* vertex_data, size_t vertex_data_size,
-                    const void* index_data, size_t index_data_size,
-                    int index_count, int vertex_size, VertexType type)
+Mesh* gl_create_mesh(const void* vertex_data, size_t vertex_data_size,
+                     const void* index_data, size_t index_data_size,
+                     int index_count, int vertex_size, VertexType type)
 {
-    Mesh mesh = {
-        gl_create_buffer(GL_ARRAY_BUFFER, vertex_data, vertex_data_size),
-        gl_create_buffer(GL_ELEMENT_ARRAY_BUFFER, index_data, index_data_size),
-        index_count,
-        vertex_size,
-        (index_data_size/index_count == 2) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT,
-        type
-    };
+    Mesh* mesh = (Mesh*)calloc(1, sizeof(*mesh));
+    mesh->vertex_buffer   = gl_create_buffer(GL_ARRAY_BUFFER, vertex_data, vertex_data_size);
+    mesh->index_buffer    = gl_create_buffer(GL_ELEMENT_ARRAY_BUFFER, index_data, index_data_size);
+    mesh->index_count     = index_count;
+    mesh->vertex_size     = vertex_size;
+    mesh->index_format    = (index_data_size/index_count == 2) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
+    mesh->type            = type;
     return mesh;
 }
 struct int3 {
@@ -149,10 +149,8 @@ struct int3 {
     int t;
     int n;
 };
-Mesh gl_load_mesh(const char* filename)
+Mesh* gl_load_mesh(const char* filename)
 {
-    Mesh mesh = {0};
-
     std::vector<Vec3> positions;
     std::vector<Vec3> normals;
     std::vector<Vec2> texcoords;
@@ -206,7 +204,7 @@ Mesh gl_load_mesh(const char* filename)
                 if(matches != 10 && matches != 13) {
                     system_log("Can't load this OBJ\n");
                     free_file_data(original_data);
-                    return mesh;
+                    return NULL;
                 }
             } else {
                 matches = sscanf(line, "%s %d//%d %d//%d %d//%d %d//%d\n",
@@ -218,7 +216,7 @@ Mesh gl_load_mesh(const char* filename)
                 if(matches != 7 && matches != 9) {
                     system_log("Can't load this OBJ\n");
                     free_file_data(original_data);
-                    return mesh;
+                    return NULL;
                 }
                 triangle[0].t = 0;
                 triangle[1].t = 0;
@@ -236,7 +234,7 @@ Mesh gl_load_mesh(const char* filename)
                 indicies.push_back(triangle[2]);
                 indicies.push_back(triangle[3]);
             }
-        } 
+        }
     }
     free_file_data(original_data);
 
@@ -260,10 +258,10 @@ Mesh gl_load_mesh(const char* filename)
 
     //VtxPosNormTanBitanTex* new_vertices = _calculate_tangets(vertices, vertex_count, i, sizeof(uint32_t), index_count);
 
-    mesh = gl_create_mesh(vertices, vertex_count*sizeof(PosNormTexVertex), i, index_count*sizeof(uint32_t), index_count, sizeof(PosNormTexVertex), kPosNormTexVertex);
+    Mesh* mesh = gl_create_mesh(vertices, vertex_count*sizeof(PosNormTexVertex), i, index_count*sizeof(uint32_t), index_count, sizeof(PosNormTexVertex), kPosNormTexVertex);
     //delete [] new_vertices;
     delete [] vertices;
     delete [] i;
-    
+
     return mesh;
 }

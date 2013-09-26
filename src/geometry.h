@@ -104,10 +104,10 @@ static const VertexDescription kVertexDescriptions[kNUM_VERTEX_TYPES][16] =
 
 /** Functions
  */
-Mesh gl_create_mesh(const void* vertex_data, size_t vertex_data_size,
-                    const void* index_data, size_t index_data_size,
-                    int index_count, int vertex_size, VertexType type);
-Mesh gl_load_mesh(const char* filename);
+Mesh* gl_create_mesh(const void* vertex_data, size_t vertex_data_size,
+                     const void* index_data, size_t index_data_size,
+                     int index_count, int vertex_size, VertexType type);
+Mesh* gl_load_mesh(const char* filename);
 
 
 /* triangle vertices
