@@ -6,6 +6,15 @@
 #define _geometry_h_
 
 #include <stdint.h>
+#include <stddef.h>
+#if defined(__APPLE__)
+    #include <OpenGLES/ES3/gl.h>
+    #include <OpenGLES/ES3/glext.h>
+#elif defined(__ANDROID__)
+    #include <GLES3/gl3.h>
+#else
+    #error Need an OpenGL implementation
+#endif
 #include "vec_math.h"
 
 /** Vertex types
@@ -42,7 +51,9 @@ typedef enum AttributeSlot
     kPositionSlot   = 0,
     kNormalSlot,
     kTexCoordSlot,
-    kColorSlot
+    kColorSlot,
+
+    kEmptySlot = -1
 } AttributeSlot;
 
 static const char* kAttributeSlotNames[] =
@@ -52,6 +63,16 @@ static const char* kAttributeSlotNames[] =
     "a_TexCoord", /* kTexCoordSlot */
     "a_Color",    /* kColorSlot */
 };
+
+typedef struct Mesh
+{
+    GLuint      vertex_buffer;
+    GLuint      index_buffer;
+    int         index_count;
+    int         vertex_size;
+    GLenum      index_format;
+    VertexType  type;
+} Mesh;
 
 /** Vertex Descriptions 
  */
@@ -67,19 +88,26 @@ static const VertexDescription kVertexDescriptions[kNUM_VERTEX_TYPES][16] =
         { kPositionSlot,  3, },
         { kNormalSlot,    3, },
         { kTexCoordSlot,  2, },
-        { 0, 0 }
+        { kEmptySlot, 0 }
     },
     { /* kPosColorVertex */
         { kPositionSlot,  3, },
         { kColorSlot,     4, },
-        { 0, 0 }
+        { kEmptySlot, 0 }
     },
     { /* kPosTexVertex */
         { kPositionSlot,  3, },
         { kTexCoordSlot,  2, },
-        { 0, 0 }
+        { kEmptySlot, 0 }
     }
 };
+
+/** Functions
+ */
+Mesh gl_create_mesh(const void* vertex_data, size_t vertex_data_size,
+                    const void* index_data, size_t index_data_size,
+                    int index_count, int vertex_size, VertexType type);
+Mesh gl_load_mesh(const char* filename);
 
 
 /* triangle vertices

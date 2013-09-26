@@ -20,6 +20,7 @@ MeshID cube_mesh(Graphics* graphics);
 MeshID quad_mesh(Graphics* graphics);
 
 TextureID load_texture(Graphics* graphics, const char* filename);
+MeshID load_mesh(Graphics* graphics, const char* filename);
 
 void set_view_transform(Graphics* graphics, Transform view);
 void add_render_command(Graphics* graphics, MeshID mesh, TextureID diffuse, Transform transform);

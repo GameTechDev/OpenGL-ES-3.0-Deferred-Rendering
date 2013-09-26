@@ -21,6 +21,8 @@ struct Game
     TextureID   color_tex;
     TextureID   grass_tex;
 
+    MeshID      house_mesh;
+
     Transform   camera;
 };
 
@@ -46,6 +48,9 @@ Game* create_game(int width, int height)
 
     game->camera = transform_zero;
     game->camera.position.y = 2.0f;
+
+    //game->house_mesh = load_mesh(game->graphics, "cube.obj");
+    game->house_mesh = load_mesh(game->graphics, "house_obj.obj");
 
     return game;
 }
@@ -83,9 +88,14 @@ void update_game(Game* game)
 
     add_render_command(game->graphics, quad_mesh(game->graphics), game->grass_tex, t);
 
+    t = transform_zero;
+    t.scale = 0.1f;
+    add_render_command(game->graphics, game->house_mesh, game->color_tex, t);
+
     set_view_transform(game->graphics, game->camera);
     game->camera = transform_zero;
-    game->camera.position.y = 2.0f;
+    game->camera.position.y = 10.0f;
+    game->camera.position.z = -100;
     set_view_transform(game->graphics, game->camera);
 }
 void render_game(Game* game)

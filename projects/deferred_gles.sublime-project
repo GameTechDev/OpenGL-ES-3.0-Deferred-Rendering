@@ -8,7 +8,6 @@
                 "*.d",
                 "*.o",
                 "*.a",
-                "test_unit_test",
                 "*.sublime-workspace"
             ],
             "folder_exclude_patterns" :

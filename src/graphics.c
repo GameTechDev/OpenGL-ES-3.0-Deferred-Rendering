@@ -26,16 +26,6 @@
 
 /* Types
  */
-
-typedef struct Mesh
-{
-    GLuint      vertex_buffer;
-    GLuint      index_buffer;
-    int         index_count;
-    int         vertex_size;
-    VertexType  type;
-} Mesh;
-
 typedef struct RenderCommand
 {
     Transform   transform;
@@ -182,19 +172,6 @@ static GLuint _create_program(const char* vertex_shader_file, const char* fragme
 
     return program;
 }
-static Mesh _create_mesh(const void* vertex_data, size_t vertex_data_size,
-                         const void* index_data, size_t index_data_size,
-                         int index_count, int vertex_size, VertexType type)
-{
-    Mesh mesh = {
-        gl_create_buffer(GL_ARRAY_BUFFER, vertex_data, vertex_data_size),
-        gl_create_buffer(GL_ELEMENT_ARRAY_BUFFER, index_data, index_data_size),
-        index_count,
-        vertex_size,
-        type
-    };
-    return mesh;
-}
 static void _setup_programs(Graphics* graphics)
 {
     { /* Create 3D program */
@@ -235,7 +212,7 @@ static void _draw_mesh(const Mesh* mesh)
         glVertexAttribPointer(desc->slot, desc->count, GL_FLOAT, GL_FALSE, mesh->vertex_size, (void*)ptr);
         ptr += sizeof(float) * desc->count;
     } while((++desc)->count);
-    glDrawElements(GL_TRIANGLES, mesh->index_count, GL_UNSIGNED_SHORT, NULL);
+    glDrawElements(GL_TRIANGLES, mesh->index_count, mesh->index_format, NULL);
 }
 
 /* External functions
@@ -271,15 +248,15 @@ Graphics* create_graphics(int width, int height)
     graphics->cube_mesh = _new_mesh_id(graphics);
     graphics->quad_mesh = _new_mesh_id(graphics);
 
-    graphics->meshes[graphics->cube_mesh] = _create_mesh(kCubeVertices, sizeof(kCubeVertices),
-                                                         kCubeIndices, sizeof(kCubeIndices),
-                                                         sizeof(kCubeIndices)/sizeof(kCubeIndices[0]),
-                                                         sizeof(kCubeVertices[0]), kPosNormTexVertex);
+    graphics->meshes[graphics->cube_mesh] = gl_create_mesh(kCubeVertices, sizeof(kCubeVertices),
+                                                           kCubeIndices, sizeof(kCubeIndices),
+                                                           sizeof(kCubeIndices)/sizeof(kCubeIndices[0]),
+                                                           sizeof(kCubeVertices[0]), kPosNormTexVertex);
 
-    graphics->meshes[graphics->quad_mesh]  = _create_mesh(kQuadVertices, sizeof(kQuadVertices),
-                                                          kQuadIndices, sizeof(kQuadIndices),
-                                                          sizeof(kQuadIndices)/sizeof(kQuadIndices[0]),
-                                                          sizeof(kQuadVertices[0]), kPosNormTexVertex);
+    graphics->meshes[graphics->quad_mesh]  = gl_create_mesh(kQuadVertices, sizeof(kQuadVertices),
+                                                            kQuadIndices, sizeof(kQuadIndices),
+                                                            sizeof(kQuadIndices)/sizeof(kQuadIndices[0]),
+                                                            sizeof(kQuadVertices[0]), kPosNormTexVertex);
 
     CheckGLError();
     system_log("Graphics initialized\n");
@@ -388,6 +365,12 @@ TextureID load_texture(Graphics* graphics, const char* filename)
 void set_view_transform(Graphics* graphics, Transform view)
 {
     graphics->view_transform = view;
+}
+MeshID load_mesh(Graphics* graphics, const char* filename)
+{
+    MeshID index = _new_mesh_id(graphics);
+    graphics->meshes[index] = gl_load_mesh(filename);
+    return index;
 }
 
 
