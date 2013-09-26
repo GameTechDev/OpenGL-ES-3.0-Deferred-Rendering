@@ -206,12 +206,12 @@ Mesh* gl_load_mesh(const char* filename)
                 }
             }
             indicies.push_back(triangle[0]);
-            indicies.push_back(triangle[1]);
             indicies.push_back(triangle[2]);
+            indicies.push_back(triangle[1]);
             if(matches == 13) {
                 indicies.push_back(triangle[0]);
-                indicies.push_back(triangle[2]);
                 indicies.push_back(triangle[3]);
+                indicies.push_back(triangle[2]);
             }
         }
     }

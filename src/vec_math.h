@@ -1171,6 +1171,37 @@ INLINE Quaternion quat_from_euler(float pitch, float yaw, float roll)
     return q;
 }
 
+INLINE Vec3 quat_get_x_axis(QUAT_INPUT q)
+{
+    Vec3 ret = {
+        1-2*(q.y*q.y+q.z*q.z),
+        2*(q.x*q.y+q.w*q.z),
+        2*(q.x*q.z-q.y*q.w)
+    };
+    ret = vec3_normalize(ret);
+    return ret;
+}
+INLINE Vec3 quat_get_y_axis(QUAT_INPUT q)
+{
+    Vec3 ret = {
+        2*(q.x*q.y-q.z*q.w),
+        1-2*(q.x*q.x+q.z*q.z),
+        2*(q.y*q.z+q.x*q.w)
+    };
+    ret = vec3_normalize(ret);
+    return ret;
+}
+INLINE Vec3 quat_get_z_axis(QUAT_INPUT q)
+{
+    Vec3 ret = {
+        2*(q.x*q.z+q.y*q.w),
+        2*(q.y*q.z-q.x*q.w),
+        1-2*(q.x*q.x+q.y*q.y)
+    };
+    ret = vec3_normalize(ret);
+    return ret;
+}
+
 
 /******************************************************************************\
  * Transform                                                                   *

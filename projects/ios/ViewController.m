@@ -33,6 +33,7 @@
     view = (GLKView *)self.view;
     view.context = self.context;
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
+    view.multipleTouchEnabled = YES;
 
     self.preferredFramesPerSecond = 60;
 
@@ -90,6 +91,80 @@
 
     (void)sizeof(view);
     (void)sizeof(rect);
+}
+
+-(float)deviceScale
+{
+    if ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)] &&
+        ([UIScreen mainScreen].scale)) {
+        return [UIScreen mainScreen].scale;
+    }
+    return 1.0f;
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    TouchPoint points[16] = {0};
+    int num_points = 0;
+    for(UITouch *touch in touches) {
+        CGPoint tapPoint = [touch locationInView:nil];
+        tapPoint.x *= [self deviceScale];
+        tapPoint.y *= [self deviceScale];
+        if([[UIDevice currentDevice] orientation] == UIInterfaceOrientationPortraitUpsideDown) {
+            // The OS should really rotate the taps for us :-(
+            tapPoint.y = [self deviceScale] - tapPoint.y;
+            tapPoint.x = [self deviceScale] - tapPoint.x;
+        }
+        points[num_points].x = tapPoint.x;
+        points[num_points].y = tapPoint.y;
+        points[num_points].index = (intptr_t)touch;
+        num_points++;
+    }
+    add_touch_points(_game, num_points, points);
+    (void)sizeof(event);
+}
+ 
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+    TouchPoint points[16] = {0};
+    int num_points = 0;
+    for(UITouch *touch in touches) {
+        CGPoint tapPoint = [touch locationInView:nil];
+        tapPoint.x *= [self deviceScale];
+        tapPoint.y *= [self deviceScale];
+        if([[UIDevice currentDevice] orientation] == UIInterfaceOrientationPortraitUpsideDown) {
+            // The OS should really rotate the taps for us :-(
+            tapPoint.y = [self deviceScale] - tapPoint.y;
+            tapPoint.x = [self deviceScale] - tapPoint.x;
+        }
+        points[num_points].x = tapPoint.x;
+        points[num_points].y = tapPoint.y;
+        points[num_points].index = (intptr_t)touch;
+        num_points++;
+    }
+    update_touch_points(_game, num_points, points);
+    (void)sizeof(event);
+}
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    TouchPoint points[16] = {0};
+    int num_points = 0;
+    for(UITouch *touch in touches) {
+        CGPoint tapPoint = [touch locationInView:nil];
+        tapPoint.x *= [self deviceScale];
+        tapPoint.y *= [self deviceScale];
+        if([[UIDevice currentDevice] orientation] == UIInterfaceOrientationPortraitUpsideDown) {
+            // The OS should really rotate the taps for us :-(
+            tapPoint.y = [self deviceScale] - tapPoint.y;
+            tapPoint.x = [self deviceScale] - tapPoint.x;
+        }
+        points[num_points].x = tapPoint.x;
+        points[num_points].y = tapPoint.y;
+        points[num_points].index = (intptr_t)touch;
+        num_points++;
+    }
+    remove_touch_points(_game, num_points, points);
+    (void)sizeof(event);
+}
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self touchesEnded:touches withEvent:event];
 }
 
 @end
