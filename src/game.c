@@ -22,6 +22,7 @@ struct Game
     TextureID   grass_tex;
 
     MeshID      house_mesh;
+    TextureID   house_texture;
 
     Transform   camera;
 };
@@ -51,6 +52,7 @@ Game* create_game(int width, int height)
 
     //game->house_mesh = load_mesh(game->graphics, "cube.obj");
     game->house_mesh = load_mesh(game->graphics, "house_obj.obj");
+    game->house_texture = load_texture(game->graphics, "house_diffuse.png");
 
     return game;
 }
@@ -90,7 +92,7 @@ void update_game(Game* game)
 
     t = transform_zero;
     t.scale = 0.1f;
-    add_render_command(game->graphics, game->house_mesh, game->color_tex, t);
+    add_render_command(game->graphics, game->house_mesh, game->house_texture, t);
 
     set_view_transform(game->graphics, game->camera);
     game->camera = transform_zero;
