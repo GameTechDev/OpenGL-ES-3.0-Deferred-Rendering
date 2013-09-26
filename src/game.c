@@ -85,7 +85,7 @@ void update_game(Game* game)
     float delta_time = (float)get_delta_time(game->timer);
     Transform t = {
         quat_from_euler(rotate, rotate*1.01f, rotate*1.03f),
-        vec3_create(sinf(rotate) + 10.0f, sinf(rotate*1.1f) + 1.0f, 0.0f),
+        vec3_create(sinf(rotate) + 10.0f, sinf(rotate*1.1f) + 3.0f, 0.0f),
         1.0f };
     rotate += delta_time;
 

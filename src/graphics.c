@@ -224,6 +224,7 @@ Graphics* create_graphics(int width, int height)
     /* Perform GL initialization */
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    glFrontFace(GL_CW);
     glViewport(0, 0, width, height);
     glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
     glClearDepthf(1.0f);
@@ -288,7 +289,7 @@ void render_graphics(Graphics* graphics)
     glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&graphics->projection_matrix);
     glUniformMatrix4fv(graphics->view_uniform, 1, GL_FALSE, (float*)&view_matrix);
     {
-        Vec4 light_dir = { -0.3f, -1.0f, 0.0f, 0.0f };
+        Vec4 light_dir = { -0.0f, -1.0f, 0.0f, 0.0f };
         glUniform4fv(graphics->lightdir_uniform, 1, (float*)&light_dir);
     }
 

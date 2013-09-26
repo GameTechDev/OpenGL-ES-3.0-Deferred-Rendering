@@ -65,20 +65,21 @@ debug: native
 # Deploy the APK to a device (or emulator)
 # Will trigger "make debug" to build the APK
 install: debug
-	ant installd
+	adb -s R32D103YECE install -r bin/DeferredGLES-debug.apk
+	#ant installd
 
 # > make run
 #
 # Run main activity of the installed APK
 # Assuming the APK is installed...won't trigger a build/install
 run: install
-	adb shell am start -n $(ANDROID_PACKAGE_NAME)/.$(ANDROID_APP_NAME)
+	adb -s R32D103YECE shell am start -n $(ANDROID_PACKAGE_NAME)/.$(ANDROID_APP_NAME)
 
 # > make kill
 #
 # If the app is running, kills it
 kill:
-	adb shell am force-stop $(ANDROID_PACKAGE_NAME)
+	adb shell am force-stop $(ANDROID_PACKAGE_NAME) -s emulator-5554
 
 GenerateHeaders:
 	javah -d ../src/include -classpath ./bin/classes/ $(ANDROID_PACKAGE_NAME).NativeLib
