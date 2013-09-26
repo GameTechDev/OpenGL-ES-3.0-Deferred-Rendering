@@ -14,8 +14,8 @@ ANDROID_PACKAGE_NAME ?= "com.intel.deferredgles"
 
 # > make
 #
-# 1) install
-all: install
+# 1) debug
+all: debug
 
 # > make project
 #

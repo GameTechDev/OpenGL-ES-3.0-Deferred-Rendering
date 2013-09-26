@@ -22,7 +22,7 @@
     "build_systems":
     [
         {
-            "name" : "MyMake",
+            "name" : "Project Make",
             "cmd": ["make"],
             "file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
             "working_dir": "${project_path}/android",

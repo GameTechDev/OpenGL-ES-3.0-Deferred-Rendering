@@ -91,7 +91,6 @@ GLuint gl_load_texture(const char* filename)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
     
     switch( components ) {
         case 1: {
