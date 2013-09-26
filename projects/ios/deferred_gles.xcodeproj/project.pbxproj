@@ -103,20 +103,20 @@
 			isa = PBXGroup;
 			children = (
 				27AB289217F297BA0011651F /* external */,
+				2715E75117ECB2CA00442391 /* ios */,
 				2715E74817ECB2A700442391 /* assert.h */,
+				2715E75F17ECF23E00442391 /* game.c */,
+				2715E76017ECF23E00442391 /* game.h */,
+				2736D5B917F383E200BE83E1 /* geometry.cpp */,
+				2779292317F24FD40090932F /* geometry.h */,
+				2779292017F24E6E0090932F /* gl_helper.c */,
+				2779292117F24E6E0090932F /* gl_helper.h */,
 				2715E74917ECB2A700442391 /* graphics.c */,
 				2715E74A17ECB2A700442391 /* graphics.h */,
 				2715E74C17ECB2A700442391 /* system.h */,
 				2715E75917ECC60100442391 /* timer.c */,
 				2715E75A17ECC60100442391 /* timer.h */,
 				2715E74D17ECB2A700442391 /* vec_math.h */,
-				2715E75117ECB2CA00442391 /* ios */,
-				2715E75F17ECF23E00442391 /* game.c */,
-				2715E76017ECF23E00442391 /* game.h */,
-				2779292017F24E6E0090932F /* gl_helper.c */,
-				2779292117F24E6E0090932F /* gl_helper.h */,
-				2779292317F24FD40090932F /* geometry.h */,
-				2736D5B917F383E200BE83E1 /* geometry.cpp */,
 			);
 			name = src;
 			path = ../../src;

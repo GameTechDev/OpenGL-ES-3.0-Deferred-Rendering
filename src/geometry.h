@@ -32,13 +32,22 @@ typedef struct PosTexVertex
 typedef struct PosNormTexVertex
 {
     Vec3    position;
-    Vec3    norm;
+    Vec3    normal;
     Vec2    tex;
 } PosNormTexVertex;
+typedef struct PosNormTanBitanTexVertex
+{
+    Vec3    position;
+    Vec3    normal;
+    Vec3    tangent;
+    Vec3    bitangent;
+    Vec2    tex;
+} PosNormTanBitanTexVertex;
 
 typedef enum VertexType
 {
     kPosNormTexVertex,
+    kPosNormTanBitanTexVertex,
     kPosColorVertex,
     kPosTexVertex,
 
@@ -51,6 +60,8 @@ typedef enum AttributeSlot
     kPositionSlot   = 0,
     kNormalSlot,
     kTexCoordSlot,
+    kTangentSlot,
+    kBitangentSlot,
     kColorSlot,
 
     kEmptySlot = -1
@@ -58,13 +69,15 @@ typedef enum AttributeSlot
 
 static const char* kAttributeSlotNames[] =
 {
-    "a_Position", /* kPositionSlot */
-    "a_Normal",   /* kNormalSlot */
-    "a_TexCoord", /* kTexCoordSlot */
-    "a_Color",    /* kColorSlot */
+    "a_Position",   /* kPositionSlot */
+    "a_Normal",     /* kNormalSlot */
+    "a_TexCoord",   /* kTexCoordSlot */
+    "a_Tangent",    /* kTangentSlot */
+    "a_Bitangent",  /* kBitangentSlot */
+    "a_Color",      /* kColorSlot */
 };
 
-typedef struct Mesh
+struct Mesh
 {
     GLuint      vertex_buffer;
     GLuint      index_buffer;
@@ -72,7 +85,7 @@ typedef struct Mesh
     int         vertex_size;
     GLenum      index_format;
     VertexType  type;
-} Mesh;
+};
 
 /** Vertex Descriptions 
  */
@@ -87,6 +100,14 @@ static const VertexDescription kVertexDescriptions[kNUM_VERTEX_TYPES][16] =
     { /* kPosNormTexVertex */
         { kPositionSlot,  3, },
         { kNormalSlot,    3, },
+        { kTexCoordSlot,  2, },
+        { kEmptySlot, 0 }
+    },
+    { /* kPosNormTanBitanTexVertex */
+        { kPositionSlot,  3, },
+        { kNormalSlot,    3, },
+        { kTangentSlot,   3, },
+        { kBitangentSlot, 3, },
         { kTexCoordSlot,  2, },
         { kEmptySlot, 0 }
     },

@@ -6,6 +6,7 @@ extern "C" {
 #include "system.h"
 #include "gl_helper.h"
 #include "assert.h"
+#include "vec_math.h"
 }
 #include <vector>
 #include <string>
@@ -19,82 +20,57 @@ extern "C" {
 
 /* Internal functions
  */
-//static VtxPosNormTanBitanTex* _calculate_tangets(const VtxPosNormTex* vertices, int num_vertices, const void* indices, size_t index_size, int num_indices) {
-//    VtxPosNormTanBitanTex* new_vertices = new VtxPosNormTanBitanTex[num_vertices];
-//    for(int ii=0;ii<num_vertices;++ii) {
-//        new_vertices[ii].pos = vertices[ii].pos;
-//        new_vertices[ii].norm = vertices[ii].norm;
-//        new_vertices[ii].tex = vertices[ii].tex;
-//    }
-//    for(int ii=0;ii<num_indices;ii+=3) {
-//        uint32_t i0,i1,i2;
-//        if(index_size == 2) {
-//            i0 = ((uint16_t*)indices)[ii+0];
-//            i1 = ((uint16_t*)indices)[ii+1];
-//            i2 = ((uint16_t*)indices)[ii+2];
-//        } else {
-//            i0 = ((uint32_t*)indices)[ii+0];
-//            i1 = ((uint32_t*)indices)[ii+1];
-//            i2 = ((uint32_t*)indices)[ii+2];
-//        }
-//
-//        VtxPosNormTanBitanTex& v0 = new_vertices[i0];
-//        VtxPosNormTanBitanTex& v1 = new_vertices[i1];
-//        VtxPosNormTanBitanTex& v2 = new_vertices[i2];
-//
-//        Vec3 delta_pos1 = Vec3subtract(&v1.pos, &v0.pos);
-//        Vec3 delta_pos2 = Vec3subtract(&v2.pos, &v0.pos);
-//        Vec2 delta_uv1 = Vec2subtract(&v1.tex, &v0.tex);
-//        Vec2 delta_uv2 = Vec2subtract(&v2.tex, &v0.tex);
-//
-//        float r = 1.0f / (delta_uv1.x * delta_uv2.y - delta_uv1.y * delta_uv2.x);
-//        Vec3 a = Vec3multiplyScalar(&delta_pos1, delta_uv2.y);
-//        Vec3 b = Vec3multiplyScalar(&delta_pos2, delta_uv1.y);
-//        Vec3 tangent = Vec3subtract(&a,&b);
-//        tangent = Vec3multiplyScalar(&tangent, r);
-//
-//        a = Vec3multiplyScalar(&delta_pos2, delta_uv1.x);
-//        b = Vec3multiplyScalar(&delta_pos1, delta_uv2.x);
-//        Vec3 bitangent = Vec3subtract(&a,&b);
-//        bitangent = Vec3multiplyScalar(&bitangent, r);
-//
-//        v0.bitan = bitangent;
-//        v1.bitan = bitangent;
-//        v2.bitan = bitangent;
-//
-//        v0.tan = tangent;
-//        v1.tan = tangent;
-//        v2.tan = tangent;
-//    }
-//    return new_vertices;
-//}
-//static void _remove_line(char** string)
-//{
-//    char c = **string;
-//    while(c != '\n' && c != '\0' && c != '\r') {
-//        (*string)++;
-//        c = **string;
-//    }
-//    if(c != '\0')
-//    (*string)++;
-//}
-//static void _advance_string(char** string)
-//{
-//    char c = **string;
-//    while(c == ' ' || c == '\n' || c == '\r') {
-//        (*string)++;
-//        c = **string;
-//    }
-//}
-//static void _advance_to_next_word(char** string)
-//{
-//    char c = **string;
-//    while(c != ' ') {
-//        (*string)++;
-//        c = **string;
-//    }
-//    (*string)++;
-//}
+static PosNormTanBitanTexVertex* _calculate_tangets(const PosNormTexVertex* vertices, int num_vertices, const void* indices, size_t index_size, int num_indices)
+{
+    PosNormTanBitanTexVertex* new_vertices = new PosNormTanBitanTexVertex[num_vertices];
+    for(int ii=0;ii<num_vertices;++ii) {
+        new_vertices[ii].position = vertices[ii].position;
+        new_vertices[ii].normal = vertices[ii].normal;
+        new_vertices[ii].tex = vertices[ii].tex;
+    }
+    for(int ii=0;ii<num_indices;ii+=3) {
+        uint32_t i0,i1,i2;
+        if(index_size == 2) {
+            i0 = ((uint16_t*)indices)[ii+0];
+            i1 = ((uint16_t*)indices)[ii+1];
+            i2 = ((uint16_t*)indices)[ii+2];
+        } else {
+            i0 = ((uint32_t*)indices)[ii+0];
+            i1 = ((uint32_t*)indices)[ii+1];
+            i2 = ((uint32_t*)indices)[ii+2];
+        }
+
+        PosNormTanBitanTexVertex& v0 = new_vertices[i0];
+        PosNormTanBitanTexVertex& v1 = new_vertices[i1];
+        PosNormTanBitanTexVertex& v2 = new_vertices[i2];
+
+        Vec3 delta_pos1 = vec3_sub(v1.position, v0.position);
+        Vec3 delta_pos2 = vec3_sub(v2.position, v0.position);
+        Vec2 delta_uv1 = vec2_sub(v1.tex, v0.tex);
+        Vec2 delta_uv2 = vec2_sub(v2.tex, v0.tex);
+
+        float r = 1.0f / (delta_uv1.x * delta_uv2.y - delta_uv1.y * delta_uv2.x);
+        Vec3 a = vec3_mul_scalar(delta_pos1, delta_uv2.y);
+        Vec3 b = vec3_mul_scalar(delta_pos2, delta_uv1.y);
+        Vec3 tangent = vec3_sub(a,b);
+        tangent = vec3_mul_scalar(tangent, r);
+
+        a = vec3_mul_scalar(delta_pos2, delta_uv1.x);
+        b = vec3_mul_scalar(delta_pos1, delta_uv2.x);
+        Vec3 bitangent = vec3_sub(a,b);
+        bitangent = vec3_mul_scalar(bitangent, r);
+
+        v0.bitangent = bitangent;
+        v1.bitangent = bitangent;
+        v2.bitangent = bitangent;
+
+        v0.tangent = tangent;
+        v1.tangent = tangent;
+        v2.tangent = tangent;
+    }
+    return new_vertices;
+}
+
 static const char* get_line_from_buffer(char* line, size_t line_size, const char* buffer)
 {
     const char* line_end = line + line_size;
@@ -149,6 +125,9 @@ struct int3 {
     int t;
     int n;
 };
+/* This is pretty ugly, but functional code. There are probably more efficient
+    ways of loading obj's.
+ */
 Mesh* gl_load_mesh(const char* filename)
 {
     std::vector<Vec3> positions;
@@ -247,21 +226,25 @@ Mesh* gl_load_mesh(const char* filename)
         PosNormTexVertex& vertex = vertices[ii];
         vertex.position = positions[pos_index];
         vertex.tex = texcoords[tex_index];
-        vertex.norm = normals[norm_index];
+        vertex.normal = normals[norm_index];
     }
-    uint32_t* i = new uint32_t[indicies.size()];
+    uint32_t* new_indices = new uint32_t[indicies.size()];
     for(int ii=0;ii<(int)indicies.size();++ii)
-        i[ii] = ii;
+        new_indices[ii] = ii;
 
     int vertex_count = (int)indicies.size();
     int index_count = vertex_count;
 
-    //VtxPosNormTanBitanTex* new_vertices = _calculate_tangets(vertices, vertex_count, i, sizeof(uint32_t), index_count);
+    PosNormTanBitanTexVertex* new_vertices = _calculate_tangets(vertices, vertex_count, new_indices, sizeof(uint32_t), index_count);
 
-    Mesh* mesh = gl_create_mesh(vertices, vertex_count*sizeof(PosNormTexVertex), i, index_count*sizeof(uint32_t), index_count, sizeof(PosNormTexVertex), kPosNormTexVertex);
-    //delete [] new_vertices;
+    Mesh* mesh = gl_create_mesh(new_vertices, vertex_count*sizeof(PosNormTanBitanTexVertex),
+                                new_indices, index_count*sizeof(uint32_t),
+                                index_count, sizeof(PosNormTanBitanTexVertex),
+                                kPosNormTanBitanTexVertex);
+
+    delete [] new_vertices;
     delete [] vertices;
-    delete [] i;
+    delete [] new_indices;
 
     return mesh;
 }
