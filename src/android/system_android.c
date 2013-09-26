@@ -40,7 +40,6 @@ int load_file_data(const char* filename, void** data, size_t* data_size)
         *data_size = file_size;
         AAsset_read(file, *data, file_size);
         AAsset_close(file);
-        system_log("Loaded %d bytes\n", *data_size);
     } else {
         return -1;
     }

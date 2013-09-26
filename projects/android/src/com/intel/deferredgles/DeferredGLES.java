@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 import android.content.res.AssetManager;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -46,6 +47,32 @@ public class DeferredGLES extends Activity
     {
         super.onResume();
         _view.onResume();
+    }
+
+    /** Input handling
+     */
+    @Override
+    public boolean onTouchEvent( MotionEvent event ) {
+        int index = event.getActionIndex();
+        int pointerId = event.getPointerId(index);
+        int action = event.getActionMasked();
+
+        if(action == MotionEvent.ACTION_DOWN) {
+            JNIWrapper.touch_down(pointerId, event.getX(), event.getY());
+        } else if((action & MotionEvent.ACTION_POINTER_DOWN) == MotionEvent.ACTION_POINTER_DOWN) {
+            JNIWrapper.touch_down(pointerId, event.getX(index), event.getY(index));
+        } if(action == MotionEvent.ACTION_UP) {
+            JNIWrapper.touch_up(pointerId, event.getX(), event.getY());
+        } else if((action & MotionEvent.ACTION_POINTER_UP) == MotionEvent.ACTION_POINTER_UP) {
+            JNIWrapper.touch_up(pointerId, event.getX(index), event.getY(index));
+        } else if(action == MotionEvent.ACTION_MOVE) {
+            for (int ii=0; ii<event.getPointerCount(); ++ii) {
+                pointerId = event.getPointerId(ii);
+                JNIWrapper.touch_move(pointerId, event.getX(ii), event.getY(ii));
+            }
+        }
+
+        return true;
     }
 
     /** Renderer interface

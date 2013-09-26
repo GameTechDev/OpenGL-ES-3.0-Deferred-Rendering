@@ -97,7 +97,7 @@
 {
     if ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)] &&
         ([UIScreen mainScreen].scale)) {
-        return [UIScreen mainScreen].scale;
+        return (float)[UIScreen mainScreen].scale;
     }
     return 1.0f;
 }
@@ -114,8 +114,8 @@
             tapPoint.y = [self deviceScale] - tapPoint.y;
             tapPoint.x = [self deviceScale] - tapPoint.x;
         }
-        points[num_points].x = tapPoint.x;
-        points[num_points].y = tapPoint.y;
+        points[num_points].x = (float)tapPoint.x;
+        points[num_points].y = (float)tapPoint.y;
         points[num_points].index = (intptr_t)touch;
         num_points++;
     }
@@ -135,8 +135,8 @@
             tapPoint.y = [self deviceScale] - tapPoint.y;
             tapPoint.x = [self deviceScale] - tapPoint.x;
         }
-        points[num_points].x = tapPoint.x;
-        points[num_points].y = tapPoint.y;
+        points[num_points].x = (float)tapPoint.x;
+        points[num_points].y = (float)tapPoint.y;
         points[num_points].index = (intptr_t)touch;
         num_points++;
     }
@@ -155,8 +155,8 @@
             tapPoint.y = [self deviceScale] - tapPoint.y;
             tapPoint.x = [self deviceScale] - tapPoint.x;
         }
-        points[num_points].x = tapPoint.x;
-        points[num_points].y = tapPoint.y;
+        points[num_points].x = (float)tapPoint.x;
+        points[num_points].y = (float)tapPoint.y;
         points[num_points].index = (intptr_t)touch;
         num_points++;
     }

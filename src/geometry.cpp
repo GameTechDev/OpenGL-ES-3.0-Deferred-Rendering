@@ -218,7 +218,7 @@ Mesh* gl_load_mesh(const char* filename)
     free_file_data(original_data);
 
     PosNormTexVertex* vertices = new PosNormTexVertex[indicies.size()];
-    int num_indices = indicies.size();
+    int num_indices = (int)indicies.size();
     for(int ii=0; ii<num_indices; ++ii) {
         int pos_index = indicies[ii].p-1;
         int tex_index = indicies[ii].t;
@@ -228,11 +228,11 @@ Mesh* gl_load_mesh(const char* filename)
         vertex.tex = texcoords[tex_index];
         vertex.normal = normals[norm_index];
     }
-    uint32_t* new_indices = new uint32_t[indicies.size()];
-    for(int ii=0;ii<(int)indicies.size();++ii)
+    uint32_t* new_indices = new uint32_t[num_indices];
+    for(int ii=0;ii<num_indices;++ii)
         new_indices[ii] = ii;
 
-    int vertex_count = (int)indicies.size();
+    int vertex_count = num_indices;
     int index_count = vertex_count;
 
     PosNormTanBitanTexVertex* new_vertices = _calculate_tangets(vertices, vertex_count, new_indices, sizeof(uint32_t), index_count);
