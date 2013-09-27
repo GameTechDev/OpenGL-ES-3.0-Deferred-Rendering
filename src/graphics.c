@@ -412,6 +412,7 @@ Graphics* create_graphics(int width, int height)
 }
 void resize_graphics(Graphics* graphics, int width, int height)
 {
+    system_log("Graphics resize. W: %d  H: %d\n", width, height);
     graphics->width = width;
     graphics->height = height;
     glViewport(0, 0, width, height);

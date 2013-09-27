@@ -167,7 +167,7 @@ void update_game(Game* game)
     }
 
     set_view_transform(game->graphics, game->camera);
-    set_sun_light(game->graphics, vec3_create(0, -1, 0), vec3_create(0, 0, 0));
+    set_sun_light(game->graphics, vec3_create(0, -1, 0), vec3_create(1, 1, 1));
 }
 void render_game(Game* game)
 {
