@@ -46,7 +46,8 @@ struct Graphics
     GLuint  view_uniform;
     GLuint  world_uniform;
     GLuint  diffuse_uniform;
-    GLuint  lights_uniform;
+    GLuint  light_directions_uniform;
+    GLuint  light_colors_uniform;
     GLuint  num_lights_uniform;
 
     GLuint  color_renderbuffer;
@@ -68,8 +69,10 @@ struct Graphics
 
     RenderCommand   commands[MAX_RENDER_COMMANDS];
     int num_commands;
-    Light   lights[MAX_LIGHTS];
-    int num_lights;
+
+    Vec3    light_directions[MAX_LIGHTS];
+    Vec3    light_colors[MAX_LIGHTS];
+    int     num_lights;
 };
 
 
@@ -184,7 +187,8 @@ static void _setup_programs(Graphics* graphics)
         graphics->view_uniform = glGetUniformLocation(graphics->program, "View");
         graphics->world_uniform = glGetUniformLocation(graphics->program, "World");
         graphics->diffuse_uniform = glGetUniformLocation(graphics->program, "s_Diffuse");
-        graphics->lights_uniform = glGetUniformLocation(graphics->program, "Lights[0].direction");
+        graphics->light_directions_uniform = glGetUniformLocation(graphics->program, "LightDirections");
+        graphics->light_colors_uniform = glGetUniformLocation(graphics->program, "LightColors");
         graphics->num_lights_uniform = glGetUniformLocation(graphics->program, "NumLights");
         system_log("Created program\n");
     }
@@ -295,7 +299,8 @@ void render_graphics(Graphics* graphics)
     glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&graphics->projection_matrix);
     glUniformMatrix4fv(graphics->view_uniform, 1, GL_FALSE, (float*)&view_matrix);
     /* Upload lights */
-    glUniform3fv(graphics->lights_uniform, graphics->num_lights, (float*)graphics->lights);
+    glUniform3fv(graphics->light_directions_uniform, graphics->num_lights, (float*)graphics->light_directions);
+    glUniform3fv(graphics->light_colors_uniform, graphics->num_lights, (float*)graphics->light_colors);
     glUniform1i(graphics->num_lights_uniform, graphics->num_lights);
 
     glActiveTexture(GL_TEXTURE0);
@@ -360,7 +365,8 @@ void add_directional_light(Graphics* graphics, Light light)
 {
     int index = graphics->num_lights++;
     assert(index < MAX_LIGHTS);
-    graphics->lights[index] = light;
+    graphics->light_directions[index] = light.direction;
+    graphics->light_colors[index] = light.color;
 }
 Texture* load_texture(Graphics* graphics, const char* filename)
 {

@@ -1,13 +1,8 @@
 precision mediump float;
 uniform sampler2D s_Diffuse;
 
-struct Light
-{
-    vec3    direction;
-    vec3    color;
-};
-
-uniform Light   Lights[64];
+uniform vec3    LightDirections[64];
+uniform vec3    LightColors[64];
 uniform int     NumLights;
 
 varying vec3 v_Normal;
@@ -19,8 +14,8 @@ void main(void) {
     vec4 final_color = vec4(0.0);
 
     for(int ii=0; ii < NumLights; ++ii) {
-        float n_dot_l = clamp(dot(normalize(-Lights[ii].direction), normalize(v_Normal)), 0.0, 1.0);
-        final_color += albedo * n_dot_l;
+        float n_dot_l = clamp(dot(normalize(-LightDirections[ii]), normalize(v_Normal)), 0.0, 1.0);
+        final_color += albedo * n_dot_l * vec4(LightColors[ii],1);
     }
 
     gl_FragColor = final_color;

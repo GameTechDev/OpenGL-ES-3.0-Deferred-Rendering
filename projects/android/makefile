@@ -81,7 +81,7 @@ run: install
 #
 # If the app is running, kills it
 kill:
-	adb $(TARGET_DEVICE) shell am force-stop $(ANDROID_PACKAGE_NAME) -s emulator-5554
+	adb $(TARGET_DEVICE) shell am force-stop $(ANDROID_PACKAGE_NAME)
 
 GenerateHeaders:
 	javah -d ../src/include -classpath ./bin/classes/ $(ANDROID_PACKAGE_NAME).NativeLib
