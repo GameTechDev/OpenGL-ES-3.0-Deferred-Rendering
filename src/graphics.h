@@ -13,8 +13,9 @@ typedef struct Mesh Mesh;
 typedef struct Texture Texture;
 typedef struct Light
 {
-    Vec3 direction;
-    Vec3 color;
+    Vec3    position;
+    Vec3    color;
+    float   size;
 } Light;
 typedef struct Material
 {
@@ -41,6 +42,6 @@ void destroy_mesh(Mesh* mesh);
 
 void set_view_transform(Graphics* graphics, Transform view);
 void add_render_command(Graphics* graphics, Mesh* mesh, Material* material, Transform transform);
-void add_directional_light(Graphics* graphics, Light light);
+void set_directional_light(Graphics* graphics, Vec3 direction, Vec3 color);
 
 #endif /* include guard */

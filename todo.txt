@@ -2,7 +2,7 @@
 Fix touch when orientation changes
 MTL loading
 -Remove specular map support
-Only 1 directional light
+-Only 1 directional light
 Add point light supprt
 Directional light shadow mapping
 Load multiple meshes per OBJ

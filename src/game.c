@@ -18,7 +18,6 @@ struct Game
     Timer*      timer;
     Graphics*   graphics;
 
-    Mesh*      house_mesh;
     Mesh*       terrain_mesh;
     Transform   camera;
 
@@ -28,7 +27,6 @@ struct Game
     Vec2        prev_single;
     Vec2        prev_double;
 
-    Material    house_material;
     Material    grass_material;
     Material    color_material;
     Material    terrain_material;
@@ -96,19 +94,12 @@ Game* create_game(int width, int height)
     game->timer = create_timer();
 
     game->camera = transform_zero;
-    game->camera.position.y = 20;
-    game->camera.position.z = -40.0f;
+    game->camera.orientation = quat_from_euler(0, kPi*-0.75f, 0);
+    game->camera.position.x = 4.0f;
+    game->camera.position.y = 2;
+    game->camera.position.z = 7.5f;
 
-    game->house_mesh = create_mesh(game->graphics, "house_obj.obj");
     game->terrain_mesh = create_mesh(game->graphics, "lightHouse.obj");
-
-    /** Create house material
-     */
-    game->house_material.albedo_tex = load_texture(game->graphics, "house_diffuse.png");
-    game->house_material.normal_tex = load_texture(game->graphics, "house_normal.png");
-    game->house_material.specular_color = vec3_create(1.0f, 1.0f, 1.0f);
-    game->house_material.specular_power = 1.5f;
-    game->house_material.specular_coefficient = 0.06f;
 
     /** Grass material
      */
@@ -125,7 +116,6 @@ Game* create_game(int width, int height)
     game->color_material.specular_color = vec3_create(1.0f, 1.0f, 1.0f);
     game->color_material.specular_power = 32.0f;
     game->color_material.specular_coefficient = 1.0f;
-
 
     /** terrain material
      */
@@ -151,26 +141,17 @@ void resize_game(Game* game, int width, int height)
 void update_game(Game* game)
 {
     Transform t = transform_zero;
-    Light light = {
-        { 0, -1, 0 },
-        { 1, 1, 1 },
-    };
     float delta_time = (float)get_delta_time(game->timer);
 
     _control_camera(game, delta_time);
 
-    t.position = vec3_create(10.0f, 3.0f, 0.0f);
-    //add_render_command(game->graphics, cube_mesh(game->graphics), &game->color_material, t);
-
+    /* Render scene */
     t = transform_zero;
     add_render_command(game->graphics, game->terrain_mesh, &game->terrain_material, t);
 
-    t = transform_zero;
-    t.scale = 0.01f;
-    //add_render_command(game->graphics, game->house_mesh, &game->house_material, t);
 
     set_view_transform(game->graphics, game->camera);
-    add_directional_light(game->graphics, light);
+    set_directional_light(game->graphics, vec3_create(0, -1, 0), vec3_create(1, 1, 1));
 }
 void render_game(Game* game)
 {

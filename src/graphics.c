@@ -54,6 +54,8 @@ struct Graphics
     GLuint  specular_color_uniform;
     GLuint  specular_power_uniform;
     GLuint  specular_coefficient_uniform;
+    GLuint  sun_direction_uniform;
+    GLuint  sun_color_uniform;
 
     GLuint  color_renderbuffer;
     GLuint  depth_renderbuffer;
@@ -74,6 +76,9 @@ struct Graphics
 
     RenderCommand   commands[MAX_RENDER_COMMANDS];
     int num_commands;
+
+    Vec3    sun_direction;
+    Vec3    sun_color;
 
     Vec3    light_directions[MAX_LIGHTS];
     Vec3    light_colors[MAX_LIGHTS];
@@ -284,6 +289,9 @@ static void _setup_programs(Graphics* graphics)
         graphics->specular_power_uniform = glGetUniformLocation(graphics->program, "u_SpecularPower");
         graphics->specular_coefficient_uniform = glGetUniformLocation(graphics->program, "u_SpecularCoefficient");
 
+        graphics->sun_color_uniform = glGetUniformLocation(graphics->program, "u_SunColor");
+        graphics->sun_direction_uniform = glGetUniformLocation(graphics->program, "u_SunDirection");
+
         glUniform1i(graphics->albedo_uniform, 0);
         glUniform1i(graphics->normal_uniform, 1);
 
@@ -436,6 +444,9 @@ void render_graphics(Graphics* graphics)
     glUniform3fv(graphics->light_colors_uniform, graphics->num_lights, (float*)graphics->light_colors);
     glUniform1i(graphics->num_lights_uniform, graphics->num_lights);
 
+    glUniform3fv(graphics->sun_direction_uniform, 1, (float*)&graphics->sun_direction);
+    glUniform3fv(graphics->sun_color_uniform, 1, (float*)&graphics->sun_color);
+
     /* Loop through render commands */
     for(ii=0;ii<graphics->num_commands;++ii) {
         RenderCommand command = graphics->commands[ii];
@@ -497,12 +508,12 @@ void add_render_command(Graphics* graphics, Mesh* mesh, Material* material, Tran
     graphics->commands[index].transform = transform;
     graphics->commands[index].material = material;
 }
-void add_directional_light(Graphics* graphics, Light light)
+void set_directional_light(Graphics* graphics, Vec3 direction, Vec3 color)
 {
     int index = graphics->num_lights++;
     assert(index < MAX_LIGHTS);
-    graphics->light_directions[index] = light.direction;
-    graphics->light_colors[index] = light.color;
+    graphics->sun_direction = direction;
+    graphics->sun_color = color;
 }
 Texture* load_texture(Graphics* graphics, const char* filename)
 {
