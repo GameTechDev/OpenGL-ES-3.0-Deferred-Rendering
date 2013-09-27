@@ -18,7 +18,9 @@ struct Game
     Timer*      timer;
     Graphics*   graphics;
 
-    Mesh*       terrain_mesh;
+    Mesh**      terrain_meshes;
+    int         num_terrain_meshes;
+
     Transform   camera;
 
     TouchPoint  points[16];
@@ -101,7 +103,7 @@ Game* create_game(int width, int height)
     game->camera.position.y = 2;
     game->camera.position.z = 7.5f;
 
-    game->terrain_mesh = create_mesh(game->graphics, "lightHouse.obj");
+    //game->terrain_mesh = create_mesh(game->graphics, "lightHouse.obj");
 
     /** Grass material
      */
@@ -127,10 +129,22 @@ Game* create_game(int width, int height)
     game->terrain_material.specular_power = 0.0f;
     game->terrain_material.specular_coefficient = 0.0f;
 
+    {
+        Mesh** meshes = NULL;
+        int num_meshes = 0;
+
+        load_obj(game->graphics, "lightHouse.obj", &game->terrain_meshes, &game->num_terrain_meshes);
+    }
+
     return game;
 }
 void destroy_game(Game* game)
 {
+    int ii;
+    for(ii=0;ii<game->num_terrain_meshes;++ii) {
+        destroy_mesh(game->terrain_meshes[ii]);
+    }
+    free(game->terrain_meshes);
     destroy_timer(game->timer);
     destroy_graphics(game->graphics);
     destroy_game(game);
@@ -150,7 +164,9 @@ void update_game(Game* game)
 
     /* Render scene */
     t = transform_zero;
-    add_render_command(game->graphics, game->terrain_mesh, &game->terrain_material, t);
+    //t.scale = 0.01f;
+    for(ii=0;ii<game->num_terrain_meshes;++ii)
+        add_render_command(game->graphics, game->terrain_meshes[ii], &game->terrain_material, t);
 
     /* Render lights */
     degrees += delta_time*(k2Pi/8);

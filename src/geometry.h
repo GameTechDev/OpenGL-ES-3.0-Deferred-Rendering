@@ -16,6 +16,7 @@
     #error Need an OpenGL implementation
 #endif
 #include "vec_math.h"
+#include "graphics.h"
 
 /** Vertex types
  */
@@ -133,7 +134,8 @@ PosNormTanBitanTexVertex* calculate_tangets(const PosNormTexVertex* vertices,
 Mesh* gl_create_mesh(const void* vertex_data, size_t vertex_data_size,
                      const void* index_data, size_t index_data_size,
                      int index_count, int vertex_size, VertexType type);
-Mesh* gl_load_mesh(const char* filename);
+Mesh* gl_load_mesh(Graphics* graphics, const char* filename);
+void gl_load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* num_meshes);
 
 
 /* triangle vertices

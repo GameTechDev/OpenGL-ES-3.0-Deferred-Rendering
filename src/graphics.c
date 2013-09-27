@@ -551,8 +551,11 @@ void set_view_transform(Graphics* graphics, Transform view)
 }
 Mesh* create_mesh(Graphics* graphics, const char* filename)
 {
-    return gl_load_mesh(filename);
-    (void)sizeof(graphics);
+    return gl_load_mesh(graphics, filename);
+}
+void load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* num_meshes)
+{
+    gl_load_obj(graphics, filename, meshes, num_meshes);
 }
 void destroy_mesh(Mesh* mesh)
 {

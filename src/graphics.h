@@ -38,6 +38,7 @@ Texture* load_texture(Graphics* graphics, const char* filename);
 void destroy_texture(Texture* texture);
 
 Mesh* create_mesh(Graphics* graphics, const char* filename);
+void load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* num_meshes);
 void destroy_mesh(Mesh* mesh);
 
 void set_view_transform(Graphics* graphics, Transform view);
