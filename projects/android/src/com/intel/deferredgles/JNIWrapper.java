@@ -10,6 +10,7 @@ public class JNIWrapper
         System.loadLibrary("androidinterface");
     }
     public static native void init(int width, int height);
+    public static native void resize(int width, int height);
     public static native void init_asset_manager(AssetManager asset_manager);
     public static native void frame();
 

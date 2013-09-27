@@ -18,6 +18,7 @@ typedef struct TouchPoint
 
 Game* create_game(int width, int height);
 void destroy_game(Game* game);
+void resize_game(Game* game, int width, int height);
 
 void update_game(Game* game);
 void render_game(Game* game);

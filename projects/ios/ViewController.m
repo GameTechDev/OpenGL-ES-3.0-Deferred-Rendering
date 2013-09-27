@@ -66,7 +66,18 @@
 
     // Dispose of any resources that can be recreated.
 }
-
+-(void)viewDidLayoutSubviews
+{
+    int width = (int)(self.view.frame.size.width*self.view.contentScaleFactor);
+    int height = (int)(self.view.frame.size.height*self.view.contentScaleFactor);
+    
+    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+    if(UIDeviceOrientationIsLandscape(orientation)) {
+        resize_game( _game, height, width);
+    } else {
+        resize_game( _game, width, height);
+    }
+}
 - (void)setupGL
 {
     [EAGLContext setCurrentContext:self.context];

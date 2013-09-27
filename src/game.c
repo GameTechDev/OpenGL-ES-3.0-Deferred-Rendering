@@ -144,6 +144,10 @@ void destroy_game(Game* game)
     destroy_graphics(game->graphics);
     destroy_game(game);
 }
+void resize_game(Game* game, int width, int height)
+{
+    resize_graphics(game->graphics, width, height);
+}
 void update_game(Game* game)
 {
     Transform t = transform_zero;

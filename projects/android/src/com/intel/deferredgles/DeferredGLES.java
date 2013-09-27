@@ -81,10 +81,11 @@ public class DeferredGLES extends Activity
     {
         public void onSurfaceCreated(GL10 gl, EGLConfig config)
         {
+            JNIWrapper.init(1, 1);
         }
         public void onSurfaceChanged(GL10 gl, int width, int height)
         {
-            JNIWrapper.init(width, height);
+            JNIWrapper.resize(width, height);
         }
         public void onDrawFrame(GL10 gl)
         {

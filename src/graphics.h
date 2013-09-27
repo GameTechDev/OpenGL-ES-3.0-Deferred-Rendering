@@ -27,6 +27,7 @@ typedef struct Material
 
 Graphics* create_graphics(int width, int height);
 void destroy_graphics(Graphics* graphics);
+void resize_graphics(Graphics* graphics, int width, int height);
 
 void render_graphics(Graphics* graphics);
 Mesh* cube_mesh(Graphics* graphics);

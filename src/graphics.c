@@ -89,6 +89,75 @@ struct Graphics
 
 /* Internal functions
  */
+static void _create_framebuffer(Graphics* graphics)
+{
+    /* Color buffer */
+    glGenTextures(1, &graphics->color_renderbuffer);
+    glBindTexture(GL_TEXTURE_2D, graphics->color_renderbuffer);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    /* Depth buffer */
+    glGenTextures(1, &graphics->depth_renderbuffer);
+    glBindTexture(GL_TEXTURE_2D, graphics->depth_renderbuffer);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    CheckGLError();
+
+    /* Framebuffer */
+    glGenFramebuffers(1, &graphics->framebuffer);
+}
+static void _resize_framebuffer(Graphics* graphics)
+{
+    GLenum framebuffer_status;
+
+
+    /* Color buffer */
+    glBindTexture(GL_TEXTURE_2D, graphics->color_renderbuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, graphics->width, graphics->height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, 0);
+    CheckGLError();
+
+    /* Depth buffer */
+    glBindTexture(GL_TEXTURE_2D, graphics->depth_renderbuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, graphics->width, graphics->height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, 0);
+    CheckGLError();
+
+    /* Framebuffer */
+    glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, graphics->color_renderbuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, graphics->depth_renderbuffer, 0);
+
+    framebuffer_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    switch (framebuffer_status) {
+        case GL_FRAMEBUFFER_COMPLETE: break;
+        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+            system_log("Framebuffer Object %d Error: Attachment Point Unconnected", graphics->framebuffer);
+            break;
+        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+            system_log("Framebuffer Object %d Error: Missing Attachment", graphics->framebuffer);
+            break;
+        case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+            system_log("Framebuffer Object %d Error: Dimensions do not match", graphics->framebuffer);
+            break;
+        case GL_FRAMEBUFFER_UNSUPPORTED:
+            system_log("Framebuffer Object %d Error: Unsupported Framebuffer Configuration", graphics->framebuffer);
+            break;
+        default:
+            system_log("Framebuffer Object %d Error: Unkown Framebuffer Object Failure", graphics->framebuffer);
+            break;
+    }
+
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    CheckGLError();
+
+    system_log("Created framebuffer\n");
+}
 static void _setup_framebuffer(Graphics* graphics)
 {
     GLenum framebuffer_status;
@@ -223,12 +292,11 @@ static void _setup_programs(Graphics* graphics)
         glEnableVertexAttribArray(kTexCoordSlot);
         glEnableVertexAttribArray(kTangentSlot);
         glEnableVertexAttribArray(kBitangentSlot);
-    CheckGLError();
 
         glUseProgram(0);
         system_log("Created program\n");
     }
-
+    CheckGLError();
     { /* Fullscreen time */
         AttributeSlot slots[] = {
             kPositionSlot,
@@ -290,7 +358,8 @@ Graphics* create_graphics(int width, int height)
     system_log("OpenGL renderer:\t%s\n", glGetString(GL_RENDERER));
 
     /* Perform other initialization */
-    _setup_framebuffer(graphics);
+    _create_framebuffer(graphics);
+    _resize_framebuffer(graphics);
     CheckGLError();
     _setup_programs(graphics);
 
@@ -329,6 +398,17 @@ Graphics* create_graphics(int width, int height)
         system_log("%s\n", buffer);
     }
     return graphics;
+}
+void resize_graphics(Graphics* graphics, int width, int height)
+{
+    graphics->width = width;
+    graphics->height = height;
+    glViewport(0, 0, width, height);
+    _resize_framebuffer(graphics);
+    graphics->projection_matrix = mat4_perspective_fov(kPiDiv2,
+                                                       width/(float)height,
+                                                       1.0f,
+                                                       1000.0f);
 }
 void render_graphics(Graphics* graphics)
 {
