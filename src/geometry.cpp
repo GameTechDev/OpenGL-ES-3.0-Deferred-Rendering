@@ -227,6 +227,8 @@ Mesh* gl_load_mesh(const char* filename)
         vertex.position = positions[pos_index];
         vertex.tex = texcoords[tex_index];
         vertex.normal = normals[norm_index];
+        /* Flip v-channel */
+        vertex.tex.y = 1.0f-vertex.tex.y;
     }
     uint32_t* new_indices = new uint32_t[num_indices];
     for(int ii=0;ii<num_indices;++ii)

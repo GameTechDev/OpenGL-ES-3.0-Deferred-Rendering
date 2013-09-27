@@ -101,7 +101,7 @@ static void _setup_framebuffer(Graphics* graphics)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, graphics->width, graphics->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, graphics->width, graphics->height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, 0);
     CheckGLError();
 
     /* Depth buffer */
@@ -111,7 +111,7 @@ static void _setup_framebuffer(Graphics* graphics)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, graphics->width, graphics->height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, graphics->width, graphics->height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, 0);
     CheckGLError();
 
     /* Framebuffer */
@@ -212,6 +212,14 @@ static void _setup_programs(Graphics* graphics)
         glUniform1i(graphics->albedo_uniform, 0);
         glUniform1i(graphics->normal_uniform, 1);
         glUniform1i(graphics->specular_uniform, 2);
+
+        glEnableVertexAttribArray(kPositionSlot);
+        glEnableVertexAttribArray(kNormalSlot);
+        glEnableVertexAttribArray(kTexCoordSlot);
+        glEnableVertexAttribArray(kTangentSlot);
+        glEnableVertexAttribArray(kBitangentSlot);
+
+        glUseProgram(0);
         system_log("Created program\n");
     }
 
@@ -222,7 +230,15 @@ static void _setup_programs(Graphics* graphics)
         };
         graphics->fullscreen_program = _create_program("fullscreen_vertex.glsl", "fullscreen_fragment.glsl", slots, 2);
 
+        glUseProgram(graphics->fullscreen_program);
+
         graphics->fullscreen_texture_uniform = glGetUniformLocation(graphics->fullscreen_program, "s_Diffuse");
+        
+        glEnableVertexAttribArray(kPositionSlot);
+        glEnableVertexAttribArray(kTexCoordSlot);
+
+        glUseProgram(0);
+
         system_log("Created fullscreen program\n");
     }
     CheckGLError();
@@ -268,7 +284,7 @@ Graphics* create_graphics(int width, int height)
 
     graphics->projection_matrix = mat4_perspective_fov(kPiDiv2,
                                                        width/(float)height,
-                                                       0.1f,
+                                                       1.0f,
                                                        1000.0f);
     graphics->view_transform = transform_zero;
 
@@ -319,11 +335,6 @@ void render_graphics(Graphics* graphics)
     CheckGLError();
 
     glUseProgram(graphics->program);
-    glEnableVertexAttribArray(kPositionSlot);
-    glEnableVertexAttribArray(kNormalSlot);
-    glEnableVertexAttribArray(kTexCoordSlot);
-    glEnableVertexAttribArray(kTangentSlot);
-    glEnableVertexAttribArray(kBitangentSlot);
     CheckGLError();
     glUniform3fv(graphics->camera_position_uniform, 1, (float*)&graphics->view_transform.position);
     glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&graphics->projection_matrix);
@@ -332,9 +343,6 @@ void render_graphics(Graphics* graphics)
     glUniform3fv(graphics->light_directions_uniform, graphics->num_lights, (float*)graphics->light_directions);
     glUniform3fv(graphics->light_colors_uniform, graphics->num_lights, (float*)graphics->light_colors);
     glUniform1i(graphics->num_lights_uniform, graphics->num_lights);
-
-    glActiveTexture(GL_TEXTURE0);
-    glUniform1i(graphics->albedo_uniform, 0);
 
     /* Loop through render commands */
     for(ii=0;ii<graphics->num_commands;++ii) {
@@ -371,15 +379,11 @@ void render_graphics(Graphics* graphics)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glUseProgram(graphics->fullscreen_program);
-    glEnableVertexAttribArray(kPositionSlot );
-    glEnableVertexAttribArray(kTexCoordSlot);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, graphics->color_renderbuffer);
-    glUniform1i(graphics->fullscreen_texture_uniform, 0);
     CheckGLError();
 
     _draw_mesh(graphics->quad_mesh);
-
     glBindTexture(GL_TEXTURE_2D, 0);
 
     CheckGLError();
