@@ -41,12 +41,48 @@ struct Game
 
 /* Internal functions
  */
+static void _control_camera(Game* game, float delta_time)
+{
+    if(game->num_points == 1) {
+        Vec2 curr = game->points[0].pos;
+        Vec2 delta = vec2_sub(curr, game->prev_single);
+
+        /* L-R rotation */
+        Quaternion q = quat_from_axis_anglef(0, 1, 0, delta_time*delta.x*0.2f);
+        game->camera.orientation = quat_multiply(game->camera.orientation, q);
+
+        /* U-D rotation */
+        q = quat_from_axis_anglef(1, 0, 0, delta_time*delta.y*0.2f);
+        game->camera.orientation = quat_multiply(q, game->camera.orientation);
+
+        game->prev_single = curr;
+    } else if(game->num_points == 2) {
+        float camera_speed = 0.1f;
+        Vec3 look = quat_get_z_axis(game->camera.orientation);
+        Vec3 right = quat_get_x_axis(game->camera.orientation);
+        Vec3 up = quat_get_y_axis(game->camera.orientation);
+        Vec2 avg = vec2_add(game->points[0].pos, game->points[1].pos);
+        Vec2 delta;
+
+        avg = vec2_mul_scalar(avg, 0.5f);
+        delta = vec2_sub(avg, game->prev_double);
+
+        look = vec3_mul_scalar(look, -delta.y*camera_speed);
+        right = vec3_mul_scalar(right, delta.x*camera_speed);
+
+
+        game->camera.position = vec3_add(game->camera.position, look);
+        game->camera.position = vec3_add(game->camera.position, right);
+
+        game->prev_double = avg;
+    }
+}
 static void _print_touches(Game* game)
 {
     int ii;
     system_log("Num points: %d\n", game->num_points);
     for(ii=0;ii<game->num_points;++ii) {
-        system_log("\t%d: (%d, %d)\n", game->points[ii].index, (int)game->points[ii].x, (int)game->points[ii].y);
+        system_log("\t%d: (%d, %d)\n", game->points[ii].index, (int)game->points[ii].pos.x, (int)game->points[ii].pos.y);
     }
 }
 
@@ -66,7 +102,7 @@ Game* create_game(int width, int height)
     game->camera.position.z = -20.0f;
 
     game->house_mesh = create_mesh(game->graphics, "house_obj.obj");
-    game->house_texture = load_texture(game->graphics, "house_diffuse.png");
+    game->house_texture = load_texture(game->graphics, "house_normal.png");
 
     return game;
 }
@@ -78,58 +114,16 @@ void destroy_game(Game* game)
 }
 void update_game(Game* game)
 {
-    static float rotate = 0.0f;
-    static float view_move = 0.0f;
-    static float view_rotate = 0.0f;
-
+    Transform t = transform_zero;
+    Light light = {
+        { 0, -1, 0 },
+        { 1, 1, 1 },
+    };
     float delta_time = (float)get_delta_time(game->timer);
-    Transform t = {
-        quat_from_euler(rotate, rotate*1.01f, rotate*1.03f),
-        vec3_create(sinf(rotate) + 10.0f, sinf(rotate*1.1f) + 3.0f, 0.0f),
-        1.0f };
-    rotate += delta_time;
 
-    view_move += delta_time*1.1;
-    view_rotate += delta_time*0.5f;
+    _control_camera(game, delta_time);
 
-    { /* Control camera */
-        if(game->num_points == 1) {
-            Vec2 curr = { game->points[0].x, game->points[0].y };
-            Vec2 delta = vec2_sub(curr, game->prev_single);
-
-            /* L-R rotation */
-            Quaternion q = quat_from_axis_anglef(0, 1, 0, delta_time*delta.x*0.2f);
-            game->camera.orientation = quat_multiply(game->camera.orientation, q);
-
-            /* U-D rotation */
-            q = quat_from_axis_anglef(1, 0, 0, delta_time*delta.y*0.2f);
-            game->camera.orientation = quat_multiply(q, game->camera.orientation);
-
-            game->prev_single = curr;
-        } else if(game->num_points == 2) {
-            float camera_speed = 0.1f;
-            Vec3 look = quat_get_z_axis(game->camera.orientation);
-            Vec3 right = quat_get_x_axis(game->camera.orientation);
-            Vec3 up = quat_get_y_axis(game->camera.orientation);
-            Vec2 curr0 = { game->points[0].x, game->points[0].y };
-            Vec2 curr1 = { game->points[1].x, game->points[1].y };
-            Vec2 avg = vec2_add(curr0, curr1);
-            Vec2 delta;
-
-            avg = vec2_mul_scalar(avg, 0.5f);
-            delta = vec2_sub(avg, game->prev_double);
-
-            look = vec3_mul_scalar(look, -delta.y*camera_speed);
-            right = vec3_mul_scalar(right, delta.x*camera_speed);
-
-
-            game->camera.position = vec3_add(game->camera.position, look);
-            game->camera.position = vec3_add(game->camera.position, right);
-
-            game->prev_double = avg;
-        }
-    }
-
+    t.position = vec3_create(10.0f, 3.0f, 0.0f);
     add_render_command(game->graphics, cube_mesh(game->graphics), game->color_tex, t);
 
     t.orientation = quat_from_euler(kPiDiv2, 0.0f, 0.0f);
@@ -142,8 +136,8 @@ void update_game(Game* game)
     t.scale = 0.01f;
     add_render_command(game->graphics, game->house_mesh, game->house_texture, t);
 
-    //set_view_transform(game->graphics, game->camera);
     set_view_transform(game->graphics, game->camera);
+    add_directional_light(game->graphics, light);
 }
 void render_game(Game* game)
 {
@@ -157,12 +151,9 @@ void add_touch_points(Game* game, int num_touch_points, TouchPoint* points)
     }
 
     if(game->num_points == 1) {
-        Vec2 curr = { game->points[0].x, game->points[0].y };
-        game->prev_single = curr;
+        game->prev_single = game->points[0].pos;
     } else if(game->num_points == 2) {
-        Vec2 curr0 = { game->points[0].x, game->points[0].y };
-        Vec2 curr1 = { game->points[1].x, game->points[1].y };
-        Vec2 avg = vec2_add(curr0, curr1);
+        Vec2 avg = vec2_add(game->points[0].pos, game->points[1].pos);
         avg = vec2_mul_scalar(avg, 0.5f);
         game->prev_double = avg;
     }
@@ -198,12 +189,9 @@ void remove_touch_points(Game* game, int num_touch_points, TouchPoint* points)
     //_print_touches(game);
 
     if(game->num_points == 1) {
-        Vec2 curr = { game->points[0].x, game->points[0].y };
-        game->prev_single = curr;
+        game->prev_single = game->points[0].pos;
     } else if(game->num_points == 2) {
-        Vec2 curr0 = { game->points[0].x, game->points[0].y };
-        Vec2 curr1 = { game->points[1].x, game->points[1].y };
-        Vec2 avg = vec2_add(curr0, curr1);
+        Vec2 avg = vec2_add(game->points[0].pos, game->points[1].pos);
         avg = vec2_mul_scalar(avg, 0.5f);
         game->prev_double = avg;
     }

@@ -22,7 +22,7 @@
     "build_systems":
     [
         {
-            "name" : "Project Make",
+            "name" : "Project",
             "cmd": ["make"],
             "file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
             "working_dir": "${project_path}/android",
@@ -41,6 +41,52 @@
                 {
                     "name": "Kill",
                     "cmd": ["make", "kill"]
+                }
+            ]
+        },
+        {
+            "name" : "Emulator",
+            "cmd": ["make", "TARGET_DEVICE=-e"],
+            "file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
+            "working_dir": "${project_path}/android",
+            "selector": "source.makefile",
+
+            "variants":
+            [
+                {
+                    "name": "Clean",
+                    "cmd": ["make", "clean", "TARGET_DEVICE=-e"]
+                },
+                {
+                    "name": "Run",
+                    "cmd": ["make", "run", "TARGET_DEVICE=-e"]
+                },
+                {
+                    "name": "Kill",
+                    "cmd": ["make", "kill", "TARGET_DEVICE=-e"]
+                }
+            ]
+        },
+        {
+            "name" : "Device",
+            "cmd": ["make", "TARGET_DEVICE=-d"],
+            "file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
+            "working_dir": "${project_path}/android",
+            "selector": "source.makefile",
+
+            "variants":
+            [
+                {
+                    "name": "Clean",
+                    "cmd": ["make", "clean", "TARGET_DEVICE=-d"]
+                },
+                {
+                    "name": "Run",
+                    "cmd": ["make", "run", "TARGET_DEVICE=-d"]
+                },
+                {
+                    "name": "Kill",
+                    "cmd": ["make", "kill", "TARGET_DEVICE=-d"]
                 }
             ]
         }

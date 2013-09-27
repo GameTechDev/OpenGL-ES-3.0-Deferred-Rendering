@@ -245,16 +245,5 @@ static const uint16_t kCubeIndices[] =
     20, 21, 22,  20, 22, 23,  /* back */
 };
 
-// static const uint16_t kCubeIndices[] =
-// {
-//      0,  2,  1,   0,  3,  2,  /* front */
-//      4,  6,  5,   4,  7,  6,  /* right */
-//      8, 10,  9,   8, 11, 10,  /* top */
-//     12, 14, 13,  12, 15, 14,  /* left */
-//     16, 18, 17,  16, 19, 18,  /* bottom */
-//     20, 22, 21,  20, 23, 22,  /* back */
-// };
-
-
 
 #endif /* include guard */

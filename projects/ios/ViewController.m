@@ -114,8 +114,8 @@
             tapPoint.y = [self deviceScale] - tapPoint.y;
             tapPoint.x = [self deviceScale] - tapPoint.x;
         }
-        points[num_points].x = (float)tapPoint.x;
-        points[num_points].y = (float)tapPoint.y;
+        points[num_points].pos.x = (float)tapPoint.x;
+        points[num_points].pos.y = (float)tapPoint.y;
         points[num_points].index = (intptr_t)touch;
         num_points++;
     }
@@ -135,8 +135,8 @@
             tapPoint.y = [self deviceScale] - tapPoint.y;
             tapPoint.x = [self deviceScale] - tapPoint.x;
         }
-        points[num_points].x = (float)tapPoint.x;
-        points[num_points].y = (float)tapPoint.y;
+        points[num_points].pos.x = (float)tapPoint.x;
+        points[num_points].pos.y = (float)tapPoint.y;
         points[num_points].index = (intptr_t)touch;
         num_points++;
     }
@@ -155,8 +155,8 @@
             tapPoint.y = [self deviceScale] - tapPoint.y;
             tapPoint.x = [self deviceScale] - tapPoint.x;
         }
-        points[num_points].x = (float)tapPoint.x;
-        points[num_points].y = (float)tapPoint.y;
+        points[num_points].pos.x = (float)tapPoint.x;
+        points[num_points].pos.y = (float)tapPoint.y;
         points[num_points].index = (intptr_t)touch;
         num_points++;
     }

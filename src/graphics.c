@@ -23,6 +23,7 @@
 #define MAX_MESHES 32
 #define MAX_TEXTURES 64
 #define MAX_RENDER_COMMANDS 1024
+#define MAX_LIGHTS 64
 
 /* Types
  */
@@ -45,7 +46,8 @@ struct Graphics
     GLuint  view_uniform;
     GLuint  world_uniform;
     GLuint  diffuse_uniform;
-    GLuint  lightdir_uniform;
+    GLuint  lights_uniform;
+    GLuint  num_lights_uniform;
 
     GLuint  color_renderbuffer;
     GLuint  depth_renderbuffer;
@@ -66,6 +68,8 @@ struct Graphics
 
     RenderCommand   commands[MAX_RENDER_COMMANDS];
     int num_commands;
+    Light   lights[MAX_LIGHTS];
+    int num_lights;
 };
 
 
@@ -180,7 +184,8 @@ static void _setup_programs(Graphics* graphics)
         graphics->view_uniform = glGetUniformLocation(graphics->program, "View");
         graphics->world_uniform = glGetUniformLocation(graphics->program, "World");
         graphics->diffuse_uniform = glGetUniformLocation(graphics->program, "s_Diffuse");
-        graphics->lightdir_uniform = glGetUniformLocation(graphics->program, "LightDir");
+        graphics->lights_uniform = glGetUniformLocation(graphics->program, "Lights[0].direction");
+        graphics->num_lights_uniform = glGetUniformLocation(graphics->program, "NumLights");
         system_log("Created program\n");
     }
 
@@ -274,7 +279,8 @@ void render_graphics(Graphics* graphics)
     GLint defaultFBO;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
 
-    /* Bind framebuffer */
+    /** Bind framebuffer 
+     */
     glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
     glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -288,10 +294,9 @@ void render_graphics(Graphics* graphics)
     CheckGLError();
     glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&graphics->projection_matrix);
     glUniformMatrix4fv(graphics->view_uniform, 1, GL_FALSE, (float*)&view_matrix);
-    {
-        Vec4 light_dir = { -0.0f, -1.0f, 0.0f, 0.0f };
-        glUniform4fv(graphics->lightdir_uniform, 1, (float*)&light_dir);
-    }
+    /* Upload lights */
+    glUniform3fv(graphics->lights_uniform, graphics->num_lights, (float*)graphics->lights);
+    glUniform1i(graphics->num_lights_uniform, graphics->num_lights);
 
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(graphics->diffuse_uniform, 0);
@@ -304,11 +309,14 @@ void render_graphics(Graphics* graphics)
         glBindTexture(GL_TEXTURE_2D, command.diffuse->texture);
         _draw_mesh(command.mesh);
     }
+
     graphics->num_commands = 0;
+    graphics->num_lights = 0;
 
     CheckGLError();
 
-    /* Back to default */
+    /** Back to default 
+     */
     glBindFramebuffer(GL_FRAMEBUFFER, defaultFBO);
 
     glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
@@ -347,6 +355,12 @@ void add_render_command(Graphics* graphics, Mesh* mesh, Texture* diffuse, Transf
     graphics->commands[index].mesh = mesh;
     graphics->commands[index].transform = transform;
     graphics->commands[index].diffuse = diffuse;
+}
+void add_directional_light(Graphics* graphics, Light light)
+{
+    int index = graphics->num_lights++;
+    assert(index < MAX_LIGHTS);
+    graphics->lights[index] = light;
 }
 Texture* load_texture(Graphics* graphics, const char* filename)
 {

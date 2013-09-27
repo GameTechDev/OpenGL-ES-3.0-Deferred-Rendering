@@ -12,6 +12,8 @@ ANDROID_APP_PATH ?= "."
 ANDROID_TARGET_ID ?= "android-18"
 ANDROID_PACKAGE_NAME ?= "com.intel.deferredgles"
 
+TARGET_DEVICE:=
+
 # > make
 #
 # 1) debug
@@ -65,7 +67,7 @@ debug: native
 # Deploy the APK to a device (or emulator)
 # Will trigger "make debug" to build the APK
 install: debug
-	adb -s R32D103YECE install -r bin/DeferredGLES-debug.apk
+	adb $(TARGET_DEVICE) install -r bin/DeferredGLES-debug.apk
 	#ant installd
 
 # > make run
@@ -73,13 +75,13 @@ install: debug
 # Run main activity of the installed APK
 # Assuming the APK is installed...won't trigger a build/install
 run: install
-	adb -s R32D103YECE shell am start -n $(ANDROID_PACKAGE_NAME)/.$(ANDROID_APP_NAME)
+	adb $(TARGET_DEVICE) shell am start -n $(ANDROID_PACKAGE_NAME)/.$(ANDROID_APP_NAME)
 
 # > make kill
 #
 # If the app is running, kills it
 kill:
-	adb shell am force-stop $(ANDROID_PACKAGE_NAME) -s emulator-5554
+	adb $(TARGET_DEVICE) shell am force-stop $(ANDROID_PACKAGE_NAME) -s emulator-5554
 
 GenerateHeaders:
 	javah -d ../src/include -classpath ./bin/classes/ $(ANDROID_PACKAGE_NAME).NativeLib

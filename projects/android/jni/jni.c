@@ -35,8 +35,7 @@ JNIEXPORT void JNICALL Java_com_intel_deferredgles_JNIWrapper_touch_1down(JNIEnv
 {
     TouchPoint point = {
         index,
-        x,
-        y
+        { x, y }
     };
     add_touch_points(_game, 1, &point);
     //system_log("%d down: %f, %f\n", index, x, y);
@@ -48,8 +47,7 @@ JNIEXPORT void JNICALL Java_com_intel_deferredgles_JNIWrapper_touch_1up(JNIEnv *
 {
     TouchPoint point = {
         index,
-        x,
-        y
+        { x, y }
     };
     remove_touch_points(_game, 1, &point);
     //system_log("%d up: %f, %f\n", index, x, y);
@@ -62,8 +60,7 @@ JNIEXPORT void JNICALL Java_com_intel_deferredgles_JNIWrapper_touch_1move(JNIEnv
 {
     TouchPoint point = {
         index,
-        x,
-        y
+        { x, y }
     };
     update_touch_points(_game, 1, &point);
     //system_log("%d move: %f, %f\n", index, x, y);

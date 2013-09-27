@@ -11,6 +11,11 @@
 typedef struct Graphics Graphics;
 typedef struct Mesh Mesh;
 typedef struct Texture Texture;
+typedef struct Light
+{
+    Vec3 direction;
+    Vec3 color;
+} Light;
 
 Graphics* create_graphics(int width, int height);
 void destroy_graphics(Graphics* graphics);
@@ -27,5 +32,6 @@ void destroy_mesh(Mesh* mesh);
 
 void set_view_transform(Graphics* graphics, Transform view);
 void add_render_command(Graphics* graphics, Mesh* mesh, Texture* diffuse, Transform transform);
+void add_directional_light(Graphics* graphics, Light light);
 
 #endif /* include guard */

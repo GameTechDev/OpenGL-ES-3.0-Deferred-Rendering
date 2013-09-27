@@ -6,14 +6,14 @@
 #define __game_h__
 
 #include <stdint.h>
+#include "vec_math.h"
 
 typedef struct Game Game;
 
 typedef struct TouchPoint
 {
-    intptr_t index;
-    float x;
-    float y;
+    intptr_t    index;
+    Vec2        pos;
 } TouchPoint;
 
 Game* create_game(int width, int height);
