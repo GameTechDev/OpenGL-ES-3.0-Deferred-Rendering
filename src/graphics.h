@@ -20,7 +20,6 @@ typedef struct Material
 {
     Texture*    albedo_tex;
     Texture*    normal_tex;
-    Texture*    specular_tex;
     Vec3        specular_color;
     float       specular_power;
     float       specular_coefficient;

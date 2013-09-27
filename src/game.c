@@ -106,7 +106,6 @@ Game* create_game(int width, int height)
      */
     game->house_material.albedo_tex = load_texture(game->graphics, "house_diffuse.png");
     game->house_material.normal_tex = load_texture(game->graphics, "house_normal.png");
-    game->house_material.specular_tex = load_texture(game->graphics, "house_spec.png");
     game->house_material.specular_color = vec3_create(1.0f, 1.0f, 1.0f);
     game->house_material.specular_power = 1.5f;
     game->house_material.specular_coefficient = 0.06f;
@@ -115,7 +114,6 @@ Game* create_game(int width, int height)
      */
     game->grass_material.albedo_tex = load_texture(game->graphics, "grass.jpg");
     game->grass_material.normal_tex = NULL;
-    game->grass_material.specular_tex = NULL;
     game->grass_material.specular_color = vec3_create(0.0f, 0.0f, 0.0f);
     game->grass_material.specular_power = 0.0f;
     game->grass_material.specular_coefficient = 0.0f;
@@ -124,7 +122,6 @@ Game* create_game(int width, int height)
      */
     game->color_material.albedo_tex = load_texture(game->graphics, "texture.png");
     game->color_material.normal_tex = NULL;
-    game->color_material.specular_tex = NULL;
     game->color_material.specular_color = vec3_create(1.0f, 1.0f, 1.0f);
     game->color_material.specular_power = 32.0f;
     game->color_material.specular_coefficient = 1.0f;
@@ -134,7 +131,6 @@ Game* create_game(int width, int height)
      */
     game->terrain_material.albedo_tex = load_texture(game->graphics, "land_diffuse.png");
     game->terrain_material.normal_tex = load_texture(game->graphics, "land_normal.png");
-    game->terrain_material.specular_tex = NULL;
     game->terrain_material.specular_color = vec3_create(0.0f, 0.0f, 0.0f);
     game->terrain_material.specular_power = 0.0f;
     game->terrain_material.specular_coefficient = 0.0f;
