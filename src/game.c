@@ -19,6 +19,7 @@ struct Game
     Graphics*   graphics;
 
     Mesh*      house_mesh;
+    Mesh*       terrain_mesh;
     Transform   camera;
 
     TouchPoint  points[16];
@@ -30,6 +31,7 @@ struct Game
     Material    house_material;
     Material    grass_material;
     Material    color_material;
+    Material    terrain_material;
 };
 
 /* Constants
@@ -94,10 +96,12 @@ Game* create_game(int width, int height)
     game->timer = create_timer();
 
     game->camera = transform_zero;
-    game->camera.position.y = 10.0f;
-    game->camera.position.z = -20.0f;
+    game->camera.position.y = 20;
+    game->camera.position.z = -40.0f;
 
     game->house_mesh = create_mesh(game->graphics, "house_obj.obj");
+    game->terrain_mesh = create_mesh(game->graphics, "terrain.obj");
+
     /** Create house material
      */
     game->house_material.albedo_tex = load_texture(game->graphics, "house_diffuse.png");
@@ -125,6 +129,17 @@ Game* create_game(int width, int height)
     game->color_material.specular_power = 32.0f;
     game->color_material.specular_coefficient = 1.0f;
 
+
+    /** terrain material
+     */
+    game->terrain_material.albedo_tex = load_texture(game->graphics, "grass.jpg");
+    game->terrain_material.normal_tex = load_texture(game->graphics, "default_norm.png");
+    game->terrain_material.specular_tex = NULL;
+    game->terrain_material.specular_color = vec3_create(0.0f, 0.0f, 0.0f);
+    game->terrain_material.specular_power = 0.0f;
+    game->terrain_material.specular_coefficient = 0.0f;
+
+
     return game;
 }
 void destroy_game(Game* game)
@@ -145,17 +160,15 @@ void update_game(Game* game)
     _control_camera(game, delta_time);
 
     t.position = vec3_create(10.0f, 3.0f, 0.0f);
-    add_render_command(game->graphics, cube_mesh(game->graphics), &game->color_material, t);
+    //add_render_command(game->graphics, cube_mesh(game->graphics), &game->color_material, t);
 
-    t.orientation = quat_from_euler(kPiDiv2, 0.0f, 0.0f);
-    t.position = vec3_create(0.0f, 0.0f, 0.0f);
-    t.scale = 50.0f;
-
-    add_render_command(game->graphics, quad_mesh(game->graphics), &game->grass_material, t);
+    t = transform_zero;
+    t.orientation = quat_from_euler(kPi, 0, 0);
+    add_render_command(game->graphics, game->terrain_mesh, &game->terrain_material, t);
 
     t = transform_zero;
     t.scale = 0.01f;
-    add_render_command(game->graphics, game->house_mesh, &game->house_material, t);
+    //add_render_command(game->graphics, game->house_mesh, &game->house_material, t);
 
     set_view_transform(game->graphics, game->camera);
     add_directional_light(game->graphics, light);

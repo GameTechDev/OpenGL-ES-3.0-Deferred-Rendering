@@ -35,7 +35,7 @@ void main(void) {
     normal = normalize(TBN*normal);
 
     vec3 final_color = vec3(0);
-    float ambient_power = 0.15;
+    float ambient_power = 1.0;
     float diffuse_power = 1.0-ambient_power;
 
     /** Perform lighting
