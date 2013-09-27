@@ -1,7 +1,7 @@
-precision lowp float;
-uniform lowp sampler2D s_Diffuse;
+precision highp float;
+uniform sampler2D s_Diffuse;
 
-varying mediump vec2 v_TexCoord;
+varying vec2 v_TexCoord;
 
 void main()
 {

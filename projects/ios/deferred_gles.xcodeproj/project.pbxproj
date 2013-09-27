@@ -27,6 +27,7 @@
 		27F3529917EBC3F600FF4D22 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529817EBC3F600FF4D22 /* UIKit.framework */; };
 		27F3529B17EBC3F600FF4D22 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529A17EBC3F600FF4D22 /* GLKit.framework */; };
 		27F3529D17EBC3F600FF4D22 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529C17EBC3F600FF4D22 /* OpenGLES.framework */; };
+		27F9196617F5EC9D008D79D7 /* todo.txt in Resources */ = {isa = PBXBuildFile; fileRef = 27F9196517F5EC9D008D79D7 /* todo.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +65,7 @@
 		27F3529A17EBC3F600FF4D22 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		27F3529C17EBC3F600FF4D22 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		27F352BE17EBC3F600FF4D22 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		27F9196517F5EC9D008D79D7 /* todo.txt */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 4; name = todo.txt; path = ../../todo.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +144,7 @@
 		27F3528817EBC3F600FF4D22 = {
 			isa = PBXGroup;
 			children = (
+				27F9196517F5EC9D008D79D7 /* todo.txt */,
 				27AB288717F2933E0011651F /* assets */,
 				2715E74517ECB2A700442391 /* src */,
 				2715E72817ECADFA00442391 /* project */,
@@ -232,6 +235,7 @@
 				2715E73E17ECADFA00442391 /* Main_iPad.storyboard in Resources */,
 				2715E73F17ECADFA00442391 /* Main_iPhone.storyboard in Resources */,
 				2715E73C17ECADFA00442391 /* InfoPlist.strings in Resources */,
+				27F9196617F5EC9D008D79D7 /* todo.txt in Resources */,
 				2715E73B17ECADFA00442391 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

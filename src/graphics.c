@@ -47,7 +47,6 @@ struct Graphics
     GLuint  world_uniform;
     GLuint  albedo_uniform;
     GLuint  normal_uniform;
-    GLuint  specular_uniform;
     GLuint  light_directions_uniform;
     GLuint  light_colors_uniform;
     GLuint  num_lights_uniform;
@@ -158,13 +157,19 @@ static GLuint _create_program(const char* vertex_shader_file, const char* fragme
 
     /* Create program */
     program = glCreateProgram();
+    CheckGLError();
     glAttachShader(program, vertex_shader);
+    CheckGLError();
     glAttachShader(program, fragment_shader);
+    CheckGLError();
     for(ii=0;ii<num_attributes;++ii) {
         glBindAttribLocation(program, attribute_slots[ii], kAttributeSlotNames[attribute_slots[ii]]);
     }
+    CheckGLError();
     glLinkProgram(program);
+    CheckGLError();
     glGetProgramiv(program, GL_LINK_STATUS, &link_status);
+    CheckGLError();
     if(link_status == GL_FALSE) {
         char message[1024];
         glGetProgramInfoLog(program, sizeof(message), 0, message);
@@ -185,9 +190,11 @@ static void _setup_programs(Graphics* graphics)
         AttributeSlot slots[] = {
             kPositionSlot,
             kNormalSlot,
+            kTangentSlot,
+            kBitangentSlot,
             kTexCoordSlot
         };
-        graphics->program = _create_program("SimpleVertex.glsl", "SimpleFragment.glsl", slots, 3);
+        graphics->program = _create_program("SimpleVertex.glsl", "SimpleFragment.glsl", slots, sizeof(slots)/sizeof(slots[0]));
 
         glUseProgram(graphics->program);
 
@@ -197,7 +204,6 @@ static void _setup_programs(Graphics* graphics)
 
         graphics->albedo_uniform = glGetUniformLocation(graphics->program, "s_Albedo");
         graphics->normal_uniform = glGetUniformLocation(graphics->program, "s_Normal");
-        graphics->specular_uniform = glGetUniformLocation(graphics->program, "s_Specular");
 
         graphics->light_directions_uniform = glGetUniformLocation(graphics->program, "u_LightDirections");
         graphics->light_colors_uniform = glGetUniformLocation(graphics->program, "u_LightColors");
@@ -211,13 +217,13 @@ static void _setup_programs(Graphics* graphics)
 
         glUniform1i(graphics->albedo_uniform, 0);
         glUniform1i(graphics->normal_uniform, 1);
-        glUniform1i(graphics->specular_uniform, 2);
 
         glEnableVertexAttribArray(kPositionSlot);
         glEnableVertexAttribArray(kNormalSlot);
         glEnableVertexAttribArray(kTexCoordSlot);
         glEnableVertexAttribArray(kTangentSlot);
         glEnableVertexAttribArray(kBitangentSlot);
+    CheckGLError();
 
         glUseProgram(0);
         system_log("Created program\n");
@@ -270,16 +276,22 @@ Graphics* create_graphics(int width, int height)
 
     /* Perform GL initialization */
     glEnable(GL_DEPTH_TEST);
+    CheckGLError();
     //glEnable(GL_CULL_FACE);
     glFrontFace(GL_CW);
+    CheckGLError();
     glViewport(0, 0, width, height);
+    CheckGLError();
     glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
+    CheckGLError();
     glClearDepthf(1.0f);
+    CheckGLError();
     system_log("OpenGL version:\t%s\n", glGetString(GL_VERSION));
     system_log("OpenGL renderer:\t%s\n", glGetString(GL_RENDERER));
 
     /* Perform other initialization */
     _setup_framebuffer(graphics);
+    CheckGLError();
     _setup_programs(graphics);
 
     graphics->projection_matrix = mat4_perspective_fov(kPiDiv2,
@@ -359,9 +371,6 @@ void render_graphics(Graphics* graphics)
         glActiveTexture(GL_TEXTURE1);
         if(command.material->normal_tex)
             glBindTexture(GL_TEXTURE_2D, command.material->normal_tex->texture);
-        glActiveTexture(GL_TEXTURE2);
-        if(command.material->specular_tex)
-            glBindTexture(GL_TEXTURE_2D, command.material->specular_tex->texture);
 
         _draw_mesh(command.mesh);
     }

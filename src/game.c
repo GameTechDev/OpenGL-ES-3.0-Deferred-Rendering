@@ -100,7 +100,7 @@ Game* create_game(int width, int height)
     game->camera.position.z = -40.0f;
 
     game->house_mesh = create_mesh(game->graphics, "house_obj.obj");
-    game->terrain_mesh = create_mesh(game->graphics, "terrain.obj");
+    game->terrain_mesh = create_mesh(game->graphics, "lightHouse.obj");
 
     /** Create house material
      */
@@ -132,8 +132,8 @@ Game* create_game(int width, int height)
 
     /** terrain material
      */
-    game->terrain_material.albedo_tex = load_texture(game->graphics, "grass.jpg");
-    game->terrain_material.normal_tex = load_texture(game->graphics, "default_norm.png");
+    game->terrain_material.albedo_tex = load_texture(game->graphics, "land_diffuse.png");
+    game->terrain_material.normal_tex = load_texture(game->graphics, "land_normal.png");
     game->terrain_material.specular_tex = NULL;
     game->terrain_material.specular_color = vec3_create(0.0f, 0.0f, 0.0f);
     game->terrain_material.specular_power = 0.0f;
@@ -163,7 +163,6 @@ void update_game(Game* game)
     //add_render_command(game->graphics, cube_mesh(game->graphics), &game->color_material, t);
 
     t = transform_zero;
-    t.orientation = quat_from_euler(kPi, 0, 0);
     add_render_command(game->graphics, game->terrain_mesh, &game->terrain_material, t);
 
     t = transform_zero;

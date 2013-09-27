@@ -51,13 +51,18 @@ GLuint gl_load_shader(const char* filename, GLenum type)
     shader_size = (GLint)data_size;
 
     shader = glCreateShader(type);
+    CheckGLError();
     glShaderSource(shader, 1, (const char**)&data, &shader_size);
+    CheckGLError();
     glCompileShader(shader);
+    CheckGLError();
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status);
+    CheckGLError();
     if(compile_status == GL_FALSE) {
         char message[1024] = {0};
         glGetShaderInfoLog(shader, sizeof(message), 0, message);
-        system_log(message);
+        system_log("Error compiling %s: %s", filename, message);
+        assert(compile_status != GL_FALSE);
         return 0;
     }
 

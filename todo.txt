@@ -1,0 +1,7 @@
+Screen resizing (orientation)
+MTL loading
+Remove specular map support
+Only 1 directional light
+Directional light shadow mapping
+Load multiple meshes per OBJ
+Clean up programmer art (cube model, color texture, etc)

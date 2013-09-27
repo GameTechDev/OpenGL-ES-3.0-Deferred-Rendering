@@ -1,11 +1,10 @@
 precision mediump float;
 uniform lowp sampler2D s_Albedo;
 uniform lowp sampler2D s_Normal;
-uniform lowp sampler2D s_Specular;
 
-uniform lowp vec3    u_LightDirections[64];
-uniform lowp vec3    u_LightColors[64];
-uniform int     u_NumLights;
+uniform lowp vec3   u_LightDirections[64];
+uniform lowp vec3   u_LightColors[64];
+uniform int         u_NumLights;
 
 uniform vec3    u_CameraPosition;
 
@@ -23,7 +22,7 @@ void main(void) {
      */
     vec3 albedo = texture2D(s_Albedo, v_TexCoord).rgb;
     vec3 normal = normalize(texture2D(s_Normal, v_TexCoord).rgb*2.0 - 1.0);
-    vec3 specular_color = (texture2D(s_Normal, v_TexCoord).rgb + u_SpecularColor) * u_SpecularCoefficient;
+    vec3 specular_color = u_SpecularColor * u_SpecularCoefficient;
 
     vec3 dir_to_cam = normalize(u_CameraPosition - v_WorldPos);
 
