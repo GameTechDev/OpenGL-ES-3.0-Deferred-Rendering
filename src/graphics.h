@@ -21,6 +21,9 @@ typedef struct Material
     Texture*    albedo_tex;
     Texture*    normal_tex;
     Texture*    specular_tex;
+    Vec3        specular_color;
+    float       specular_power;
+    float       specular_coefficient;
 } Material;
 
 Graphics* create_graphics(int width, int height);
@@ -37,7 +40,7 @@ Mesh* create_mesh(Graphics* graphics, const char* filename);
 void destroy_mesh(Mesh* mesh);
 
 void set_view_transform(Graphics* graphics, Transform view);
-void add_render_command(Graphics* graphics, Mesh* mesh, Texture* diffuse, Transform transform);
+void add_render_command(Graphics* graphics, Mesh* mesh, Material* material, Transform transform);
 void add_directional_light(Graphics* graphics, Light light);
 
 #endif /* include guard */

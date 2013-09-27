@@ -31,7 +31,7 @@ typedef struct RenderCommand
 {
     Transform   transform;
     Mesh*       mesh;
-    Texture*    albedo;
+    Material*   material;
 } RenderCommand;
 
 struct Texture
@@ -51,6 +51,10 @@ struct Graphics
     GLuint  light_directions_uniform;
     GLuint  light_colors_uniform;
     GLuint  num_lights_uniform;
+    GLuint  camera_position_uniform;
+    GLuint  specular_color_uniform;
+    GLuint  specular_power_uniform;
+    GLuint  specular_coefficient_uniform;
 
     GLuint  color_renderbuffer;
     GLuint  depth_renderbuffer;
@@ -185,6 +189,8 @@ static void _setup_programs(Graphics* graphics)
         };
         graphics->program = _create_program("SimpleVertex.glsl", "SimpleFragment.glsl", slots, 3);
 
+        glUseProgram(graphics->program);
+
         graphics->projection_uniform = glGetUniformLocation(graphics->program, "u_Projection");
         graphics->view_uniform = glGetUniformLocation(graphics->program, "u_View");
         graphics->world_uniform = glGetUniformLocation(graphics->program, "u_World");
@@ -196,6 +202,16 @@ static void _setup_programs(Graphics* graphics)
         graphics->light_directions_uniform = glGetUniformLocation(graphics->program, "u_LightDirections");
         graphics->light_colors_uniform = glGetUniformLocation(graphics->program, "u_LightColors");
         graphics->num_lights_uniform = glGetUniformLocation(graphics->program, "u_NumLights");
+
+        graphics->camera_position_uniform = glGetUniformLocation(graphics->program, "u_CameraPosition");
+
+        graphics->specular_color_uniform = glGetUniformLocation(graphics->program, "u_SpecularColor");
+        graphics->specular_power_uniform = glGetUniformLocation(graphics->program, "u_SpecularPower");
+        graphics->specular_coefficient_uniform = glGetUniformLocation(graphics->program, "u_SpecularCoefficient");
+
+        glUniform1i(graphics->albedo_uniform, 0);
+        glUniform1i(graphics->normal_uniform, 1);
+        glUniform1i(graphics->specular_uniform, 2);
         system_log("Created program\n");
     }
 
@@ -302,6 +318,7 @@ void render_graphics(Graphics* graphics)
     glEnableVertexAttribArray(kNormalSlot);
     glEnableVertexAttribArray(kTexCoordSlot);
     CheckGLError();
+    glUniform3fv(graphics->camera_position_uniform, 1, (float*)&graphics->view_transform.position);
     glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&graphics->projection_matrix);
     glUniformMatrix4fv(graphics->view_uniform, 1, GL_FALSE, (float*)&view_matrix);
     /* Upload lights */
@@ -317,7 +334,20 @@ void render_graphics(Graphics* graphics)
         RenderCommand command = graphics->commands[ii];
         Mat4 model = transform_get_matrix(command.transform);
         glUniformMatrix4fv(graphics->world_uniform, 1, GL_FALSE, (float*)&model);
-        glBindTexture(GL_TEXTURE_2D, command.albedo->texture);
+        glUniform3fv(graphics->specular_color_uniform, 1, (float*)&command.material->specular_color);
+        glUniform1f(graphics->specular_power_uniform, command.material->specular_power);
+        glUniform1f(graphics->specular_coefficient_uniform, command.material->specular_coefficient);
+
+        glActiveTexture(GL_TEXTURE0);
+        if(command.material->albedo_tex)
+            glBindTexture(GL_TEXTURE_2D, command.material->albedo_tex->texture);
+        glActiveTexture(GL_TEXTURE1);
+        if(command.material->normal_tex)
+            glBindTexture(GL_TEXTURE_2D, command.material->normal_tex->texture);
+        glActiveTexture(GL_TEXTURE2);
+        if(command.material->specular_tex)
+            glBindTexture(GL_TEXTURE_2D, command.material->specular_tex->texture);
+
         _draw_mesh(command.mesh);
     }
 
@@ -359,13 +389,13 @@ Mesh* quad_mesh(Graphics* graphics)
 {
     return graphics->quad_mesh;
 }
-void add_render_command(Graphics* graphics, Mesh* mesh, Texture* albedo, Transform transform)
+void add_render_command(Graphics* graphics, Mesh* mesh, Material* material, Transform transform)
 {
     int index = graphics->num_commands++;
     assert(index < MAX_RENDER_COMMANDS);
     graphics->commands[index].mesh = mesh;
     graphics->commands[index].transform = transform;
-    graphics->commands[index].albedo = albedo;
+    graphics->commands[index].material = material;
 }
 void add_directional_light(Graphics* graphics, Light light)
 {
