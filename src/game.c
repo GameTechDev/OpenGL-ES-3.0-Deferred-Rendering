@@ -102,7 +102,7 @@ Game* create_game(int width, int height)
     game->camera.position.z = -20.0f;
 
     game->house_mesh = create_mesh(game->graphics, "house_obj.obj");
-    game->house_texture = load_texture(game->graphics, "house_normal.png");
+    game->house_texture = load_texture(game->graphics, "house_diffuse.png");
 
     return game;
 }

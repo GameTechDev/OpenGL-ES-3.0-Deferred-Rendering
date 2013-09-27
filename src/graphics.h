@@ -16,6 +16,12 @@ typedef struct Light
     Vec3 direction;
     Vec3 color;
 } Light;
+typedef struct Material
+{
+    Texture*    albedo_tex;
+    Texture*    normal_tex;
+    Texture*    specular_tex;
+} Material;
 
 Graphics* create_graphics(int width, int height);
 void destroy_graphics(Graphics* graphics);

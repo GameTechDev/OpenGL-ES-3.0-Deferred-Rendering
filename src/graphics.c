@@ -31,7 +31,7 @@ typedef struct RenderCommand
 {
     Transform   transform;
     Mesh*       mesh;
-    Texture*    diffuse;
+    Texture*    albedo;
 } RenderCommand;
 
 struct Texture
@@ -45,7 +45,9 @@ struct Graphics
     GLuint  projection_uniform;
     GLuint  view_uniform;
     GLuint  world_uniform;
-    GLuint  diffuse_uniform;
+    GLuint  albedo_uniform;
+    GLuint  normal_uniform;
+    GLuint  specular_uniform;
     GLuint  light_directions_uniform;
     GLuint  light_colors_uniform;
     GLuint  num_lights_uniform;
@@ -183,13 +185,17 @@ static void _setup_programs(Graphics* graphics)
         };
         graphics->program = _create_program("SimpleVertex.glsl", "SimpleFragment.glsl", slots, 3);
 
-        graphics->projection_uniform = glGetUniformLocation(graphics->program, "Projection");
-        graphics->view_uniform = glGetUniformLocation(graphics->program, "View");
-        graphics->world_uniform = glGetUniformLocation(graphics->program, "World");
-        graphics->diffuse_uniform = glGetUniformLocation(graphics->program, "s_Diffuse");
-        graphics->light_directions_uniform = glGetUniformLocation(graphics->program, "LightDirections");
-        graphics->light_colors_uniform = glGetUniformLocation(graphics->program, "LightColors");
-        graphics->num_lights_uniform = glGetUniformLocation(graphics->program, "NumLights");
+        graphics->projection_uniform = glGetUniformLocation(graphics->program, "u_Projection");
+        graphics->view_uniform = glGetUniformLocation(graphics->program, "u_View");
+        graphics->world_uniform = glGetUniformLocation(graphics->program, "u_World");
+
+        graphics->albedo_uniform = glGetUniformLocation(graphics->program, "s_Albedo");
+        graphics->normal_uniform = glGetUniformLocation(graphics->program, "s_Normal");
+        graphics->specular_uniform = glGetUniformLocation(graphics->program, "s_Specular");
+
+        graphics->light_directions_uniform = glGetUniformLocation(graphics->program, "u_LightDirections");
+        graphics->light_colors_uniform = glGetUniformLocation(graphics->program, "u_LightColors");
+        graphics->num_lights_uniform = glGetUniformLocation(graphics->program, "u_NumLights");
         system_log("Created program\n");
     }
 
@@ -283,7 +289,7 @@ void render_graphics(Graphics* graphics)
     GLint defaultFBO;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
 
-    /** Bind framebuffer 
+    /** Bind framebuffer
      */
     glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
     glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
@@ -304,14 +310,14 @@ void render_graphics(Graphics* graphics)
     glUniform1i(graphics->num_lights_uniform, graphics->num_lights);
 
     glActiveTexture(GL_TEXTURE0);
-    glUniform1i(graphics->diffuse_uniform, 0);
+    glUniform1i(graphics->albedo_uniform, 0);
 
     /* Loop through render commands */
     for(ii=0;ii<graphics->num_commands;++ii) {
         RenderCommand command = graphics->commands[ii];
         Mat4 model = transform_get_matrix(command.transform);
         glUniformMatrix4fv(graphics->world_uniform, 1, GL_FALSE, (float*)&model);
-        glBindTexture(GL_TEXTURE_2D, command.diffuse->texture);
+        glBindTexture(GL_TEXTURE_2D, command.albedo->texture);
         _draw_mesh(command.mesh);
     }
 
@@ -320,7 +326,7 @@ void render_graphics(Graphics* graphics)
 
     CheckGLError();
 
-    /** Back to default 
+    /** Back to default
      */
     glBindFramebuffer(GL_FRAMEBUFFER, defaultFBO);
 
@@ -353,13 +359,13 @@ Mesh* quad_mesh(Graphics* graphics)
 {
     return graphics->quad_mesh;
 }
-void add_render_command(Graphics* graphics, Mesh* mesh, Texture* diffuse, Transform transform)
+void add_render_command(Graphics* graphics, Mesh* mesh, Texture* albedo, Transform transform)
 {
     int index = graphics->num_commands++;
     assert(index < MAX_RENDER_COMMANDS);
     graphics->commands[index].mesh = mesh;
     graphics->commands[index].transform = transform;
-    graphics->commands[index].diffuse = diffuse;
+    graphics->commands[index].albedo = albedo;
 }
 void add_directional_light(Graphics* graphics, Light light)
 {
