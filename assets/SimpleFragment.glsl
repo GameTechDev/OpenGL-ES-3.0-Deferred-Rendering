@@ -2,8 +2,9 @@ precision mediump float;
 uniform lowp sampler2D s_Albedo;
 uniform lowp sampler2D s_Normal;
 
-uniform lowp vec3   u_LightDirections[64];
+uniform lowp vec3   u_LightPositions[64];
 uniform lowp vec3   u_LightColors[64];
+uniform lowp float  u_LightSizes[64];
 uniform int         u_NumLights;
 
 uniform lowp vec3   u_SunDirection;
@@ -37,7 +38,7 @@ void main(void) {
     normal = normalize(TBN*normal);
 
     vec3 final_color = vec3(0);
-    float ambient_power = 1.0;
+    float ambient_power = 0.1;
     float diffuse_power = 1.0-ambient_power;
 
     /** Perform lighting
@@ -58,19 +59,22 @@ void main(void) {
 
     for(int ii=0; ii < u_NumLights; ++ii) {
         vec3 light_color = u_LightColors[ii];
-        vec3 light_dir = normalize(-u_LightDirections[ii]);
+        vec3 light_dir = u_LightPositions[ii] - v_WorldPos;
+        float dist = length(light_dir);
+        float size = u_LightSizes[ii];
+        float attenuation = 1.0 - pow( clamp(dist/size, 0.0, 1.0), 2.0);
+        light_dir = normalize(light_dir);
+
         /* Calculate diffuse lighting */
         float n_dot_l = clamp(dot(light_dir, normal), 0.0, 1.0);
         /* Calculate specular lighting */
         vec3 reflection = reflect(dir_to_cam, normal);
         float r_dot_l = clamp(dot(reflection, -light_dir), 0.0, 1.0);
         /* Calculate final colors */
-        vec3 diffuse = albedo * light_color * diffuse_power * n_dot_l;
+        vec3 diffuse = albedo * light_color * n_dot_l;
         vec3 specular = specular_color * vec3(min(1.0, pow(r_dot_l, u_SpecularPower))) * light_color;
-        vec3 ambient = albedo * light_color * ambient_power;
 
-        final_color += diffuse + ambient + specular;
-    }
+        final_color += attenuation * (diffuse + specular);    }
 
     gl_FragColor = vec4(final_color,1.0);
 }

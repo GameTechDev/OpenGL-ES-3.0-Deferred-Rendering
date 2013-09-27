@@ -30,6 +30,8 @@ struct Game
     Material    grass_material;
     Material    color_material;
     Material    terrain_material;
+
+    Light       point_lights[8];
 };
 
 /* Constants
@@ -125,7 +127,6 @@ Game* create_game(int width, int height)
     game->terrain_material.specular_power = 0.0f;
     game->terrain_material.specular_coefficient = 0.0f;
 
-
     return game;
 }
 void destroy_game(Game* game)
@@ -140,8 +141,10 @@ void resize_game(Game* game, int width, int height)
 }
 void update_game(Game* game)
 {
+    static float degrees = 0.0f;
     Transform t = transform_zero;
     float delta_time = (float)get_delta_time(game->timer);
+    int ii;
 
     _control_camera(game, delta_time);
 
@@ -149,9 +152,22 @@ void update_game(Game* game)
     t = transform_zero;
     add_render_command(game->graphics, game->terrain_mesh, &game->terrain_material, t);
 
+    /* Render lights */
+    degrees += delta_time*(k2Pi/8);
+    for(ii=0;ii<8;++ii) {
+        float angle = ii*(k2Pi/8)+degrees;
+        Quaternion q = quat_from_euler(0, angle, 0);
+        Vec3 direction = quat_get_z_axis(q);
+        game->point_lights[ii].position = vec3_mul_scalar(direction, 7.0f);
+        game->point_lights[ii].position.y = 2.0f;
+        game->point_lights[ii].color = vec3_create(1.0f, 0.0f, 0.0f);
+        game->point_lights[ii].size = 4.0f;
+
+        add_point_light(game->graphics, game->point_lights[ii]);
+    }
 
     set_view_transform(game->graphics, game->camera);
-    set_directional_light(game->graphics, vec3_create(0, -1, 0), vec3_create(1, 1, 1));
+    set_sun_light(game->graphics, vec3_create(0, -1, 0), vec3_create(0, 0, 0));
 }
 void render_game(Game* game)
 {
@@ -171,7 +187,6 @@ void add_touch_points(Game* game, int num_touch_points, TouchPoint* points)
         avg = vec2_mul_scalar(avg, 0.5f);
         game->prev_double = avg;
     }
-    //_print_touches(game);
 }
 void update_touch_points(Game* game, int num_touch_points, TouchPoint* points)
 {
@@ -184,7 +199,6 @@ void update_touch_points(Game* game, int num_touch_points, TouchPoint* points)
             }
         }
     }
-    //_print_touches(game);
 }
 void remove_touch_points(Game* game, int num_touch_points, TouchPoint* points)
 {
@@ -199,8 +213,6 @@ void remove_touch_points(Game* game, int num_touch_points, TouchPoint* points)
             }
         }
     }
-
-    //_print_touches(game);
 
     if(game->num_points == 1) {
         game->prev_single = game->points[0].pos;

@@ -47,8 +47,9 @@ struct Graphics
     GLuint  world_uniform;
     GLuint  albedo_uniform;
     GLuint  normal_uniform;
-    GLuint  light_directions_uniform;
+    GLuint  light_positions_uniform;
     GLuint  light_colors_uniform;
+    GLuint  light_sizes_uniform;
     GLuint  num_lights_uniform;
     GLuint  camera_position_uniform;
     GLuint  specular_color_uniform;
@@ -80,8 +81,9 @@ struct Graphics
     Vec3    sun_direction;
     Vec3    sun_color;
 
-    Vec3    light_directions[MAX_LIGHTS];
+    Vec3    light_positions[MAX_LIGHTS];
     Vec3    light_colors[MAX_LIGHTS];
+    float   light_sizes[MAX_LIGHTS];
     int     num_lights;
 };
 
@@ -279,8 +281,9 @@ static void _setup_programs(Graphics* graphics)
         graphics->albedo_uniform = glGetUniformLocation(graphics->program, "s_Albedo");
         graphics->normal_uniform = glGetUniformLocation(graphics->program, "s_Normal");
 
-        graphics->light_directions_uniform = glGetUniformLocation(graphics->program, "u_LightDirections");
+        graphics->light_positions_uniform = glGetUniformLocation(graphics->program, "u_LightPositions");
         graphics->light_colors_uniform = glGetUniformLocation(graphics->program, "u_LightColors");
+        graphics->light_sizes_uniform = glGetUniformLocation(graphics->program, "u_LightSizes");
         graphics->num_lights_uniform = glGetUniformLocation(graphics->program, "u_NumLights");
 
         graphics->camera_position_uniform = glGetUniformLocation(graphics->program, "u_CameraPosition");
@@ -440,28 +443,41 @@ void render_graphics(Graphics* graphics)
     glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&graphics->projection_matrix);
     glUniformMatrix4fv(graphics->view_uniform, 1, GL_FALSE, (float*)&view_matrix);
     /* Upload lights */
-    glUniform3fv(graphics->light_directions_uniform, graphics->num_lights, (float*)graphics->light_directions);
+    glUniform3fv(graphics->light_positions_uniform, graphics->num_lights, (float*)graphics->light_positions);
+    CheckGLError();
     glUniform3fv(graphics->light_colors_uniform, graphics->num_lights, (float*)graphics->light_colors);
+    CheckGLError();
+    glUniform1fv(graphics->light_sizes_uniform, graphics->num_lights, (float*)graphics->light_sizes);
+    CheckGLError();
     glUniform1i(graphics->num_lights_uniform, graphics->num_lights);
+    CheckGLError();
 
     glUniform3fv(graphics->sun_direction_uniform, 1, (float*)&graphics->sun_direction);
+    CheckGLError();
     glUniform3fv(graphics->sun_color_uniform, 1, (float*)&graphics->sun_color);
+    CheckGLError();
 
     /* Loop through render commands */
     for(ii=0;ii<graphics->num_commands;++ii) {
         RenderCommand command = graphics->commands[ii];
         Mat4 model = transform_get_matrix(command.transform);
         glUniformMatrix4fv(graphics->world_uniform, 1, GL_FALSE, (float*)&model);
+    CheckGLError();
         glUniform3fv(graphics->specular_color_uniform, 1, (float*)&command.material->specular_color);
+    CheckGLError();
         glUniform1f(graphics->specular_power_uniform, command.material->specular_power);
+    CheckGLError();
         glUniform1f(graphics->specular_coefficient_uniform, command.material->specular_coefficient);
+    CheckGLError();
 
         glActiveTexture(GL_TEXTURE0);
         if(command.material->albedo_tex)
             glBindTexture(GL_TEXTURE_2D, command.material->albedo_tex->texture);
+    CheckGLError();
         glActiveTexture(GL_TEXTURE1);
         if(command.material->normal_tex)
             glBindTexture(GL_TEXTURE_2D, command.material->normal_tex->texture);
+    CheckGLError();
 
         _draw_mesh(command.mesh);
     }
@@ -508,12 +524,18 @@ void add_render_command(Graphics* graphics, Mesh* mesh, Material* material, Tran
     graphics->commands[index].transform = transform;
     graphics->commands[index].material = material;
 }
-void set_directional_light(Graphics* graphics, Vec3 direction, Vec3 color)
+void set_sun_light(Graphics* graphics, Vec3 direction, Vec3 color)
+{
+    graphics->sun_direction = direction;
+    graphics->sun_color = color;
+}
+void add_point_light(Graphics* graphics, Light light)
 {
     int index = graphics->num_lights++;
     assert(index < MAX_LIGHTS);
-    graphics->sun_direction = direction;
-    graphics->sun_color = color;
+    graphics->light_positions[index] = light.position;
+    graphics->light_colors[index] = light.color;
+    graphics->light_sizes[index] = light.size;
 }
 Texture* load_texture(Graphics* graphics, const char* filename)
 {
