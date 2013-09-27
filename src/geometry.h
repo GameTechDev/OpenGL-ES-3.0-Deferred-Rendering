@@ -125,6 +125,11 @@ static const VertexDescription kVertexDescriptions[kNUM_VERTEX_TYPES][16] =
 
 /** Functions
  */
+PosNormTanBitanTexVertex* calculate_tangets(const PosNormTexVertex* vertices,
+                                            int num_vertices,
+                                            const void* indices,
+                                            size_t index_size,
+                                            int num_indices);
 Mesh* gl_create_mesh(const void* vertex_data, size_t vertex_data_size,
                      const void* index_data, size_t index_data_size,
                      int index_count, int vertex_size, VertexType type);

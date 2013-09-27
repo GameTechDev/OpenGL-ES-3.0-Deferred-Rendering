@@ -10,6 +10,7 @@ attribute vec2 a_TexCoord;
 
 varying vec3 v_WorldPos;
 varying vec3 v_Normal;
+varying vec3 v_TangentWorldSpace;
 varying vec2 v_TexCoord;
 
 void main(void) {
@@ -19,6 +20,7 @@ void main(void) {
     v_WorldPos = vec3(world_pos);
     v_TexCoord = a_TexCoord;
     v_Normal = world3 * a_Normal;
+    v_TangentWorldSpace = world3 * a_Tangent;
 
     gl_Position = u_Projection * u_View * world_pos;
 }

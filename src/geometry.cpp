@@ -20,7 +20,7 @@ extern "C" {
 
 /* Internal functions
  */
-static PosNormTanBitanTexVertex* _calculate_tangets(const PosNormTexVertex* vertices, int num_vertices, const void* indices, size_t index_size, int num_indices)
+PosNormTanBitanTexVertex* calculate_tangets(const PosNormTexVertex* vertices, int num_vertices, const void* indices, size_t index_size, int num_indices)
 {
     PosNormTanBitanTexVertex* new_vertices = new PosNormTanBitanTexVertex[num_vertices];
     for(int ii=0;ii<num_vertices;++ii) {
@@ -235,7 +235,7 @@ Mesh* gl_load_mesh(const char* filename)
     int vertex_count = num_indices;
     int index_count = vertex_count;
 
-    PosNormTanBitanTexVertex* new_vertices = _calculate_tangets(vertices, vertex_count, new_indices, sizeof(uint32_t), index_count);
+    PosNormTanBitanTexVertex* new_vertices = calculate_tangets(vertices, vertex_count, new_indices, sizeof(uint32_t), index_count);
 
     Mesh* mesh = gl_create_mesh(new_vertices, vertex_count*sizeof(PosNormTanBitanTexVertex),
                                 new_indices, index_count*sizeof(uint32_t),

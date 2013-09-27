@@ -15,6 +15,7 @@ uniform float   u_SpecularCoefficient;
 
 varying vec3 v_WorldPos;
 varying vec3 v_Normal;
+varying vec3 v_TangentWorldSpace;
 varying vec2 v_TexCoord;
 
 void main(void) {
@@ -23,10 +24,17 @@ void main(void) {
     /** Load texture values
      */
     vec3 albedo = texture2D(s_Albedo, texcoord).rgb;
-    vec3 specular_color = u_SpecularColor*u_SpecularCoefficient;
-    vec3 normal = normalize(v_Normal);
+    vec3 normal = normalize(texture2D(s_Normal, texcoord).rgb*2.0 - 1.0);
+    vec3 specular_color = (texture2D(s_Normal, texcoord).rgb + u_SpecularColor) * u_SpecularCoefficient;
 
     vec3 dir_to_cam = normalize(u_CameraPosition - v_WorldPos);
+
+    vec3 N = normalize(v_Normal);
+    vec3 T = normalize(v_TangentWorldSpace - dot(v_TangentWorldSpace, N)*N);
+    vec3 B = cross(N,T);
+
+    mat3 TBN = mat3(T, B, N);
+    normal = normalize(TBN*normal);
 
     vec4 final_color = vec4(0);
     float ambient_power = 0.15;

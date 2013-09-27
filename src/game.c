@@ -104,8 +104,8 @@ Game* create_game(int width, int height)
     game->house_material.normal_tex = load_texture(game->graphics, "house_normal.png");
     game->house_material.specular_tex = load_texture(game->graphics, "house_spec.png");
     game->house_material.specular_color = vec3_create(1.0f, 1.0f, 1.0f);
-    game->house_material.specular_power = 5.0f;
-    game->house_material.specular_coefficient = 2.0f;
+    game->house_material.specular_power = 1.5f;
+    game->house_material.specular_coefficient = 0.06f;
 
     /** Grass material
      */

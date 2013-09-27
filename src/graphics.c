@@ -272,11 +272,16 @@ Graphics* create_graphics(int width, int height)
                                                        1000.0f);
     graphics->view_transform = transform_zero;
 
-    graphics->cube_mesh = gl_create_mesh(kCubeVertices, sizeof(kCubeVertices),
-                                         kCubeIndices, sizeof(kCubeIndices),
-                                         sizeof(kCubeIndices)/sizeof(kCubeIndices[0]),
-                                         sizeof(kCubeVertices[0]), kPosNormTexVertex);
-
+    {
+        PosNormTanBitanTexVertex* new_vertices = calculate_tangets(kCubeVertices, 36,
+                                                              kCubeIndices, sizeof(kCubeIndices[0]),
+                                                              sizeof(kCubeIndices)/sizeof(kCubeIndices[0]));
+        graphics->cube_mesh = gl_create_mesh(new_vertices, 36*sizeof(PosNormTanBitanTexVertex),
+                                             kCubeIndices, sizeof(kCubeIndices),
+                                             sizeof(kCubeIndices)/sizeof(kCubeIndices[0]),
+                                             sizeof(PosNormTanBitanTexVertex), kPosNormTanBitanTexVertex);
+        free(new_vertices);
+    }
     graphics->quad_mesh  = gl_create_mesh(kQuadVertices, sizeof(kQuadVertices),
                                           kQuadIndices, sizeof(kQuadIndices),
                                           sizeof(kQuadIndices)/sizeof(kQuadIndices[0]),
@@ -317,6 +322,8 @@ void render_graphics(Graphics* graphics)
     glEnableVertexAttribArray(kPositionSlot);
     glEnableVertexAttribArray(kNormalSlot);
     glEnableVertexAttribArray(kTexCoordSlot);
+    glEnableVertexAttribArray(kTangentSlot);
+    glEnableVertexAttribArray(kBitangentSlot);
     CheckGLError();
     glUniform3fv(graphics->camera_position_uniform, 1, (float*)&graphics->view_transform.position);
     glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&graphics->projection_matrix);
