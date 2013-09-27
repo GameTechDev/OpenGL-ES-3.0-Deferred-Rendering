@@ -553,9 +553,9 @@ Mesh* create_mesh(Graphics* graphics, const char* filename)
 {
     return gl_load_mesh(graphics, filename);
 }
-void load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* num_meshes)
+void load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* num_meshes, Material** materials, int* num_materials)
 {
-    gl_load_obj(graphics, filename, meshes, num_meshes);
+    gl_load_obj(graphics, filename, meshes, num_meshes, materials, num_materials);
 }
 void destroy_mesh(Mesh* mesh)
 {

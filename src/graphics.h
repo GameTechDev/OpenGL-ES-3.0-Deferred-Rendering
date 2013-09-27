@@ -19,6 +19,7 @@ typedef struct Light
 } Light;
 typedef struct Material
 {
+    char        name[64];
     Texture*    albedo_tex;
     Texture*    normal_tex;
     Vec3        specular_color;
@@ -38,7 +39,7 @@ Texture* load_texture(Graphics* graphics, const char* filename);
 void destroy_texture(Texture* texture);
 
 Mesh* create_mesh(Graphics* graphics, const char* filename);
-void load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* num_meshes);
+void load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* num_meshes, Material** materials, int* num_materials);
 void destroy_mesh(Mesh* mesh);
 
 void set_view_transform(Graphics* graphics, Transform view);

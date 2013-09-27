@@ -126,9 +126,13 @@ static void _load_mtl_file(Graphics* graphics, const char* filename, std::map<st
         sscanf(line, "%s", line_header);
 
         if(strcmp(line_header, "newmtl") == 0) {
+            Material blank_material = {0};
+            blank_material.specular_power = 16.0f;
             char name[128] = {0};
             assert(sscanf(line, "%s %s\n", line_header, name) == 2);
             current_name = name;
+            materials[name] = blank_material;
+            strncpy(materials[name].name, name, sizeof(materials[name].name));
         } else if(strcmp(line_header, "map_Kd") == 0) {
             char texture[128] = {0};
             assert(sscanf(line, "%s %s\n", line_header, texture) == 2);
@@ -137,6 +141,13 @@ static void _load_mtl_file(Graphics* graphics, const char* filename, std::map<st
             char texture[128] = {0};
             assert(sscanf(line, "%s %s\n", line_header, texture) == 2);
             materials[current_name].normal_tex = load_texture(graphics, texture);
+        } else if(strcmp(line_header, "Ks") == 0) {
+            Vec3 spec_color;
+            assert(sscanf(line, "%s %f %f %f\n", line_header, &spec_color.x, &spec_color.y, &spec_color.z) == 4);
+            materials[current_name].specular_color = spec_color;
+        } else if(strcmp(line_header, "Ns") == 0) {
+            Vec3 spec_color;
+            assert(sscanf(line, "%s %f\n", line_header, &materials[current_name].specular_coefficient) == 2);
         }
     }
 }
@@ -288,13 +299,16 @@ Mesh* gl_load_mesh(Graphics* graphics, const char* filename)
     return mesh;
     (void)sizeof(graphics);
 }
-void gl_load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* num_meshes)
+void gl_load_obj(Graphics* graphics, const char* filename,
+                 Mesh*** meshes, int* num_meshes,
+                 Material** materials, int* num_materials)
 {
     std::vector<Vec3> positions;
     std::vector<Vec3> normals;
     std::vector<Vec2> texcoords;
 
     std::vector<std::vector<int3> >  all_indices;
+    std::vector<std::string>  mesh_material_pairs;
     int current_indices = -1;
 
     std::map<std::string, Material> all_materials;
@@ -334,12 +348,15 @@ void gl_load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* 
             assert(sscanf(line, "%s %f %f %f\n", line_header, &n.x, &n.y, &n.z) == 4);
             normals.push_back(n);
         } else if(strcmp(line_header, "usemtl") == 0) {
+            char name[256];
+            assert(sscanf(line, "%s %s\n", line_header, name) == 2);
             all_indices.push_back(std::vector<int3>());
+            mesh_material_pairs.push_back(name);
             current_indices++;
         } else if(strcmp(line_header, "mtllib") == 0) {
             char mtl_filename[256];
             assert(sscanf(line, "%s %s\n", line_header, mtl_filename) == 2);
-            //_load_mtl_file(graphics, mtl_filename, all_materials);
+            _load_mtl_file(graphics, mtl_filename, all_materials);
         } else if(strcmp(line_header, "f") == 0) {
             int3 triangle[4];
             int matches;
@@ -429,6 +446,12 @@ void gl_load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* 
         (*meshes)[ii] = all_meshes[ii];
     }
     *num_meshes = all_meshes.size();
+    
+    *materials = (Material*)calloc(mesh_material_pairs.size(),sizeof(Material*));
+    for(int ii=0;ii<(int)mesh_material_pairs.size(); ++ii) {
+        (*materials)[ii] = all_materials[mesh_material_pairs[ii]];
+    }
+    *num_materials = mesh_material_pairs.size();
 
     (void)sizeof(graphics);
 }

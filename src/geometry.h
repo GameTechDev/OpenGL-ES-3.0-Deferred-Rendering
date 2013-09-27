@@ -135,7 +135,9 @@ Mesh* gl_create_mesh(const void* vertex_data, size_t vertex_data_size,
                      const void* index_data, size_t index_data_size,
                      int index_count, int vertex_size, VertexType type);
 Mesh* gl_load_mesh(Graphics* graphics, const char* filename);
-void gl_load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* num_meshes);
+void gl_load_obj(Graphics* graphics, const char* filename,
+                 Mesh*** meshes, int* num_meshes,
+                 Material** materials, int* num_materials);
 
 
 /* triangle vertices
