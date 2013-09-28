@@ -1,0 +1,66 @@
+newmtl bridgeSG1
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 0.00
+map_Kd pierComposite.png
+map_Ks pierSpec.png
+map_bump pierNormal.png
+newmtl houseSG1
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 0.00
+map_Kd houseDiffuse.png
+map_Ks houseSpec.png
+map_bump houseNormal.png
+newmtl houseTransparentSG1
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 0.00
+map_Kd houseDiffuse.png
+map_Ks houseSpec.png
+map_bump houseNormal.png
+newmtl landSG1
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 0.00
+map_Kd land_diffuse.png
+map_Ks land_spec.png
+map_bump land_normal.png
+newmtl lightHouseSG1
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 0.00
+map_Kd lightHouseDiffuse.png
+map_Ks lightHouseSpec.png
+map_bump lightHouseNormal.png
+newmtl lightHouseTransparentSG1
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 0.00
+map_Kd lightHouseDiffuse.png
+map_Ks lightHouseSpec.png
+map_bump lightHouseNormal.png
