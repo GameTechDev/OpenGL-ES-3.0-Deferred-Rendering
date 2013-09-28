@@ -502,13 +502,13 @@ void gl_load_obj(Graphics* graphics, const char* filename,
     for(int ii=0;ii<(int)all_meshes.size(); ++ii) {
         (*meshes)[ii] = all_meshes[ii];
     }
-    *num_meshes = all_meshes.size();
+    *num_meshes = (int)all_meshes.size();
 
     *materials = (Material*)calloc(all_materials.size(),sizeof(Material));
     for(int ii=0;ii<(int)mesh_material_pairs.size();++ii) {
         (*materials)[ii] = all_materials[mesh_material_pairs[ii]];
     }
-    *num_materials = all_materials.size();
+    *num_materials = (int)all_materials.size();
     
     (void)sizeof(graphics);
 }
