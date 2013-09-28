@@ -426,7 +426,7 @@ void gl_load_obj(Graphics* graphics, const char* filename,
     for(int jj=0; jj<(int)all_indices.size();++jj) {
         std::vector<int3>& indices = all_indices[jj];
 
-        #if 1
+        #if 0
             PosNormTexVertex* vertices = new PosNormTexVertex[indices.size()];
             int num_indices = (int)indices.size();
             for(int ii=0; ii<num_indices; ++ii) {
@@ -476,10 +476,10 @@ void gl_load_obj(Graphics* graphics, const char* filename,
                     vertex.normal = normals[norm_index];
                     /* Flip v-channel */
                     vertex.tex.y = 1.0f-vertex.tex.y;
-                    v.push_back(vertex);
 
                     i.push_back(v.size());
                     m[index] = v.size();
+                    v.push_back(vertex);
                 }
             }
             int vertex_count = (int)v.size();
