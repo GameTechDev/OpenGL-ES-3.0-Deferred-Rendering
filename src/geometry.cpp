@@ -426,73 +426,41 @@ void gl_load_obj(Graphics* graphics, const char* filename,
     for(int jj=0; jj<(int)all_indices.size();++jj) {
         std::vector<int3>& indices = all_indices[jj];
 
-        #if 0
-            PosNormTexVertex* vertices = new PosNormTexVertex[indices.size()];
-            int num_indices = (int)indices.size();
-            for(int ii=0; ii<num_indices; ++ii) {
+        std::map<int3, int> m;
+        std::vector<PosNormTexVertex> v;
+        std::vector<uint32_t> i;
+        int num_indices = (int)indices.size();
+        for(int ii=0;ii<num_indices;++ii) {
+            int3 index = indices[ii];
+            std::map<int3, int>::iterator iter = m.find(index);
+            if(iter != m.end()) {
+                /* Already exists */
+                i.push_back(iter->second);
+            } else {
+                /* Add it */
                 int pos_index = indices[ii].p-1;
                 int tex_index = indices[ii].t;
                 int norm_index = indices[ii].n-1;
-                PosNormTexVertex& vertex = vertices[ii];
+                PosNormTexVertex vertex;
                 vertex.position = positions[pos_index];
                 vertex.tex = texcoords[tex_index];
                 vertex.normal = normals[norm_index];
                 /* Flip v-channel */
                 vertex.tex.y = 1.0f-vertex.tex.y;
-            }
-            uint32_t* new_indices = new uint32_t[num_indices];
-            for(int ii=0;ii<num_indices;++ii)
-                new_indices[ii] = ii;
 
-            int vertex_count = num_indices;
-            int index_count = vertex_count;
-            PosNormTanBitanTexVertex* new_vertices = calculate_tangets(vertices, vertex_count, new_indices, sizeof(uint32_t), index_count);
+                i.push_back(v.size());
+                m[index] = v.size();
+                v.push_back(vertex);
+            }
+        }
+        int vertex_count = (int)v.size();
+        int index_count = i.size();
+        PosNormTanBitanTexVertex* new_vertices = calculate_tangets(v.data(), vertex_count, i.data(), sizeof(uint32_t), index_count);
 
         Mesh* mesh = gl_create_mesh(new_vertices, vertex_count*sizeof(PosNormTanBitanTexVertex),
-                                    new_indices, index_count*sizeof(uint32_t),
+                                    i.data(), index_count*sizeof(uint32_t),
                                     index_count, sizeof(PosNormTanBitanTexVertex),
                                     kPosNormTanBitanTexVertex);
-            delete [] vertices;
-            delete [] new_indices;
-        #else
-            std::map<int3, int> m;
-            std::vector<PosNormTexVertex> v;
-            std::vector<uint32_t> i;
-            int num_indices = (int)indices.size();
-            for(int ii=0;ii<num_indices;++ii) {
-                int3 index = indices[ii];
-                std::map<int3, int>::iterator iter = m.find(index);
-                if(iter != m.end()) {
-                    /* Already exists */
-                    i.push_back(iter->second);
-                } else {
-                    /* Add it */
-                    int pos_index = indices[ii].p-1;
-                    int tex_index = indices[ii].t;
-                    int norm_index = indices[ii].n-1;
-                    PosNormTexVertex vertex;
-                    vertex.position = positions[pos_index];
-                    vertex.tex = texcoords[tex_index];
-                    vertex.normal = normals[norm_index];
-                    /* Flip v-channel */
-                    vertex.tex.y = 1.0f-vertex.tex.y;
-
-                    i.push_back(v.size());
-                    m[index] = v.size();
-                    v.push_back(vertex);
-                }
-            }
-            int vertex_count = (int)v.size();
-            int index_count = i.size();
-            PosNormTanBitanTexVertex* new_vertices = calculate_tangets(v.data(), vertex_count, i.data(), sizeof(uint32_t), index_count);
-
-            Mesh* mesh = gl_create_mesh(new_vertices, vertex_count*sizeof(PosNormTanBitanTexVertex),
-                                        i.data(), index_count*sizeof(uint32_t),
-                                        index_count, sizeof(PosNormTanBitanTexVertex),
-                                        kPosNormTanBitanTexVertex);
-        #endif
-
-        /* 20784 */
 
         delete [] new_vertices;
 

@@ -1,9 +1,9 @@
 -Screen resizing (orientation)
 Fix touch when orientation changes
-MTL loading
+-MTL loading
 -Remove specular map support
 -Only 1 directional light
 -Add point light supprt
 Directional light shadow mapping
-Load multiple meshes per OBJ
+-Load multiple meshes per OBJ
 Clean up programmer art (cube model, color texture, etc)

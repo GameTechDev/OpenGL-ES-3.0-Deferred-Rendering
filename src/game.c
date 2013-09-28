@@ -170,7 +170,7 @@ void update_game(Game* game)
 
     /* Render lights */
     degrees += delta_time*(k2Pi/8);
-    for(ii=0;ii<8;++ii) {
+    for(ii=0;ii<1;++ii) {
         float angle = ii*(k2Pi/8)+degrees;
         Quaternion q = quat_from_euler(0, angle, 0);
         Vec3 direction = quat_get_z_axis(q);
