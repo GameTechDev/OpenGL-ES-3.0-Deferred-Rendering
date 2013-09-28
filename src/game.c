@@ -131,13 +131,8 @@ Game* create_game(int width, int height)
     game->terrain_material.specular_power = 0.0f;
     game->terrain_material.specular_coefficient = 0.0f;
 
-    {
-        Mesh** meshes = NULL;
-        int num_meshes = 0;
-
-        //load_obj(game->graphics, "lightHouse.obj", &game->terrain_meshes, &game->num_terrain_meshes);
-        load_obj(game->graphics, "house_obj.obj", &game->terrain_meshes, &game->num_terrain_meshes, &game->terrain_materials, &game->num_terrain_materials);
-    }
+    /* Load terrain obj */
+    load_obj(game->graphics, "lightHouse.obj", &game->terrain_meshes, &game->num_terrain_meshes, &game->terrain_materials, &game->num_terrain_materials);
 
     return game;
 }
@@ -148,6 +143,7 @@ void destroy_game(Game* game)
         destroy_mesh(game->terrain_meshes[ii]);
     }
     free(game->terrain_meshes);
+    free(game->terrain_materials);
     destroy_timer(game->timer);
     destroy_graphics(game->graphics);
     destroy_game(game);
@@ -167,9 +163,10 @@ void update_game(Game* game)
 
     /* Render scene */
     t = transform_zero;
-    t.scale = 0.01f;
-    for(ii=0;ii<game->num_terrain_meshes;++ii)
+    //t.scale = 0.01f;
+    for(ii=0;ii<game->num_terrain_meshes;++ii) {
         add_render_command(game->graphics, game->terrain_meshes[ii], &game->terrain_materials[ii], t);
+    }
 
     /* Render lights */
     degrees += delta_time*(k2Pi/8);

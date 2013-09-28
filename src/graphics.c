@@ -463,22 +463,22 @@ void render_graphics(Graphics* graphics)
         RenderCommand command = graphics->commands[ii];
         Mat4 model = transform_get_matrix(command.transform);
         glUniformMatrix4fv(graphics->world_uniform, 1, GL_FALSE, (float*)&model);
-    CheckGLError();
+        CheckGLError();
         glUniform3fv(graphics->specular_color_uniform, 1, (float*)&command.material->specular_color);
-    CheckGLError();
+        CheckGLError();
         glUniform1f(graphics->specular_power_uniform, command.material->specular_power);
-    CheckGLError();
+        CheckGLError();
         glUniform1f(graphics->specular_coefficient_uniform, command.material->specular_coefficient);
-    CheckGLError();
+        CheckGLError();
 
         glActiveTexture(GL_TEXTURE0);
         if(command.material->albedo_tex)
             glBindTexture(GL_TEXTURE_2D, command.material->albedo_tex->texture);
-    CheckGLError();
+        CheckGLError();
         glActiveTexture(GL_TEXTURE1);
         if(command.material->normal_tex)
             glBindTexture(GL_TEXTURE_2D, command.material->normal_tex->texture);
-    CheckGLError();
+        CheckGLError();
 
         _draw_mesh(command.mesh);
     }
