@@ -38,7 +38,6 @@ Mesh* quad_mesh(Graphics* graphics);
 Texture* load_texture(Graphics* graphics, const char* filename);
 void destroy_texture(Texture* texture);
 
-Mesh* create_mesh(Graphics* graphics, const char* filename);
 void load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* num_meshes, Material** materials, int* num_materials);
 void destroy_mesh(Mesh* mesh);
 
