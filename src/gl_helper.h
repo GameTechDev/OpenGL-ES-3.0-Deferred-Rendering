@@ -15,14 +15,18 @@
 #endif
 #include "system.h"
 
-#define CheckGLError()                  \
-    do {                                \
-        GLenum _glError = glGetError(); \
-        if(_glError != GL_NO_ERROR) {   \
-            system_log("%s:%d:  OpenGL Error: %d\n", __FILE__, __LINE__, _glError);\
-        }                               \
-        assert(_glError == GL_NO_ERROR);\
-    } while(__LINE__ == 0)
+#ifdef DEBUG
+    #define CheckGLError()                  \
+        do {                                \
+            GLenum _glError = glGetError(); \
+            if(_glError != GL_NO_ERROR) {   \
+                system_log("%s:%d:  OpenGL Error: %d\n", __FILE__, __LINE__, _glError);\
+            }                               \
+            assert(_glError == GL_NO_ERROR);\
+        } while(__LINE__ == 0)
+#else
+    #define CheckGLError()
+#endif
 
 
 GLuint gl_create_buffer(GLenum type, const void* data, size_t size);

@@ -17,14 +17,21 @@
 
 /*! @brief Assert
  */
-#ifndef assert
-    #define assert(condition)   \
-        do {                    \
-            if(!(condition)) {  \
-                debugBreak();   \
-            }                   \
-        } while(__LINE__ == -1)
+#ifdef DEBUG
+    #ifndef assert
+        #define assert(condition)   \
+            do {                    \
+                if(!(condition)) {  \
+                    debugBreak();   \
+                }                   \
+            } while(__LINE__ == -1)
+    #endif
+#else
+    #ifndef assert
+        #define assert(condition)
+    #endif
 #endif
+
 #ifndef ASSERT
     #define ASSERT assert
 #endif

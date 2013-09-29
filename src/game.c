@@ -36,6 +36,9 @@ struct Game
     Material    terrain_material;
 
     Light       point_lights[8];
+
+    float       fps_time;
+    int         fps_count;
 };
 
 /* Constants
@@ -184,6 +187,16 @@ void update_game(Game* game)
 
     set_view_transform(game->graphics, game->camera);
     set_sun_light(game->graphics, vec3_create(0, -1, 0), vec3_create(1, 1, 1));
+
+    /* Calculate FPS */
+    game->fps_time += delta_time;
+    game->fps_count++;
+    
+    if(game->fps_time >= 1.0f) {
+        system_log("FPS: %f\n", game->fps_count/game->fps_time);
+        game->fps_time -= 1.0f;
+        game->fps_count = 0;
+    }
 }
 void render_game(Game* game)
 {
