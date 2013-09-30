@@ -87,7 +87,8 @@ struct Graphics
             GLuint  gbuffer;
             GLuint  depth;
 
-            GLuint inverse_view_proj;
+            GLuint inverse_proj;
+            GLuint inverse_view;
 
             GLuint light_color;
             GLuint light_position;
@@ -161,7 +162,7 @@ static void _create_framebuffer(Graphics* graphics)
     /* Framebuffer */
     glGenFramebuffers(1, &graphics->framebuffer);
 
-    
+
     /* Pass2 light buffer */
     glGenTextures(1, &graphics->prepass_program.light_buffer);
     glBindTexture(GL_TEXTURE_2D, graphics->prepass_program.light_buffer);
@@ -215,7 +216,7 @@ static void _resize_framebuffer(Graphics* graphics)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindTexture(GL_TEXTURE_2D, 0);
     CheckGLError();
-    
+
     /* Color buffer */
     glBindTexture(GL_TEXTURE_2D, graphics->prepass_program.light_buffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, graphics->width, graphics->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
@@ -353,7 +354,8 @@ static void _setup_programs(Graphics* graphics)
 
         graphics->prepass_program.pass2.camera_position = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_CameraPosition");
 
-        graphics->prepass_program.pass2.inverse_view_proj = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_InverseViewProj");
+        graphics->prepass_program.pass2.inverse_proj = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_InverseProj");
+        graphics->prepass_program.pass2.inverse_view = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_InverseView");
 
 
         glUseProgram(graphics->prepass_program.pass2.program);
@@ -486,13 +488,16 @@ void resize_graphics(Graphics* graphics, int width, int height)
     graphics->projection_matrix = mat4_perspective_fov(kPiDiv2,
                                                        width/(float)height,
                                                        1.0f,
-                                                       100.0f);
+                                                       1000.0f);
 }
 void render_graphics(Graphics* graphics)
 {
-    Mat4 view_matrix = mat4_inverse(transform_get_matrix(graphics->view_transform));
+    Mat4 view_matrix = transform_get_matrix(graphics->view_transform);
+    Mat4 inv_view_matrix = mat4_inverse(view_matrix);
     Mat4 view_proj = mat4_multiply(view_matrix, graphics->projection_matrix);
+    //Mat4 view_proj = mat4_multiply(graphics->projection_matrix, view_matrix);
     Mat4 inv_view_proj = mat4_inverse(view_proj);
+    Mat4 inv_proj = mat4_inverse(graphics->projection_matrix);
     int ii;
 
     GLint defaultFBO;
@@ -511,7 +516,7 @@ void render_graphics(Graphics* graphics)
         CheckGLError();
         glUniform3fv(graphics->forward_program.camera_position, 1, (float*)&graphics->view_transform.position);
         glUniformMatrix4fv(graphics->forward_program.projection, 1, GL_FALSE, (float*)&graphics->projection_matrix);
-        glUniformMatrix4fv(graphics->forward_program.view, 1, GL_FALSE, (float*)&view_matrix);
+        glUniformMatrix4fv(graphics->forward_program.view, 1, GL_FALSE, (float*)&inv_view_matrix);
         /* Upload lights */
         glUniform3fv(graphics->forward_program.light_positions, graphics->num_lights, (float*)graphics->light_positions);
         glUniform3fv(graphics->forward_program.light_colors, graphics->num_lights, (float*)graphics->light_colors);
@@ -561,7 +566,7 @@ void render_graphics(Graphics* graphics)
         glUseProgram(graphics->prepass_program.pass1.program);
         CheckGLError();
         glUniformMatrix4fv(graphics->prepass_program.pass1.projection, 1, GL_FALSE, (float*)&graphics->projection_matrix);
-        glUniformMatrix4fv(graphics->prepass_program.pass1.view, 1, GL_FALSE, (float*)&view_matrix);
+        glUniformMatrix4fv(graphics->prepass_program.pass1.view, 1, GL_FALSE, (float*)&inv_view_matrix);
 
         for(ii=0;ii<graphics->num_commands;++ii) {
             RenderCommand command = graphics->commands[ii];
@@ -592,9 +597,11 @@ void render_graphics(Graphics* graphics)
         CheckGLError();
         glUseProgram(graphics->prepass_program.pass2.program);
         CheckGLError();
-        glUniformMatrix4fv(graphics->prepass_program.pass2.inverse_view_proj, 1, GL_FALSE, (float*)&inv_view_proj);
+        glUniformMatrix4fv(graphics->prepass_program.pass2.inverse_proj, 1, GL_FALSE, (float*)&inv_proj);
+        glUniformMatrix4fv(graphics->prepass_program.pass2.inverse_view, 1, GL_FALSE, (float*)&view_matrix);
+
         glUniformMatrix4fv(graphics->prepass_program.pass2.projection, 1, GL_FALSE, (float*)&graphics->projection_matrix);
-        glUniformMatrix4fv(graphics->prepass_program.pass2.view, 1, GL_FALSE, (float*)&view_matrix);
+        glUniformMatrix4fv(graphics->prepass_program.pass2.view, 1, GL_FALSE, (float*)&inv_view_matrix);
         glUniform3fv(graphics->prepass_program.pass2.camera_position, 1, (float*)&graphics->view_transform.position);
 
         glActiveTexture(GL_TEXTURE0);
@@ -603,11 +610,13 @@ void render_graphics(Graphics* graphics)
         glBindTexture(GL_TEXTURE_2D, graphics->depth_renderbuffer);
         CheckGLError();
 
+        graphics->num_lights = 1;
         for(ii=0;ii<graphics->num_lights;++ii) {
             Transform light_transform = {
                 quat_identity,
                 graphics->light_positions[ii],
-                graphics->light_sizes[ii]
+                //graphics->light_sizes[ii]
+                100.0f
             };
             Mat4 world = transform_get_matrix(light_transform);
             Vec3 v = vec3_sub(graphics->view_transform.position, light_transform.position);
@@ -618,19 +627,20 @@ void render_graphics(Graphics* graphics)
             glUniform1f(graphics->prepass_program.pass2.light_size, graphics->light_sizes[ii]);
 
 
+        glDepthFunc(GL_ALWAYS);
             _draw_mesh(graphics->sphere_mesh);
             CheckGLError();
         }
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, graphics->color_renderbuffer, 0);
         CheckGLError();
-        
+
         /* Enable depth write */
         glDepthMask(GL_TRUE);
         glDisable(GL_BLEND);
         glDepthFunc(GL_LESS);
         glCullFace(GL_BACK);
-        
+
         graphics->num_commands = 0;
         graphics->num_lights = 0;
         CheckGLError();

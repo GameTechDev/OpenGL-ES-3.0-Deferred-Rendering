@@ -2,7 +2,8 @@ precision highp float;
 uniform sampler2D s_GBuffer;
 uniform sampler2D s_Depth;
 
-uniform mat4 u_InverseViewProj;
+uniform mat4    u_InverseProj;
+uniform mat4    u_InverseView;
 
 uniform vec3    u_LightColor;
 uniform vec3    u_LightPosition;
@@ -30,9 +31,22 @@ void main(void) {
     float spec_power = gbuffer_val.a;
     float depth = texture2D(s_Depth, v_TexCoord).r;
 
-    vec4 world_pos = vec4(v_ScreenPosition.xy, depth, 1.0);
-    world_pos = u_InverseViewProj * world_pos;
+    float f = 1000.0;
+    float n = 1.0;
+    depth = (2.0 * n) / (f + n - depth * (f - n));
+    
+    vec4 world_pos = vec4(gl_FragCoord.xy, depth, 1.0);
+    world_pos = u_InverseProj * world_pos;
     world_pos /= world_pos.w;
+
+    world_pos = u_InverseView * world_pos;
+
+    vec2 viewport = vec2(640.0,960.0);
+    vec3 ndcspace = vec3(gl_FragCoord.xy/viewport * 2.0 - 1.0, depth);
+    float camspace_z = -1.0 / (ndcspace.z + 1.0);
+    vec4 clipspace = vec4(ndcspace * camspace_z, camspace_z);
+    vec4 viewspace = u_InverseProj * clipspace;
+    vec4 worldspace = u_InverseView * viewspace;
 
     vec3 dir_to_cam = normalize(u_CameraPosition - world_pos.xyz);
 
@@ -55,8 +69,9 @@ void main(void) {
     vec3 diffuse = light_color * n_dot_l;
     float specular = min(1.0, pow(r_dot_l, spec_power));
 
-    gl_FragColor = vec4(diffuse, specular);
+    //gl_FragColor = vec4(diffuse, specular);
     //gl_FragColor = vec4(u_LightColor, 1.0);
-    //gl_FragColor = vec4(world_pos.xyz, 1.0);
+    gl_FragColor = vec4(worldspace.xyz, 1.0);
     //gl_FragColor = vec4(dist/10.0);
+    //gl_FragColor = vec4(viewport/1000.0,1.0,1.0);
 }
