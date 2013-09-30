@@ -257,7 +257,7 @@ void gl_load_obj(Graphics* graphics, const char* filename,
             all_indices.push_back(std::vector<int3>());
             mesh_material_pairs.push_back(name);
             current_indices++;
-        } else if(strcmp(line_header, "mtllib") == 0) {
+        } else if(strcmp(line_header, "mtllib") == 0 && materials) {
             char mtl_filename[256];
             matches = sscanf(line, "%s %s\n", line_header, mtl_filename);
             assert(matches == 2);
@@ -358,11 +358,13 @@ void gl_load_obj(Graphics* graphics, const char* filename,
     }
     *num_meshes = (int)all_meshes.size();
 
-    *materials = (Material*)calloc(all_materials.size(),sizeof(Material));
-    for(int ii=0;ii<(int)mesh_material_pairs.size();++ii) {
-        (*materials)[ii] = all_materials[mesh_material_pairs[ii]];
+    if(materials) {
+        *materials = (Material*)calloc(all_materials.size(),sizeof(Material));
+        for(int ii=0;ii<(int)mesh_material_pairs.size();++ii) {
+            (*materials)[ii] = all_materials[mesh_material_pairs[ii]];
+        }
+        *num_materials = (int)all_materials.size();
     }
-    *num_materials = (int)all_materials.size();
 
     (void)sizeof(graphics);
 }

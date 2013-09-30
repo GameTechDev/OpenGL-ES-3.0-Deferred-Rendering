@@ -173,8 +173,8 @@ void update_game(Game* game)
     }
 
     /* Render lights */
-    degrees += delta_time*(k2Pi/8);
-    for(ii=0;ii<1;++ii) {
+    degrees += delta_time*(k2Pi/32);
+    for(ii=0;ii<8;++ii) {
         float angle = ii*(k2Pi/8)+degrees;
         Quaternion q = quat_from_euler(0, angle, 0);
         Vec3 direction = quat_get_z_axis(q);
@@ -187,7 +187,7 @@ void update_game(Game* game)
     }
 
     set_view_transform(game->graphics, game->camera);
-    set_sun_light(game->graphics, vec3_create(0, -1, 0), vec3_create(1, 1, 1));
+    set_sun_light(game->graphics, vec3_create(0, -1, 0), vec3_create(0.8f, 0.8f, 0.8f));
 
     /* Calculate FPS */
     game->fps_time += delta_time;

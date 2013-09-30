@@ -1,24 +1,24 @@
-precision mediump float;
-uniform lowp sampler2D s_Albedo;
-uniform lowp sampler2D s_Normal;
+precision highp float;
+uniform sampler2D s_Albedo;
+uniform sampler2D s_Normal;
 
-uniform lowp vec3   u_LightPositions[64];
-uniform lowp vec3   u_LightColors[64];
-uniform lowp float  u_LightSizes[64];
+uniform vec3   u_LightPositions[64];
+uniform vec3   u_LightColors[64];
+uniform float  u_LightSizes[64];
 uniform int         u_NumLights;
 
-uniform lowp vec3   u_SunDirection;
-uniform lowp vec3   u_SunColor;
+uniform vec3   u_SunDirection;
+uniform vec3   u_SunColor;
 
 uniform vec3    u_CameraPosition;
 
-uniform lowp vec3    u_SpecularColor;
-uniform lowp float   u_SpecularPower;
-uniform lowp float   u_SpecularCoefficient;
+uniform vec3    u_SpecularColor;
+uniform float   u_SpecularPower;
+uniform float   u_SpecularCoefficient;
 
 varying vec3 v_WorldPos;
-varying mediump vec3 v_Normal;
-varying mediump vec3 v_TangentWorldSpace;
+varying vec3 v_Normal;
+varying vec3 v_TangentWorldSpace;
 varying vec2 v_TexCoord;
 
 void main(void) {
