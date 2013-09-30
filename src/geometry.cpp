@@ -151,7 +151,6 @@ static void _load_mtl_file(Graphics* graphics, const char* filename, std::map<st
             assert(matches == 4);
             materials[current_name].specular_color = spec_color;
         } else if(strcmp(line_header, "Ns") == 0) {
-            Vec3 spec_color;
             matches = sscanf(line, "%s %f\n", line_header, &materials[current_name].specular_coefficient);
             assert(matches == 2);
         }
@@ -342,10 +341,10 @@ void gl_load_obj(Graphics* graphics, const char* filename,
         }
         int vertex_count = (int)v.size();
         int index_count = (int)i.size();
-        PosNormTanBitanTexVertex* new_vertices = calculate_tangets(v.data(), vertex_count, i.data(), sizeof(uint32_t), index_count);
+        PosNormTanBitanTexVertex* new_vertices = calculate_tangets(&v[0], vertex_count, &i[0], sizeof(uint32_t), index_count);
 
         Mesh* mesh = gl_create_mesh(new_vertices, vertex_count*sizeof(PosNormTanBitanTexVertex),
-                                    i.data(), index_count*sizeof(uint32_t),
+                                    &i[0], index_count*sizeof(uint32_t),
                                     index_count, sizeof(PosNormTanBitanTexVertex),
                                     kPosNormTanBitanTexVertex);
 

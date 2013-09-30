@@ -76,8 +76,10 @@ struct Graphics
     Mat4    projection_matrix;
     Transform   view_transform;
 
-    GLuint  fullscreen_program;
-    GLuint  fullscreen_texture_uniform;
+    struct {
+        GLuint  program;
+        GLuint  fullscreen_texture;
+    } fullscreen_program;
 
     Mesh*  cube_mesh;
     Mesh*  quad_mesh;
@@ -318,11 +320,11 @@ static void _setup_programs(Graphics* graphics)
             kPositionSlot,
             kTexCoordSlot
         };
-        graphics->fullscreen_program = _create_program("fullscreen_vertex.glsl", "fullscreen_fragment.glsl", slots, 2);
+        graphics->fullscreen_program.program = _create_program("fullscreen_vertex.glsl", "fullscreen_fragment.glsl", slots, 2);
 
-        glUseProgram(graphics->fullscreen_program);
+        glUseProgram(graphics->fullscreen_program.program);
 
-        graphics->fullscreen_texture_uniform = glGetUniformLocation(graphics->fullscreen_program, "s_Diffuse");
+        graphics->fullscreen_program.fullscreen_texture = glGetUniformLocation(graphics->fullscreen_program.program, "s_Diffuse");
 
         glEnableVertexAttribArray(kPositionSlot);
         glEnableVertexAttribArray(kTexCoordSlot);
@@ -360,7 +362,7 @@ Graphics* create_graphics(int width, int height)
 
     /* Perform GL initialization */
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     glFrontFace(GL_CW);
     CheckGLError();
     glViewport(0, 0, width, height);
@@ -488,7 +490,7 @@ void render_graphics(Graphics* graphics)
     glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glUseProgram(graphics->fullscreen_program);
+    glUseProgram(graphics->fullscreen_program.program);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, graphics->color_renderbuffer);
     CheckGLError();
