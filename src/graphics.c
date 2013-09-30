@@ -65,6 +65,19 @@ struct Graphics
         GLuint  sun_color;
     } forward_program;
 
+    struct {
+        GLuint  pass1_program;
+
+        GLuint  projection;
+        GLuint  view;
+        GLuint  world;
+
+        GLuint  normal;
+
+        GLuint  specular_power;
+
+    } prepass_program;
+
     GLuint  color_renderbuffer;
     GLuint  depth_renderbuffer;
     GLuint  depth_texture;
@@ -277,7 +290,7 @@ static void _setup_programs(Graphics* graphics)
             kBitangentSlot,
             kTexCoordSlot
         };
-        graphics->forward_program.program = _create_program("SimpleVertex.glsl", "SimpleFragment.glsl", slots, sizeof(slots)/sizeof(slots[0]));
+        graphics->forward_program.program = _create_program("shaders/forward/SimpleVertex.glsl", "shaders/forward/SimpleFragment.glsl", slots, sizeof(slots)/sizeof(slots[0]));
 
         glUseProgram(graphics->forward_program.program);
 
@@ -313,6 +326,33 @@ static void _setup_programs(Graphics* graphics)
 
         glUseProgram(0);
         system_log("Created program\n");
+    }
+    { /* Create light pre-pass program */
+        AttributeSlot slots[] = {
+            kPositionSlot,
+            kNormalSlot,
+            kTangentSlot,
+            kBitangentSlot,
+            kTexCoordSlot
+        };
+        graphics->prepass_program.pass1_program = _create_program("shaders/light_prepass/Pass1Vertex.glsl", "shaders/light_prepass/Pass1Fragment.glsl", slots, sizeof(slots)/sizeof(slots[0]));
+
+        graphics->prepass_program.projection = glGetUniformLocation(graphics->prepass_program.pass1_program, "u_Projection");
+        graphics->prepass_program.view = glGetUniformLocation(graphics->prepass_program.pass1_program, "u_View");
+        graphics->prepass_program.world = glGetUniformLocation(graphics->prepass_program.pass1_program, "u_World");
+
+        graphics->prepass_program.normal = glGetUniformLocation(graphics->prepass_program.pass1_program, "s_Normal");
+        graphics->prepass_program.specular_power   = glGetUniformLocation(graphics->prepass_program.pass1_program, "u_SpecularPower");
+
+        glUseProgram(graphics->prepass_program.pass1_program);
+        glUniform1i(graphics->prepass_program.normal, 0);
+        glEnableVertexAttribArray(kPositionSlot);
+        glEnableVertexAttribArray(kNormalSlot);
+        glEnableVertexAttribArray(kTexCoordSlot);
+        glEnableVertexAttribArray(kTangentSlot);
+        glEnableVertexAttribArray(kBitangentSlot);
+        glUseProgram(0);
+        system_log("Created prepass pass 1 program\n");
     }
     CheckGLError();
     { /* Fullscreen time */
@@ -434,54 +474,89 @@ void render_graphics(Graphics* graphics)
     GLint defaultFBO;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
 
-    /** Bind framebuffer
-     */
-    glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
-    glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    #if 0 /* Forward renderer */
+        /** Bind framebuffer
+         */
+        glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
+        glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    CheckGLError();
-
-    glUseProgram(graphics->forward_program.program);
-    CheckGLError();
-    glUniform3fv(graphics->forward_program.camera_position, 1, (float*)&graphics->view_transform.position);
-    glUniformMatrix4fv(graphics->forward_program.projection, 1, GL_FALSE, (float*)&graphics->projection_matrix);
-    glUniformMatrix4fv(graphics->forward_program.view, 1, GL_FALSE, (float*)&view_matrix);
-    /* Upload lights */
-    glUniform3fv(graphics->forward_program.light_positions, graphics->num_lights, (float*)graphics->light_positions);
-    glUniform3fv(graphics->forward_program.light_colors, graphics->num_lights, (float*)graphics->light_colors);
-    glUniform1fv(graphics->forward_program.light_sizes, graphics->num_lights, (float*)graphics->light_sizes);
-    glUniform1i(graphics->forward_program.num_lights, graphics->num_lights);
-    CheckGLError();
-
-    glUniform3fv(graphics->forward_program.sun_direction, 1, (float*)&graphics->sun_direction);
-    glUniform3fv(graphics->forward_program.sun_color, 1, (float*)&graphics->sun_color);
-    CheckGLError();
-
-    /* Loop through render commands */
-    for(ii=0;ii<graphics->num_commands;++ii) {
-        RenderCommand command = graphics->commands[ii];
-        Mat4 model = transform_get_matrix(command.transform);
-        glUniformMatrix4fv(graphics->forward_program.world, 1, GL_FALSE, (float*)&model);
-        glUniform3fv(graphics->forward_program.specular_color, 1, (float*)&command.material->specular_color);
-        glUniform1f(graphics->forward_program.specular_power  , command.material->specular_power);
-        glUniform1f(graphics->forward_program.specular_coefficient, command.material->specular_coefficient);
         CheckGLError();
 
-        glActiveTexture(GL_TEXTURE0);
-        if(command.material->albedo_tex)
-            glBindTexture(GL_TEXTURE_2D, command.material->albedo_tex->texture);
-        glActiveTexture(GL_TEXTURE1);
-        if(command.material->normal_tex)
-            glBindTexture(GL_TEXTURE_2D, command.material->normal_tex->texture);
+        glUseProgram(graphics->forward_program.program);
+        CheckGLError();
+        glUniform3fv(graphics->forward_program.camera_position, 1, (float*)&graphics->view_transform.position);
+        glUniformMatrix4fv(graphics->forward_program.projection, 1, GL_FALSE, (float*)&graphics->projection_matrix);
+        glUniformMatrix4fv(graphics->forward_program.view, 1, GL_FALSE, (float*)&view_matrix);
+        /* Upload lights */
+        glUniform3fv(graphics->forward_program.light_positions, graphics->num_lights, (float*)graphics->light_positions);
+        glUniform3fv(graphics->forward_program.light_colors, graphics->num_lights, (float*)graphics->light_colors);
+        glUniform1fv(graphics->forward_program.light_sizes, graphics->num_lights, (float*)graphics->light_sizes);
+        glUniform1i(graphics->forward_program.num_lights, graphics->num_lights);
+        CheckGLError();
 
-        _draw_mesh(command.mesh);
-    }
+        glUniform3fv(graphics->forward_program.sun_direction, 1, (float*)&graphics->sun_direction);
+        glUniform3fv(graphics->forward_program.sun_color, 1, (float*)&graphics->sun_color);
+        CheckGLError();
 
-    graphics->num_commands = 0;
-    graphics->num_lights = 0;
+        /* Loop through render commands */
+        for(ii=0;ii<graphics->num_commands;++ii) {
+            RenderCommand command = graphics->commands[ii];
+            Mat4 model = transform_get_matrix(command.transform);
+            glUniformMatrix4fv(graphics->forward_program.world, 1, GL_FALSE, (float*)&model);
+            glUniform3fv(graphics->forward_program.specular_color, 1, (float*)&command.material->specular_color);
+            glUniform1f(graphics->forward_program.specular_power  , command.material->specular_power);
+            glUniform1f(graphics->forward_program.specular_coefficient, command.material->specular_coefficient);
+            CheckGLError();
 
-    CheckGLError();
+            glActiveTexture(GL_TEXTURE0);
+            if(command.material->albedo_tex)
+                glBindTexture(GL_TEXTURE_2D, command.material->albedo_tex->texture);
+            glActiveTexture(GL_TEXTURE1);
+            if(command.material->normal_tex)
+                glBindTexture(GL_TEXTURE_2D, command.material->normal_tex->texture);
+
+            _draw_mesh(command.mesh);
+        }
+
+        graphics->num_commands = 0;
+        graphics->num_lights = 0;
+
+        CheckGLError();
+    #else
+        /** Bind framebuffer
+         */
+        glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
+        glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        CheckGLError();
+
+        glUseProgram(graphics->prepass_program.pass1_program);
+        CheckGLError();
+        glUniformMatrix4fv(graphics->prepass_program.projection, 1, GL_FALSE, (float*)&graphics->projection_matrix);
+        glUniformMatrix4fv(graphics->prepass_program.view, 1, GL_FALSE, (float*)&view_matrix);
+
+        /* Loop through render commands */
+        for(ii=0;ii<graphics->num_commands;++ii) {
+            RenderCommand command = graphics->commands[ii];
+            Mat4 model = transform_get_matrix(command.transform);
+            glUniformMatrix4fv(graphics->prepass_program.world, 1, GL_FALSE, (float*)&model);
+            glUniform1f(graphics->prepass_program.specular_power  , command.material->specular_power);
+            CheckGLError();
+
+            glActiveTexture(GL_TEXTURE0);
+            if(command.material->normal_tex)
+                glBindTexture(GL_TEXTURE_2D, command.material->normal_tex->texture);
+
+            _draw_mesh(command.mesh);
+        }
+
+
+        graphics->num_commands = 0;
+        graphics->num_lights = 0;
+        CheckGLError();
+    #endif
 
     /** Back to default
      */

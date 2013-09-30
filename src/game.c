@@ -137,6 +137,7 @@ Game* create_game(int width, int height)
     /* Load terrain obj */
     load_obj(game->graphics, "lightHouse.obj", &game->terrain_meshes, &game->num_terrain_meshes, &game->terrain_materials, &game->num_terrain_materials);
 
+    reset_timer(game->timer);
     return game;
 }
 void destroy_game(Game* game)
