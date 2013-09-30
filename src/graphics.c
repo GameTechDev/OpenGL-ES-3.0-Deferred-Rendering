@@ -41,22 +41,29 @@ struct Texture
 
 struct Graphics
 {
-    GLuint  program;
-    GLuint  projection_uniform;
-    GLuint  view_uniform;
-    GLuint  world_uniform;
-    GLuint  albedo_uniform;
-    GLuint  normal_uniform;
-    GLuint  light_positions_uniform;
-    GLuint  light_colors_uniform;
-    GLuint  light_sizes_uniform;
-    GLuint  num_lights_uniform;
-    GLuint  camera_position_uniform;
-    GLuint  specular_color_uniform;
-    GLuint  specular_power_uniform;
-    GLuint  specular_coefficient_uniform;
-    GLuint  sun_direction_uniform;
-    GLuint  sun_color_uniform;
+    struct {
+        GLuint  program;
+
+        GLuint  projection;
+        GLuint  view;
+        GLuint  world;
+
+        GLuint  albedo;
+        GLuint  normal;
+
+        GLuint  light_positions;
+        GLuint  light_colors;
+        GLuint  light_sizes;
+        GLuint  num_lights;
+
+        GLuint  camera_position;
+        GLuint  specular_color;
+        GLuint  specular_power;
+        GLuint  specular_coefficient;
+
+        GLuint  sun_direction;
+        GLuint  sun_color;
+    } forward_program;
 
     GLuint  color_renderbuffer;
     GLuint  depth_renderbuffer;
@@ -162,8 +169,6 @@ static void _resize_framebuffer(Graphics* graphics)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindTexture(GL_TEXTURE_2D, 0);
     CheckGLError();
-
-    system_log("Created framebuffer\n");
 }
 static void _setup_framebuffer(Graphics* graphics)
 {
@@ -270,33 +275,33 @@ static void _setup_programs(Graphics* graphics)
             kBitangentSlot,
             kTexCoordSlot
         };
-        graphics->program = _create_program("SimpleVertex.glsl", "SimpleFragment.glsl", slots, sizeof(slots)/sizeof(slots[0]));
+        graphics->forward_program.program = _create_program("SimpleVertex.glsl", "SimpleFragment.glsl", slots, sizeof(slots)/sizeof(slots[0]));
 
-        glUseProgram(graphics->program);
+        glUseProgram(graphics->forward_program.program);
 
-        graphics->projection_uniform = glGetUniformLocation(graphics->program, "u_Projection");
-        graphics->view_uniform = glGetUniformLocation(graphics->program, "u_View");
-        graphics->world_uniform = glGetUniformLocation(graphics->program, "u_World");
+        graphics->forward_program.projection = glGetUniformLocation(graphics->forward_program.program, "u_Projection");
+        graphics->forward_program.view = glGetUniformLocation(graphics->forward_program.program, "u_View");
+        graphics->forward_program.world = glGetUniformLocation(graphics->forward_program.program, "u_World");
 
-        graphics->albedo_uniform = glGetUniformLocation(graphics->program, "s_Albedo");
-        graphics->normal_uniform = glGetUniformLocation(graphics->program, "s_Normal");
+        graphics->forward_program.albedo = glGetUniformLocation(graphics->forward_program.program, "s_Albedo");
+        graphics->forward_program.normal = glGetUniformLocation(graphics->forward_program.program, "s_Normal");
 
-        graphics->light_positions_uniform = glGetUniformLocation(graphics->program, "u_LightPositions");
-        graphics->light_colors_uniform = glGetUniformLocation(graphics->program, "u_LightColors");
-        graphics->light_sizes_uniform = glGetUniformLocation(graphics->program, "u_LightSizes");
-        graphics->num_lights_uniform = glGetUniformLocation(graphics->program, "u_NumLights");
+        graphics->forward_program.light_positions = glGetUniformLocation(graphics->forward_program.program, "u_LightPositions");
+        graphics->forward_program.light_colors = glGetUniformLocation(graphics->forward_program.program, "u_LightColors");
+        graphics->forward_program.light_sizes = glGetUniformLocation(graphics->forward_program.program, "u_LightSizes");
+        graphics->forward_program.num_lights = glGetUniformLocation(graphics->forward_program.program, "u_NumLights");
 
-        graphics->camera_position_uniform = glGetUniformLocation(graphics->program, "u_CameraPosition");
+        graphics->forward_program.camera_position = glGetUniformLocation(graphics->forward_program.program, "u_CameraPosition");
 
-        graphics->specular_color_uniform = glGetUniformLocation(graphics->program, "u_SpecularColor");
-        graphics->specular_power_uniform = glGetUniformLocation(graphics->program, "u_SpecularPower");
-        graphics->specular_coefficient_uniform = glGetUniformLocation(graphics->program, "u_SpecularCoefficient");
+        graphics->forward_program.specular_color = glGetUniformLocation(graphics->forward_program.program, "u_SpecularColor");
+        graphics->forward_program.specular_power   = glGetUniformLocation(graphics->forward_program.program, "u_SpecularPower");
+        graphics->forward_program.specular_coefficient = glGetUniformLocation(graphics->forward_program.program, "u_SpecularCoefficient");
 
-        graphics->sun_color_uniform = glGetUniformLocation(graphics->program, "u_SunColor");
-        graphics->sun_direction_uniform = glGetUniformLocation(graphics->program, "u_SunDirection");
+        graphics->forward_program.sun_color = glGetUniformLocation(graphics->forward_program.program, "u_SunColor");
+        graphics->forward_program.sun_direction = glGetUniformLocation(graphics->forward_program.program, "u_SunDirection");
 
-        glUniform1i(graphics->albedo_uniform, 0);
-        glUniform1i(graphics->normal_uniform, 1);
+        glUniform1i(graphics->forward_program.albedo, 0);
+        glUniform1i(graphics->forward_program.normal, 1);
 
         glEnableVertexAttribArray(kPositionSlot);
         glEnableVertexAttribArray(kNormalSlot);
@@ -318,7 +323,7 @@ static void _setup_programs(Graphics* graphics)
         glUseProgram(graphics->fullscreen_program);
 
         graphics->fullscreen_texture_uniform = glGetUniformLocation(graphics->fullscreen_program, "s_Diffuse");
-        
+
         glEnableVertexAttribArray(kPositionSlot);
         glEnableVertexAttribArray(kTexCoordSlot);
 
@@ -355,14 +360,11 @@ Graphics* create_graphics(int width, int height)
 
     /* Perform GL initialization */
     glEnable(GL_DEPTH_TEST);
-    CheckGLError();
     //glEnable(GL_CULL_FACE);
     glFrontFace(GL_CW);
     CheckGLError();
     glViewport(0, 0, width, height);
-    CheckGLError();
     glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
-    CheckGLError();
     glClearDepthf(1.0f);
     CheckGLError();
     system_log("OpenGL version:\t%s\n", glGetString(GL_VERSION));
@@ -438,47 +440,38 @@ void render_graphics(Graphics* graphics)
 
     CheckGLError();
 
-    glUseProgram(graphics->program);
+    glUseProgram(graphics->forward_program.program);
     CheckGLError();
-    glUniform3fv(graphics->camera_position_uniform, 1, (float*)&graphics->view_transform.position);
-    glUniformMatrix4fv(graphics->projection_uniform, 1, GL_FALSE, (float*)&graphics->projection_matrix);
-    glUniformMatrix4fv(graphics->view_uniform, 1, GL_FALSE, (float*)&view_matrix);
+    glUniform3fv(graphics->forward_program.camera_position, 1, (float*)&graphics->view_transform.position);
+    glUniformMatrix4fv(graphics->forward_program.projection, 1, GL_FALSE, (float*)&graphics->projection_matrix);
+    glUniformMatrix4fv(graphics->forward_program.view, 1, GL_FALSE, (float*)&view_matrix);
     /* Upload lights */
-    glUniform3fv(graphics->light_positions_uniform, graphics->num_lights, (float*)graphics->light_positions);
-    CheckGLError();
-    glUniform3fv(graphics->light_colors_uniform, graphics->num_lights, (float*)graphics->light_colors);
-    CheckGLError();
-    glUniform1fv(graphics->light_sizes_uniform, graphics->num_lights, (float*)graphics->light_sizes);
-    CheckGLError();
-    glUniform1i(graphics->num_lights_uniform, graphics->num_lights);
+    glUniform3fv(graphics->forward_program.light_positions, graphics->num_lights, (float*)graphics->light_positions);
+    glUniform3fv(graphics->forward_program.light_colors, graphics->num_lights, (float*)graphics->light_colors);
+    glUniform1fv(graphics->forward_program.light_sizes, graphics->num_lights, (float*)graphics->light_sizes);
+    glUniform1i(graphics->forward_program.num_lights, graphics->num_lights);
     CheckGLError();
 
-    glUniform3fv(graphics->sun_direction_uniform, 1, (float*)&graphics->sun_direction);
-    CheckGLError();
-    glUniform3fv(graphics->sun_color_uniform, 1, (float*)&graphics->sun_color);
+    glUniform3fv(graphics->forward_program.sun_direction, 1, (float*)&graphics->sun_direction);
+    glUniform3fv(graphics->forward_program.sun_color, 1, (float*)&graphics->sun_color);
     CheckGLError();
 
     /* Loop through render commands */
     for(ii=0;ii<graphics->num_commands;++ii) {
         RenderCommand command = graphics->commands[ii];
         Mat4 model = transform_get_matrix(command.transform);
-        glUniformMatrix4fv(graphics->world_uniform, 1, GL_FALSE, (float*)&model);
-        CheckGLError();
-        glUniform3fv(graphics->specular_color_uniform, 1, (float*)&command.material->specular_color);
-        CheckGLError();
-        glUniform1f(graphics->specular_power_uniform, command.material->specular_power);
-        CheckGLError();
-        glUniform1f(graphics->specular_coefficient_uniform, command.material->specular_coefficient);
+        glUniformMatrix4fv(graphics->forward_program.world, 1, GL_FALSE, (float*)&model);
+        glUniform3fv(graphics->forward_program.specular_color, 1, (float*)&command.material->specular_color);
+        glUniform1f(graphics->forward_program.specular_power  , command.material->specular_power);
+        glUniform1f(graphics->forward_program.specular_coefficient, command.material->specular_coefficient);
         CheckGLError();
 
         glActiveTexture(GL_TEXTURE0);
         if(command.material->albedo_tex)
             glBindTexture(GL_TEXTURE_2D, command.material->albedo_tex->texture);
-        CheckGLError();
         glActiveTexture(GL_TEXTURE1);
         if(command.material->normal_tex)
             glBindTexture(GL_TEXTURE_2D, command.material->normal_tex->texture);
-        CheckGLError();
 
         _draw_mesh(command.mesh);
     }
