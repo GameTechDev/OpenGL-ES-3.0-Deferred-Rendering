@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2743853E17FB5F97008D9C2C /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2743853C17FB5F97008D9C2C /* scene.cpp */; };
+		2743854117FB6071008D9C2C /* utility.c in Sources */ = {isa = PBXBuildFile; fileRef = 2743853F17FB6071008D9C2C /* utility.c */; };
 		2797218517FAA53B00EB40A8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218417FAA53B00EB40A8 /* Foundation.framework */; };
 		2797218717FAA53B00EB40A8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218617FAA53B00EB40A8 /* CoreGraphics.framework */; };
 		2797218917FAA53B00EB40A8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218817FAA53B00EB40A8 /* UIKit.framework */; };
@@ -28,6 +30,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2743853C17FB5F97008D9C2C /* scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scene.cpp; sourceTree = "<group>"; };
+		2743853D17FB5F97008D9C2C /* scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene.h; sourceTree = "<group>"; };
+		2743853F17FB6071008D9C2C /* utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utility.c; sourceTree = "<group>"; };
+		2743854017FB6071008D9C2C /* utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utility.h; sourceTree = "<group>"; };
 		2797218117FAA53B00EB40A8 /* deferred_gles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deferred_gles.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2797218417FAA53B00EB40A8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2797218617FAA53B00EB40A8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -163,6 +169,10 @@
 				27FC1C0217FB498300D3C6B5 /* vertex.h */,
 				27FC1C0A17FB4A1600D3C6B5 /* graphics.c */,
 				27FC1C0B17FB4A1600D3C6B5 /* graphics.h */,
+				2743853C17FB5F97008D9C2C /* scene.cpp */,
+				2743853D17FB5F97008D9C2C /* scene.h */,
+				2743853F17FB6071008D9C2C /* utility.c */,
+				2743854017FB6071008D9C2C /* utility.h */,
 			);
 			name = src;
 			path = ../../src;
@@ -252,9 +262,11 @@
 			files = (
 				27FC1C0C17FB4A1600D3C6B5 /* graphics.c in Sources */,
 				27FC1C1017FB4D8A00D3C6B5 /* stb_image.c in Sources */,
+				2743853E17FB5F97008D9C2C /* scene.cpp in Sources */,
 				279721C417FAA5AA00EB40A8 /* AppDelegate.m in Sources */,
 				279721CC17FAA79300EB40A8 /* OpenGLView.m in Sources */,
 				27FC1C0517FB498300D3C6B5 /* game.c in Sources */,
+				2743854117FB6071008D9C2C /* utility.c in Sources */,
 				27FC1C0717FB498300D3C6B5 /* mesh.c in Sources */,
 				27FC1C0817FB498300D3C6B5 /* program.c in Sources */,
 				27FC1C0917FB498300D3C6B5 /* timer.c in Sources */,

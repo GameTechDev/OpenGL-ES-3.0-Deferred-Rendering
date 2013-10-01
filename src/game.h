@@ -16,7 +16,7 @@ typedef struct TouchPoint
     Vec2        pos;
 } TouchPoint;
 
-Game* create_game(int width, int height);
+Game* create_game(void);
 void destroy_game(Game* G);
 void resize_game(Game* G, int width, int height);
 

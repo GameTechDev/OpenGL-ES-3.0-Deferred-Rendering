@@ -169,6 +169,8 @@ void resize_graphics(Graphics* G, int width, int height)
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &G->default_framebuffer));
 
     _resize_framebuffer(G);
+
+    system_log("Graphics resized: %d, %d\n", width, height);
 }
 void render_graphics(Graphics* G)
 {

@@ -7,6 +7,7 @@
 #include "timer.h"
 #include "graphics.h"
 #include "vec_math.h"
+#include "scene.h"
 
 /* Defines
  */
@@ -21,6 +22,7 @@ struct Game
 
     /* Game objects */
     Transform   camera;
+    Scene*      scene;
 
     /* Input */
     TouchPoint  points[16];
@@ -79,7 +81,7 @@ static void _control_camera(Game* G, float delta_time)
 
 /* External functions
  */
-Game* create_game(int width, int height)
+Game* create_game(void)
 {
     Game* game = (Game*)calloc(1, sizeof(*game));
     game->timer = create_timer();
@@ -91,6 +93,9 @@ Game* create_game(int width, int height)
     game->camera.position.x = 4.0f;
     game->camera.position.y = 2;
     game->camera.position.z = 7.5f;
+
+    /* Load scene */
+    create_scene("test.obj");
 
     reset_timer(game->timer);
     return game;

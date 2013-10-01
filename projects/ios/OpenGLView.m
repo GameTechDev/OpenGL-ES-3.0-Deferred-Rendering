@@ -29,7 +29,7 @@
     [self setupGL];
     [self setupDisplayLink];
 
-    self.game = create_game([self screenSize].size.width, [self screenSize].size.height);
+    self.game = create_game();
 }
 - (void)dealloc
 {
