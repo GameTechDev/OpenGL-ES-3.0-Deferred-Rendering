@@ -142,6 +142,7 @@ static void _load_obj(const char* filename)
 
     std::vector<std::vector<int3> >  all_indices;
     std::vector<std::string>  mesh_material_pairs;
+    std::vector<std::string>  mesh_names;
     int current_indices = -1;
 
     //std::map<std::string, Material> all_materials;
@@ -278,11 +279,30 @@ static void _load_obj(const char* filename)
                 v.push_back(vertex);
             }
         }
-        int vertex_count = (int)v.size();
-        int index_count = (int)i.size();
-        Vertex* new_vertices = calculate_tangets(&v[0], vertex_count, &i[0], sizeof(uint32_t), index_count);
+        uint32_t vertex_count = (uint32_t)v.size();
+        uint32_t index_count = (uint32_t)i.size();
+        Vertex* new_vertices = calculate_tangets(&v[0], (int)vertex_count, &i[0], sizeof(uint32_t), (int)index_count);
 
         //Mesh* mesh = create_mesh(new_vertices, sizeof(Vertex)*vertex_count, &i[0], sizeof(uint32_t)*index_count, index_count);
+
+        FILE* mesh_file = fopen(mesh_names[(uint32_t)jj].c_str(), "wb");
+
+        // mtl_name_len
+        uint32_t material_name_len = (uint32_t)strlen(mesh_material_pairs[(uint32_t)jj].c_str());
+        fwrite(&material_name_len, 1, sizeof(material_name_len), mesh_file);
+        // mtl_name
+        fwrite(mesh_material_pairs[(uint32_t)jj].c_str(), 1, material_name_len, mesh_file);
+        // vertex count
+        fwrite(&vertex_count, 1, sizeof(vertex_count), mesh_file);
+        // index count
+        fwrite(&index_count, 1, sizeof(index_count), mesh_file);
+        // vertices
+        fwrite(new_vertices, sizeof(Vertex), vertex_count, mesh_file);
+        // indices
+        fwrite(&i[0], sizeof(uint32_t), index_count, mesh_file);
+
+        fclose(mesh_file);
+
 
         delete [] new_vertices;
 
