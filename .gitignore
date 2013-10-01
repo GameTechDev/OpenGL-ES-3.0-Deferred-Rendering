@@ -229,3 +229,4 @@ tools/exporter
 gen/
 libs/
 *.sublime-workspace
+tools/*.mesh
