@@ -74,14 +74,6 @@ static void _control_camera(Game* game, float delta_time)
         game->prev_double = avg;
     }
 }
-static void _print_touches(Game* game)
-{
-    int ii;
-    system_log("Num points: %d\n", game->num_points);
-    for(ii=0;ii<game->num_points;++ii) {
-        system_log("\t%d: (%d, %d)\n", game->points[ii].index, (int)game->points[ii].pos.x, (int)game->points[ii].pos.y);
-    }
-}
 
 /* External functions
  */
@@ -141,7 +133,6 @@ void add_touch_points(Game* game, int num_touch_points, TouchPoint* points)
         avg = vec2_mul_scalar(avg, 0.5f);
         game->prev_double = avg;
     }
-    _print_touches(game);
 }
 void update_touch_points(Game* game, int num_touch_points, TouchPoint* points)
 {

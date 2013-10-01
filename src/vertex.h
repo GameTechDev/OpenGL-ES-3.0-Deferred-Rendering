@@ -27,13 +27,5 @@ typedef enum AttributeSlot
     kEmptySlot = -1
 } AttributeSlot;
 
-static const char* kAttributeSlotNames[] =
-{
-    "a_Position",   /* kPositionSlot */
-    "a_Normal",     /* kNormalSlot */
-    "a_TexCoord",   /* kTexCoordSlot */
-    "a_Tangent",    /* kTangentSlot */
-    "a_Bitangent",  /* kBitangentSlot */
-};
 
 #endif /* include guard */

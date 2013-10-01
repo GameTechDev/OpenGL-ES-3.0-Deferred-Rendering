@@ -37,16 +37,16 @@ Mesh* create_mesh(const Vertex* vertex_data, size_t vertex_data_size,
     GLuint  index_buffer = 0;
 
     /* Create vertex buffer */
-    glGenBuffers(1, &vertex_buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, vertex_data_size, vertex_data, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    ASSERT_GL(glGenBuffers(1, &vertex_buffer));
+    ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
+    ASSERT_GL(glBufferData(GL_ARRAY_BUFFER, vertex_data_size, vertex_data, GL_STATIC_DRAW));
+    ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
     /* Create index buffer */
-    glGenBuffers(1, &vertex_buffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_data_size, index_data, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    ASSERT_GL(glGenBuffers(1, &vertex_buffer));
+    ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer));
+    ASSERT_GL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_data_size, index_data, GL_STATIC_DRAW));
+    ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
     /* Create mesh */
     mesh = (Mesh*)calloc(1, sizeof(Mesh));
@@ -56,21 +56,21 @@ Mesh* create_mesh(const Vertex* vertex_data, size_t vertex_data_size,
 
     return mesh;
 }
-void draw_mesh(const Mesh* mesh)
+void draw_mesh(const Mesh* M)
 {
     intptr_t ptr = 0;
-    glBindBuffer(GL_ARRAY_BUFFER, mesh->vertex_buffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->index_buffer);
-    glVertexAttribPointer(kPositionSlot,    3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(ptr+=0));
-    glVertexAttribPointer(kNormalSlot,      3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(ptr+=3));
-    glVertexAttribPointer(kTangentSlot,     3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(ptr+=3));
-    glVertexAttribPointer(kBitangentSlot,   3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(ptr+=3));
-    glVertexAttribPointer(kTexCoordSlot,    2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(ptr+=3));
-    glDrawElements(GL_TRIANGLES, mesh->index_count, GL_UNSIGNED_INT, NULL);
+    ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, M->vertex_buffer));
+    ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, M->index_buffer));
+    ASSERT_GL(glVertexAttribPointer(kPositionSlot,    3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(ptr+=0)));
+    ASSERT_GL(glVertexAttribPointer(kNormalSlot,      3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(ptr+=3)));
+    ASSERT_GL(glVertexAttribPointer(kTangentSlot,     3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(ptr+=3)));
+    ASSERT_GL(glVertexAttribPointer(kBitangentSlot,   3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(ptr+=3)));
+    ASSERT_GL(glVertexAttribPointer(kTexCoordSlot,    2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(ptr+=3)));
+    ASSERT_GL(glDrawElements(GL_TRIANGLES, M->index_count, GL_UNSIGNED_INT, NULL));
 }
-void _destroy_mesh(Mesh* mesh)
+void _destroy_mesh(Mesh* M)
 {
-    glDeleteBuffers(1,&mesh->vertex_buffer);
-    glDeleteBuffers(1,&mesh->index_buffer);
-    free(mesh);
+    glDeleteBuffers(1,&M->vertex_buffer);
+    glDeleteBuffers(1,&M->index_buffer);
+    free(M);
 }

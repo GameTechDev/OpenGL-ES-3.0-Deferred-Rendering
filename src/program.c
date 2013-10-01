@@ -5,6 +5,7 @@
 #include "gl_include.h"
 #include "system.h"
 #include "vertex.h"
+#include "assert.h"
 
 /* Defines
  */
@@ -14,6 +15,14 @@
 
 /* Constants
  */
+static const char* kAttributeSlotNames[] =
+{
+    "a_Position",   /* kPositionSlot */
+    "a_Normal",     /* kNormalSlot */
+    "a_TexCoord",   /* kTexCoordSlot */
+    "a_Tangent",    /* kTangentSlot */
+    "a_Bitangent",  /* kBitangentSlot */
+};
 
 /* Variables
  */
@@ -38,17 +47,16 @@ static GLuint _load_shader(const char* filename, GLenum type)
     shader_size = (GLint)data_size;
 
     shader = glCreateShader(type);
-    glShaderSource(shader, 1, (const char**)&data, &shader_size);
-    glCompileShader(shader);
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status);
+    ASSERT_GL(glShaderSource(shader, 1, (const char**)&data, &shader_size));
+    ASSERT_GL(glCompileShader(shader));
+    ASSERT_GL(glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status));
     if(compile_status == GL_FALSE) {
         char message[1024] = {0};
-        glGetShaderInfoLog(shader, sizeof(message), 0, message);
+        ASSERT_GL(glGetShaderInfoLog(shader, sizeof(message), 0, message));
         system_log("Error compiling %s: %s", filename, message);
         assert(compile_status != GL_FALSE);
         return 0;
     }
-    CheckGLError();
 
     free_file_data(data);
 
@@ -71,29 +79,27 @@ Program create_program(const char* vertex_shader_filename,
 
     /* Create program */
     program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
+    ASSERT_GL(glAttachShader(program, vertex_shader));
+    ASSERT_GL(glAttachShader(program, fragment_shader));
 
-    glBindAttribLocation(program, kPositionSlot,    "a_Position");
-    glBindAttribLocation(program, kNormalSlot,      "a_Normal");
-    glBindAttribLocation(program, kTangentSlot,     "a_Tangent");
-    glBindAttribLocation(program, kBitangentSlot,   "a_Bitangent");
-    glBindAttribLocation(program, kTexCoordSlot,    "a_TexCoord");
-    CheckGLError();
+    ASSERT_GL(glBindAttribLocation(program, kPositionSlot,    kAttributeSlotNames[kPositionSlot]));
+    ASSERT_GL(glBindAttribLocation(program, kNormalSlot,      kAttributeSlotNames[kNormalSlot]));
+    ASSERT_GL(glBindAttribLocation(program, kTangentSlot,     kAttributeSlotNames[kTangentSlot]));
+    ASSERT_GL(glBindAttribLocation(program, kBitangentSlot,   kAttributeSlotNames[kBitangentSlot]));
+    ASSERT_GL(glBindAttribLocation(program, kTexCoordSlot,    kAttributeSlotNames[kTexCoordSlot]));
 
-    glLinkProgram(program);
-    glGetProgramiv(program, GL_LINK_STATUS, &link_status);
+    ASSERT_GL(glLinkProgram(program));
+    ASSERT_GL(glGetProgramiv(program, GL_LINK_STATUS, &link_status));
     if(link_status == GL_FALSE) {
         char message[1024];
-        glGetProgramInfoLog(program, sizeof(message), 0, message);
+        ASSERT_GL(glGetProgramInfoLog(program, sizeof(message), 0, message));
         system_log(message);
         assert(link_status != GL_FALSE);
     }
-    glDetachShader(program, fragment_shader);
-    glDetachShader(program, vertex_shader);
-    glDeleteShader(fragment_shader);
-    glDeleteShader(vertex_shader);
-    CheckGLError();
+    ASSERT_GL(glDetachShader(program, fragment_shader));
+    ASSERT_GL(glDetachShader(program, vertex_shader));
+    ASSERT_GL(glDeleteShader(fragment_shader));
+    ASSERT_GL(glDeleteShader(vertex_shader));
 
     return program;
 }

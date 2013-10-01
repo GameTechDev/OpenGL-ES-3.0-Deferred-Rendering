@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		274F848717FB34A000F7C38E /* mesh.c in Sources */ = {isa = PBXBuildFile; fileRef = 274F848317FB34A000F7C38E /* mesh.c */; };
+		274F848817FB34A000F7C38E /* program.c in Sources */ = {isa = PBXBuildFile; fileRef = 274F848517FB34A000F7C38E /* program.c */; };
 		2797218517FAA53B00EB40A8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218417FAA53B00EB40A8 /* Foundation.framework */; };
 		2797218717FAA53B00EB40A8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218617FAA53B00EB40A8 /* CoreGraphics.framework */; };
 		2797218917FAA53B00EB40A8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218817FAA53B00EB40A8 /* UIKit.framework */; };
@@ -23,6 +25,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		274F848317FB34A000F7C38E /* mesh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mesh.c; sourceTree = "<group>"; };
+		274F848417FB34A000F7C38E /* mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mesh.h; sourceTree = "<group>"; };
+		274F848517FB34A000F7C38E /* program.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = program.c; sourceTree = "<group>"; };
+		274F848617FB34A000F7C38E /* program.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = program.h; sourceTree = "<group>"; };
 		2797218117FAA53B00EB40A8 /* deferred_gles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deferred_gles.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2797218417FAA53B00EB40A8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2797218617FAA53B00EB40A8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -129,6 +135,10 @@
 		279721CD17FAAA7E00EB40A8 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				274F848317FB34A000F7C38E /* mesh.c */,
+				274F848417FB34A000F7C38E /* mesh.h */,
+				274F848517FB34A000F7C38E /* program.c */,
+				274F848617FB34A000F7C38E /* program.h */,
 				279721D017FAAA7E00EB40A8 /* assert.h */,
 				279721D617FAAA7E00EB40A8 /* game.c */,
 				279721D717FAAA7E00EB40A8 /* game.h */,
@@ -215,7 +225,9 @@
 			files = (
 				279721EF17FAAA7E00EB40A8 /* game.c in Sources */,
 				279721C417FAA5AA00EB40A8 /* AppDelegate.m in Sources */,
+				274F848817FB34A000F7C38E /* program.c in Sources */,
 				279721CC17FAA79300EB40A8 /* OpenGLView.m in Sources */,
+				274F848717FB34A000F7C38E /* mesh.c in Sources */,
 				279721C017FAA59D00EB40A8 /* main.m in Sources */,
 				279721F617FAAA7E00EB40A8 /* timer.c in Sources */,
 				279721F317FAAA7E00EB40A8 /* system_ios.m in Sources */,
