@@ -7,7 +7,6 @@
 @interface OpenGLView : GLKViewController
 
 @property(strong, nonatomic) EAGLContext* context;
-
--(void)setupGL;
+@property struct Game* game;
 
 @end

@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include "system.h"
 #include "timer.h"
-#include "graphics.h"
 #include "vec_math.h"
 
 /* Defines
@@ -15,28 +14,19 @@
  */
 struct Game
 {
+    /* Engine objects */
     Timer*      timer;
-    Graphics*   graphics;
 
-    Mesh**      terrain_meshes;
-    int         num_terrain_meshes;
-    Material*   terrain_materials;
-    int         num_terrain_materials;
-
+    /* Game objects */
     Transform   camera;
 
+    /* Input */
     TouchPoint  points[16];
     int         num_points;
-
     Vec2        prev_single;
     Vec2        prev_double;
 
-    Material    grass_material;
-    Material    color_material;
-    Material    terrain_material;
-
-    Light       point_lights[8];
-
+    /* FPS Counting */
     float       fps_time;
     int         fps_count;
 };
@@ -68,7 +58,6 @@ static void _control_camera(Game* game, float delta_time)
         float camera_speed = 0.1f;
         Vec3 look = quat_get_z_axis(game->camera.orientation);
         Vec3 right = quat_get_x_axis(game->camera.orientation);
-        Vec3 up = quat_get_y_axis(game->camera.orientation);
         Vec2 avg = vec2_add(game->points[0].pos, game->points[1].pos);
         Vec2 delta;
 
@@ -99,96 +88,31 @@ static void _print_touches(Game* game)
 Game* create_game(int width, int height)
 {
     Game* game = (Game*)calloc(1, sizeof(*game));
-    game->graphics = create_graphics(width, height);
     game->timer = create_timer();
 
+    /* Set up camera */
     game->camera = transform_zero;
     game->camera.orientation = quat_from_euler(0, kPi*-0.75f, 0);
     game->camera.position.x = 4.0f;
     game->camera.position.y = 2;
     game->camera.position.z = 7.5f;
 
-    //game->terrain_mesh = create_mesh(game->graphics, "lightHouse.obj");
-
-    /** Grass material
-     */
-    game->grass_material.albedo_tex = load_texture(game->graphics, "grass.jpg");
-    game->grass_material.normal_tex = NULL;
-    game->grass_material.specular_color = vec3_create(0.0f, 0.0f, 0.0f);
-    game->grass_material.specular_power = 0.0f;
-    game->grass_material.specular_coefficient = 0.0f;
-
-    /** Color material
-     */
-    game->color_material.albedo_tex = load_texture(game->graphics, "texture.png");
-    game->color_material.normal_tex = NULL;
-    game->color_material.specular_color = vec3_create(1.0f, 1.0f, 1.0f);
-    game->color_material.specular_power = 32.0f;
-    game->color_material.specular_coefficient = 1.0f;
-
-    /** terrain material
-     */
-    game->terrain_material.albedo_tex = load_texture(game->graphics, "land_diffuse.png");
-    game->terrain_material.normal_tex = load_texture(game->graphics, "land_normal.png");
-    game->terrain_material.specular_color = vec3_create(0.0f, 0.0f, 0.0f);
-    game->terrain_material.specular_power = 0.0f;
-    game->terrain_material.specular_coefficient = 0.0f;
-
-    /* Load terrain obj */
-    load_obj(game->graphics, "lightHouse.obj", &game->terrain_meshes, &game->num_terrain_meshes, &game->terrain_materials, &game->num_terrain_materials);
-
     reset_timer(game->timer);
     return game;
 }
 void destroy_game(Game* game)
 {
-    int ii;
-    for(ii=0;ii<game->num_terrain_meshes;++ii) {
-        destroy_mesh(game->terrain_meshes[ii]);
-    }
-    free(game->terrain_meshes);
-    free(game->terrain_materials);
     destroy_timer(game->timer);
-    destroy_graphics(game->graphics);
-    destroy_game(game);
+    free(game);
 }
 void resize_game(Game* game, int width, int height)
 {
-    resize_graphics(game->graphics, width, height);
 }
 void update_game(Game* game)
 {
-    static float degrees = 0.0f;
-    Transform t = transform_zero;
     float delta_time = (float)get_delta_time(game->timer);
-    int ii;
 
     _control_camera(game, delta_time);
-
-    /* Set view matrix first */
-    set_view_transform(game->graphics, game->camera);
-
-    /* Render scene */
-    t = transform_zero;
-    //t.scale = 0.01f;
-    for(ii=0;ii<game->num_terrain_meshes;++ii) {
-        add_render_command(game->graphics, game->terrain_meshes[ii], &game->terrain_materials[ii], transform_get_matrix(t));
-    }
-
-    /* Render lights */
-    degrees += delta_time*(k2Pi/32);
-    for(ii=0;ii<8;++ii) {
-        float angle = ii*(k2Pi/8)+degrees;
-        Quaternion q = quat_from_euler(0, angle, 0);
-        Vec3 direction = quat_get_z_axis(q);
-        game->point_lights[ii].position = vec3_mul_scalar(direction, 7.0f);
-        game->point_lights[ii].position.y = 2.0f;
-        game->point_lights[ii].color = vec3_create(1.0f, 0.0f, 0.0f);
-        game->point_lights[ii].size = 4.0f;
-
-        add_point_light(game->graphics, game->point_lights[ii]);
-    }
-    set_sun_light(game->graphics, vec3_create(0, -1, 0), vec3_create(0.8f, 0.8f, 0.8f));
 
     /* Calculate FPS */
     game->fps_time += delta_time;
@@ -202,7 +126,6 @@ void update_game(Game* game)
 }
 void render_game(Game* game)
 {
-    render_graphics(game->graphics);
 }
 void add_touch_points(Game* game, int num_touch_points, TouchPoint* points)
 {
@@ -218,6 +141,7 @@ void add_touch_points(Game* game, int num_touch_points, TouchPoint* points)
         avg = vec2_mul_scalar(avg, 0.5f);
         game->prev_double = avg;
     }
+    _print_touches(game);
 }
 void update_touch_points(Game* game, int num_touch_points, TouchPoint* points)
 {

@@ -13,6 +13,7 @@
     self.window.backgroundColor = [UIColor whiteColor];
     self.window.rootViewController = [[OpenGLView alloc] initWithNibName:nil bundle:nil];
     [self.window makeKeyAndVisible];
+    
     return YES;
 }
 

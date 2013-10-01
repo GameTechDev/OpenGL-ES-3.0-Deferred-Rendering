@@ -60,6 +60,8 @@
  If your name should be here but isn't, let Sean know.
 
 */
+#ifndef __clang_analyzer__
+
 #include "stb_image.h"
 #ifndef STBI_HEADER_FILE_ONLY
 
@@ -139,7 +141,6 @@ typedef struct
    uint8 *img_buffer, *img_buffer_end;
    uint8 *img_buffer_original;
 } stbi;
-
 
 static void refill_buffer(stbi *s);
 
@@ -4323,6 +4324,9 @@ int stbi_info_from_callbacks(stbi_io_callbacks const *c, void *user, int *x, int
 }
 
 #endif // STBI_HEADER_FILE_ONLY
+
+
+#endif // #ifndef __clang_analyzer__
 
 /*
    revision history:
