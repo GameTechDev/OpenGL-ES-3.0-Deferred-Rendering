@@ -7,293 +7,203 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2715E73917ECADFA00442391 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2715E72A17ECADFA00442391 /* AppDelegate.m */; };
-		2715E73B17ECADFA00442391 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2715E72F17ECADFA00442391 /* Images.xcassets */; };
-		2715E73C17ECADFA00442391 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2715E73017ECADFA00442391 /* InfoPlist.strings */; };
-		2715E73D17ECADFA00442391 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2715E73117ECADFA00442391 /* main.m */; };
-		2715E73E17ECADFA00442391 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2715E73217ECADFA00442391 /* Main_iPad.storyboard */; };
-		2715E73F17ECADFA00442391 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2715E73317ECADFA00442391 /* Main_iPhone.storyboard */; };
-		2715E74217ECADFA00442391 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2715E73817ECADFA00442391 /* ViewController.m */; };
-		2715E74F17ECB2A700442391 /* graphics.c in Sources */ = {isa = PBXBuildFile; fileRef = 2715E74917ECB2A700442391 /* graphics.c */; };
-		2715E75317ECB2CA00442391 /* system_ios.m in Sources */ = {isa = PBXBuildFile; fileRef = 2715E75217ECB2CA00442391 /* system_ios.m */; };
-		2715E75B17ECC60100442391 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2715E75917ECC60100442391 /* timer.c */; };
-		2715E76117ECF23E00442391 /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 2715E75F17ECF23E00442391 /* game.c */; };
-		271E4EE617F9FE9E006EB3CD /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 271E4EE517F9FE9E006EB3CD /* assets */; };
-		2736D5BA17F383E200BE83E1 /* geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2736D5B917F383E200BE83E1 /* geometry.cpp */; };
-		2779292217F24E6E0090932F /* gl_helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 2779292017F24E6E0090932F /* gl_helper.c */; };
-		2788B3C317FA917400E9BF1E /* deferred_lighting_renderer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2788B3C117FA917400E9BF1E /* deferred_lighting_renderer.c */; };
-		2788B3C417FA917400E9BF1E /* forward_renderer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2788B3C217FA917400E9BF1E /* forward_renderer.c */; };
-		2788B3C717FA986700E9BF1E /* mesh.c in Sources */ = {isa = PBXBuildFile; fileRef = 2788B3C517FA986700E9BF1E /* mesh.c */; };
-		2788B3CE17FA9CE600E9BF1E /* program.c in Sources */ = {isa = PBXBuildFile; fileRef = 2788B3CC17FA9CE600E9BF1E /* program.c */; };
-		27AB28BB17F297BA0011651F /* stb_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 27AB28A917F297BA0011651F /* stb_image.c */; };
-		27F3529517EBC3F600FF4D22 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529417EBC3F600FF4D22 /* Foundation.framework */; };
-		27F3529717EBC3F600FF4D22 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */; };
-		27F3529917EBC3F600FF4D22 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529817EBC3F600FF4D22 /* UIKit.framework */; };
-		27F3529B17EBC3F600FF4D22 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529A17EBC3F600FF4D22 /* GLKit.framework */; };
-		27F3529D17EBC3F600FF4D22 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529C17EBC3F600FF4D22 /* OpenGLES.framework */; };
+		2797218517FAA53B00EB40A8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218417FAA53B00EB40A8 /* Foundation.framework */; };
+		2797218717FAA53B00EB40A8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218617FAA53B00EB40A8 /* CoreGraphics.framework */; };
+		2797218917FAA53B00EB40A8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218817FAA53B00EB40A8 /* UIKit.framework */; };
+		279721BF17FAA59D00EB40A8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 279721BB17FAA59D00EB40A8 /* InfoPlist.strings */; };
+		279721C017FAA59D00EB40A8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 279721BD17FAA59D00EB40A8 /* main.m */; };
+		279721C417FAA5AA00EB40A8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 279721C217FAA5AA00EB40A8 /* AppDelegate.m */; };
+		279721C517FAA5AA00EB40A8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 279721C317FAA5AA00EB40A8 /* Images.xcassets */; };
+		279721C717FAA71000EB40A8 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 279721C617FAA71000EB40A8 /* GLKit.framework */; };
+		279721C917FAA71800EB40A8 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 279721C817FAA71800EB40A8 /* OpenGLES.framework */; };
+		279721CC17FAA79300EB40A8 /* OpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 279721CB17FAA79300EB40A8 /* OpenGLView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2715E72917ECADFA00442391 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		2715E72A17ECADFA00442391 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		2715E72B17ECADFA00442391 /* deferred_gles-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "deferred_gles-Info.plist"; sourceTree = "<group>"; };
-		2715E72F17ECADFA00442391 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		2715E73017ECADFA00442391 /* InfoPlist.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
-		2715E73117ECADFA00442391 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		2715E73217ECADFA00442391 /* Main_iPad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main_iPad.storyboard; sourceTree = "<group>"; };
-		2715E73317ECADFA00442391 /* Main_iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main_iPhone.storyboard; sourceTree = "<group>"; };
-		2715E73717ECADFA00442391 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		2715E73817ECADFA00442391 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		2715E74817ECB2A700442391 /* assert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = assert.h; sourceTree = "<group>"; };
-		2715E74917ECB2A700442391 /* graphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = graphics.c; sourceTree = "<group>"; };
-		2715E74A17ECB2A700442391 /* graphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = graphics.h; sourceTree = "<group>"; };
-		2715E74C17ECB2A700442391 /* system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
-		2715E74D17ECB2A700442391 /* vec_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vec_math.h; sourceTree = "<group>"; };
-		2715E75217ECB2CA00442391 /* system_ios.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = system_ios.m; sourceTree = "<group>"; };
-		2715E75917ECC60100442391 /* timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timer.c; sourceTree = "<group>"; };
-		2715E75A17ECC60100442391 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
-		2715E75F17ECF23E00442391 /* game.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = game.c; sourceTree = "<group>"; };
-		2715E76017ECF23E00442391 /* game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = game.h; sourceTree = "<group>"; };
-		271E4EE517F9FE9E006EB3CD /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../../assets; sourceTree = "<group>"; };
-		2736D5B917F383E200BE83E1 /* geometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = geometry.cpp; sourceTree = "<group>"; };
-		2779292017F24E6E0090932F /* gl_helper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gl_helper.c; sourceTree = "<group>"; };
-		2779292117F24E6E0090932F /* gl_helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gl_helper.h; sourceTree = "<group>"; };
-		2779292317F24FD40090932F /* geometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = geometry.h; sourceTree = "<group>"; };
-		2788B3BF17FA8FC400E9BF1E /* renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = renderer.h; sourceTree = "<group>"; };
-		2788B3C117FA917400E9BF1E /* deferred_lighting_renderer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = deferred_lighting_renderer.c; sourceTree = "<group>"; };
-		2788B3C217FA917400E9BF1E /* forward_renderer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = forward_renderer.c; sourceTree = "<group>"; };
-		2788B3C517FA986700E9BF1E /* mesh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mesh.c; sourceTree = "<group>"; };
-		2788B3C617FA986700E9BF1E /* mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mesh.h; sourceTree = "<group>"; };
-		2788B3C817FA98A300E9BF1E /* gl_include.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gl_include.h; sourceTree = "<group>"; };
-		2788B3CA17FA9BE900E9BF1E /* vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertex.h; sourceTree = "<group>"; };
-		2788B3CC17FA9CE600E9BF1E /* program.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = program.c; sourceTree = "<group>"; };
-		2788B3CD17FA9CE600E9BF1E /* program.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = program.h; sourceTree = "<group>"; };
-		27AB28A917F297BA0011651F /* stb_image.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stb_image.c; sourceTree = "<group>"; };
-		27AB28AA17F297BA0011651F /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
-		27F3529117EBC3F600FF4D22 /* deferred gles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "deferred gles.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		27F3529417EBC3F600FF4D22 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		27F3529817EBC3F600FF4D22 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		27F3529A17EBC3F600FF4D22 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
-		27F3529C17EBC3F600FF4D22 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
-		27F352BE17EBC3F600FF4D22 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		27F9196517F5EC9D008D79D7 /* todo.txt */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 4; name = todo.txt; path = ../../todo.txt; sourceTree = "<group>"; };
+		2797218117FAA53B00EB40A8 /* deferred_gles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deferred_gles.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2797218417FAA53B00EB40A8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		2797218617FAA53B00EB40A8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		2797218817FAA53B00EB40A8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		2797219D17FAA53B00EB40A8 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		279721B517FAA59D00EB40A8 /* deferred_gles-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "deferred_gles-Info.plist"; sourceTree = "<group>"; };
+		279721BC17FAA59D00EB40A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
+		279721BD17FAA59D00EB40A8 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		279721C117FAA5AA00EB40A8 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		279721C217FAA5AA00EB40A8 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		279721C317FAA5AA00EB40A8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		279721C617FAA71000EB40A8 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		279721C817FAA71800EB40A8 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		279721CA17FAA79300EB40A8 /* OpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenGLView.h; sourceTree = "<group>"; };
+		279721CB17FAA79300EB40A8 /* OpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenGLView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		27F3528E17EBC3F600FF4D22 /* Frameworks */ = {
+		2797217E17FAA53B00EB40A8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				27F3529D17EBC3F600FF4D22 /* OpenGLES.framework in Frameworks */,
-				27F3529717EBC3F600FF4D22 /* CoreGraphics.framework in Frameworks */,
-				27F3529917EBC3F600FF4D22 /* UIKit.framework in Frameworks */,
-				27F3529B17EBC3F600FF4D22 /* GLKit.framework in Frameworks */,
-				27F3529517EBC3F600FF4D22 /* Foundation.framework in Frameworks */,
+				279721C917FAA71800EB40A8 /* OpenGLES.framework in Frameworks */,
+				279721C717FAA71000EB40A8 /* GLKit.framework in Frameworks */,
+				2797218717FAA53B00EB40A8 /* CoreGraphics.framework in Frameworks */,
+				2797218917FAA53B00EB40A8 /* UIKit.framework in Frameworks */,
+				2797218517FAA53B00EB40A8 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2715E72817ECADFA00442391 /* project */ = {
+		2797217817FAA53B00EB40A8 = {
 			isa = PBXGroup;
 			children = (
-				2715E72917ECADFA00442391 /* AppDelegate.h */,
-				2715E72A17ECADFA00442391 /* AppDelegate.m */,
-				2715E72B17ECADFA00442391 /* deferred_gles-Info.plist */,
-				2715E72F17ECADFA00442391 /* Images.xcassets */,
-				2715E73017ECADFA00442391 /* InfoPlist.strings */,
-				2715E73117ECADFA00442391 /* main.m */,
-				2715E73217ECADFA00442391 /* Main_iPad.storyboard */,
-				2715E73317ECADFA00442391 /* Main_iPhone.storyboard */,
-				2715E73717ECADFA00442391 /* ViewController.h */,
-				2715E73817ECADFA00442391 /* ViewController.m */,
-			);
-			name = project;
-			sourceTree = "<group>";
-		};
-		2715E74517ECB2A700442391 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				2788B3C117FA917400E9BF1E /* deferred_lighting_renderer.c */,
-				2788B3C217FA917400E9BF1E /* forward_renderer.c */,
-				27AB289217F297BA0011651F /* external */,
-				2715E75117ECB2CA00442391 /* ios */,
-				2715E74817ECB2A700442391 /* assert.h */,
-				2715E75F17ECF23E00442391 /* game.c */,
-				2715E76017ECF23E00442391 /* game.h */,
-				2736D5B917F383E200BE83E1 /* geometry.cpp */,
-				2779292317F24FD40090932F /* geometry.h */,
-				2779292017F24E6E0090932F /* gl_helper.c */,
-				2779292117F24E6E0090932F /* gl_helper.h */,
-				2715E74917ECB2A700442391 /* graphics.c */,
-				2715E74A17ECB2A700442391 /* graphics.h */,
-				2715E74C17ECB2A700442391 /* system.h */,
-				2715E75917ECC60100442391 /* timer.c */,
-				2715E75A17ECC60100442391 /* timer.h */,
-				2715E74D17ECB2A700442391 /* vec_math.h */,
-				2788B3BF17FA8FC400E9BF1E /* renderer.h */,
-				2788B3C517FA986700E9BF1E /* mesh.c */,
-				2788B3C617FA986700E9BF1E /* mesh.h */,
-				2788B3C817FA98A300E9BF1E /* gl_include.h */,
-				2788B3CA17FA9BE900E9BF1E /* vertex.h */,
-				2788B3CC17FA9CE600E9BF1E /* program.c */,
-				2788B3CD17FA9CE600E9BF1E /* program.h */,
-			);
-			name = src;
-			path = ../../src;
-			sourceTree = "<group>";
-		};
-		2715E75117ECB2CA00442391 /* ios */ = {
-			isa = PBXGroup;
-			children = (
-				2715E75217ECB2CA00442391 /* system_ios.m */,
-			);
-			path = ios;
-			sourceTree = "<group>";
-		};
-		27AB289217F297BA0011651F /* external */ = {
-			isa = PBXGroup;
-			children = (
-				27AB28A917F297BA0011651F /* stb_image.c */,
-				27AB28AA17F297BA0011651F /* stb_image.h */,
-			);
-			path = external;
-			sourceTree = "<group>";
-		};
-		27F3528817EBC3F600FF4D22 = {
-			isa = PBXGroup;
-			children = (
-				27F9196517F5EC9D008D79D7 /* todo.txt */,
-				271E4EE517F9FE9E006EB3CD /* assets */,
-				2715E74517ECB2A700442391 /* src */,
-				2715E72817ECADFA00442391 /* project */,
-				27F3529317EBC3F600FF4D22 /* Frameworks */,
-				27F3529217EBC3F600FF4D22 /* Products */,
+				279721B317FAA58500EB40A8 /* project */,
+				2797218317FAA53B00EB40A8 /* Frameworks */,
+				2797218217FAA53B00EB40A8 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		27F3529217EBC3F600FF4D22 /* Products */ = {
+		2797218217FAA53B00EB40A8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				27F3529117EBC3F600FF4D22 /* deferred gles.app */,
+				2797218117FAA53B00EB40A8 /* deferred_gles.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		27F3529317EBC3F600FF4D22 /* Frameworks */ = {
+		2797218317FAA53B00EB40A8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				27F3529417EBC3F600FF4D22 /* Foundation.framework */,
-				27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */,
-				27F3529817EBC3F600FF4D22 /* UIKit.framework */,
-				27F3529A17EBC3F600FF4D22 /* GLKit.framework */,
-				27F3529C17EBC3F600FF4D22 /* OpenGLES.framework */,
-				27F352BE17EBC3F600FF4D22 /* XCTest.framework */,
+				279721C817FAA71800EB40A8 /* OpenGLES.framework */,
+				279721C617FAA71000EB40A8 /* GLKit.framework */,
+				2797218417FAA53B00EB40A8 /* Foundation.framework */,
+				2797218617FAA53B00EB40A8 /* CoreGraphics.framework */,
+				2797218817FAA53B00EB40A8 /* UIKit.framework */,
+				2797219D17FAA53B00EB40A8 /* XCTest.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		279721B317FAA58500EB40A8 /* project */ = {
+			isa = PBXGroup;
+			children = (
+				279721C117FAA5AA00EB40A8 /* AppDelegate.h */,
+				279721C217FAA5AA00EB40A8 /* AppDelegate.m */,
+				279721C317FAA5AA00EB40A8 /* Images.xcassets */,
+				279721B417FAA58F00EB40A8 /* Supporting Files */,
+				279721CA17FAA79300EB40A8 /* OpenGLView.h */,
+				279721CB17FAA79300EB40A8 /* OpenGLView.m */,
+			);
+			name = project;
+			sourceTree = "<group>";
+		};
+		279721B417FAA58F00EB40A8 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				279721B517FAA59D00EB40A8 /* deferred_gles-Info.plist */,
+				279721BA17FAA59D00EB40A8 /* en.lproj */,
+				279721BD17FAA59D00EB40A8 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		279721BA17FAA59D00EB40A8 /* en.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				279721BB17FAA59D00EB40A8 /* InfoPlist.strings */,
+			);
+			path = en.lproj;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		27F3529017EBC3F600FF4D22 /* deferred gles */ = {
+		2797218017FAA53B00EB40A8 /* deferred_gles */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 27F352CE17EBC3F600FF4D22 /* Build configuration list for PBXNativeTarget "deferred gles" */;
+			buildConfigurationList = 279721AD17FAA53B00EB40A8 /* Build configuration list for PBXNativeTarget "deferred_gles" */;
 			buildPhases = (
-				27F3528D17EBC3F600FF4D22 /* Sources */,
-				27F3528E17EBC3F600FF4D22 /* Frameworks */,
-				27F3528F17EBC3F600FF4D22 /* Resources */,
+				2797217D17FAA53B00EB40A8 /* Sources */,
+				2797217E17FAA53B00EB40A8 /* Frameworks */,
+				2797217F17FAA53B00EB40A8 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = "deferred gles";
-			productName = "deferred gles";
-			productReference = 27F3529117EBC3F600FF4D22 /* deferred gles.app */;
+			name = deferred_gles;
+			productName = deferred_gles;
+			productReference = 2797218117FAA53B00EB40A8 /* deferred_gles.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		27F3528917EBC3F600FF4D22 /* Project object */ = {
+		2797217917FAA53B00EB40A8 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = Intel;
-				TargetAttributes = {
-					27F3529017EBC3F600FF4D22 = {
-						DevelopmentTeam = 2A7FWPQDHA;
-					};
-				};
 			};
-			buildConfigurationList = 27F3528C17EBC3F600FF4D22 /* Build configuration list for PBXProject "deferred_gles" */;
+			buildConfigurationList = 2797217C17FAA53B00EB40A8 /* Build configuration list for PBXProject "deferred_gles" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
-				Base,
 			);
-			mainGroup = 27F3528817EBC3F600FF4D22;
-			productRefGroup = 27F3529217EBC3F600FF4D22 /* Products */;
+			mainGroup = 2797217817FAA53B00EB40A8;
+			productRefGroup = 2797218217FAA53B00EB40A8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				27F3529017EBC3F600FF4D22 /* deferred gles */,
+				2797218017FAA53B00EB40A8 /* deferred_gles */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		27F3528F17EBC3F600FF4D22 /* Resources */ = {
+		2797217F17FAA53B00EB40A8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				271E4EE617F9FE9E006EB3CD /* assets in Resources */,
-				2715E73E17ECADFA00442391 /* Main_iPad.storyboard in Resources */,
-				2715E73F17ECADFA00442391 /* Main_iPhone.storyboard in Resources */,
-				2715E73C17ECADFA00442391 /* InfoPlist.strings in Resources */,
-				2715E73B17ECADFA00442391 /* Images.xcassets in Resources */,
+				279721C517FAA5AA00EB40A8 /* Images.xcassets in Resources */,
+				279721BF17FAA59D00EB40A8 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		27F3528D17EBC3F600FF4D22 /* Sources */ = {
+		2797217D17FAA53B00EB40A8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2788B3CE17FA9CE600E9BF1E /* program.c in Sources */,
-				2788B3C717FA986700E9BF1E /* mesh.c in Sources */,
-				2715E74F17ECB2A700442391 /* graphics.c in Sources */,
-				2788B3C317FA917400E9BF1E /* deferred_lighting_renderer.c in Sources */,
-				2715E73D17ECADFA00442391 /* main.m in Sources */,
-				2715E76117ECF23E00442391 /* game.c in Sources */,
-				2715E73917ECADFA00442391 /* AppDelegate.m in Sources */,
-				2715E75317ECB2CA00442391 /* system_ios.m in Sources */,
-				2715E74217ECADFA00442391 /* ViewController.m in Sources */,
-				2779292217F24E6E0090932F /* gl_helper.c in Sources */,
-				2736D5BA17F383E200BE83E1 /* geometry.cpp in Sources */,
-				2715E75B17ECC60100442391 /* timer.c in Sources */,
-				2788B3C417FA917400E9BF1E /* forward_renderer.c in Sources */,
-				27AB28BB17F297BA0011651F /* stb_image.c in Sources */,
+				279721C417FAA5AA00EB40A8 /* AppDelegate.m in Sources */,
+				279721CC17FAA79300EB40A8 /* OpenGLView.m in Sources */,
+				279721C017FAA59D00EB40A8 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		279721BB17FAA59D00EB40A8 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				279721BC17FAA59D00EB40A8 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
-		27F352CC17EBC3F600FF4D22 /* Debug */ = {
+		279721AB17FAA53B00EB40A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++98";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -301,9 +211,9 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_CXX0X_EXTENSIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
@@ -324,40 +234,31 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_PEDANTIC = YES;
-				GCC_WARN_SHADOW = YES;
-				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = NO;
-				GCC_WARN_UNUSED_PARAMETER = YES;
-				GCC_WARN_UNUSED_VARIABLE = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				OBJROOT = ./obj;
+				OBJROOT = obj;
 				ONLY_ACTIVE_ARCH = YES;
-				RUN_CLANG_STATIC_ANALYZER = NO;
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
-				SYMROOT = ./bin;
+				SYMROOT = bin;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "../../src/**";
 			};
 			name = Debug;
 		};
-		27F352CD17EBC3F600FF4D22 /* Release */ = {
+		279721AC17FAA53B00EB40A8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++98";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -365,9 +266,9 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_CXX0X_EXTENSIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
@@ -382,62 +283,56 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_PEDANTIC = YES;
-				GCC_WARN_SHADOW = YES;
-				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = NO;
-				GCC_WARN_UNUSED_PARAMETER = YES;
-				GCC_WARN_UNUSED_VARIABLE = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				LLVM_LTO = YES;
-				OBJROOT = ./obj;
-				RUN_CLANG_STATIC_ANALYZER = NO;
+				OBJROOT = obj;
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
-				SYMROOT = ./bin;
+				SYMROOT = bin;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "../../src/**";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		27F352CF17EBC3F600FF4D22 /* Debug */ = {
+		279721AE17FAA53B00EB40A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++98";
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_PEDANTIC = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/deferred_gles-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
 		};
-		27F352D017EBC3F600FF4D22 /* Release */ = {
+		279721AF17FAA53B00EB40A8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++98";
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_PEDANTIC = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/deferred_gles-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -445,25 +340,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		27F3528C17EBC3F600FF4D22 /* Build configuration list for PBXProject "deferred_gles" */ = {
+		2797217C17FAA53B00EB40A8 /* Build configuration list for PBXProject "deferred_gles" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				27F352CC17EBC3F600FF4D22 /* Debug */,
-				27F352CD17EBC3F600FF4D22 /* Release */,
+				279721AB17FAA53B00EB40A8 /* Debug */,
+				279721AC17FAA53B00EB40A8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		27F352CE17EBC3F600FF4D22 /* Build configuration list for PBXNativeTarget "deferred gles" */ = {
+		279721AD17FAA53B00EB40A8 /* Build configuration list for PBXNativeTarget "deferred_gles" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				27F352CF17EBC3F600FF4D22 /* Debug */,
-				27F352D017EBC3F600FF4D22 /* Release */,
+				279721AE17FAA53B00EB40A8 /* Debug */,
+				279721AF17FAA53B00EB40A8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 27F3528917EBC3F600FF4D22 /* Project object */;
+	rootObject = 2797217917FAA53B00EB40A8 /* Project object */;
 }
