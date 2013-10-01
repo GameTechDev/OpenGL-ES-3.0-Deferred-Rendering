@@ -17,14 +17,14 @@ typedef struct TouchPoint
 } TouchPoint;
 
 Game* create_game(int width, int height);
-void destroy_game(Game* game);
-void resize_game(Game* game, int width, int height);
+void destroy_game(Game* G);
+void resize_game(Game* G, int width, int height);
 
-void update_game(Game* game);
-void render_game(Game* game);
+void update_game(Game* G);
+void render_game(Game* G);
 
-void add_touch_points(Game* game, int num_touch_points, TouchPoint* points);
-void update_touch_points(Game* game, int num_touch_points, TouchPoint* points);
-void remove_touch_points(Game* game, int num_touch_points, TouchPoint* points);
+void add_touch_points(Game* G, int num_touch_points, TouchPoint* points);
+void update_touch_points(Game* G, int num_touch_points, TouchPoint* points);
+void remove_touch_points(Game* G, int num_touch_points, TouchPoint* points);
 
 #endif /* include guard */

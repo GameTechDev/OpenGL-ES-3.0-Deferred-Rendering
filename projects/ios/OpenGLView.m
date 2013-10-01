@@ -39,17 +39,18 @@
         [EAGLContext setCurrentContext:nil];
     }
 }
-
+-(void)viewDidLayoutSubviews
+{
+    resize_game(self.game, (int)[self screenSize].size.width, (int)[self screenSize].size.height);
+}
 - (void)setupDisplayLink {
     CADisplayLink* display_link = [CADisplayLink displayLinkWithTarget:self selector:@selector(render:)];
     [display_link addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 }
 -(void)render:(CADisplayLink*)display_link {
-    // update();
-    // render();
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    
+    update_game(self.game);
+    render_game(self.game);
+        
     [self.context presentRenderbuffer:GL_RENDERBUFFER];
 }
 -(CGRect)screenSize

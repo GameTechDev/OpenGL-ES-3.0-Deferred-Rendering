@@ -58,7 +58,7 @@ Mesh* create_mesh(const Vertex* vertex_data, size_t vertex_data_size,
 }
 void draw_mesh(const Mesh* M)
 {
-    intptr_t ptr = 0;
+    float* ptr = 0;
     ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, M->vertex_buffer));
     ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, M->index_buffer));
     ASSERT_GL(glVertexAttribPointer(kPositionSlot,    3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(ptr+=0)));

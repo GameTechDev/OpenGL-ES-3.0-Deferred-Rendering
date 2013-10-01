@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		274F848717FB34A000F7C38E /* mesh.c in Sources */ = {isa = PBXBuildFile; fileRef = 274F848317FB34A000F7C38E /* mesh.c */; };
-		274F848817FB34A000F7C38E /* program.c in Sources */ = {isa = PBXBuildFile; fileRef = 274F848517FB34A000F7C38E /* program.c */; };
 		2797218517FAA53B00EB40A8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218417FAA53B00EB40A8 /* Foundation.framework */; };
 		2797218717FAA53B00EB40A8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218617FAA53B00EB40A8 /* CoreGraphics.framework */; };
 		2797218917FAA53B00EB40A8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218817FAA53B00EB40A8 /* UIKit.framework */; };
@@ -19,16 +17,17 @@
 		279721C717FAA71000EB40A8 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 279721C617FAA71000EB40A8 /* GLKit.framework */; };
 		279721C917FAA71800EB40A8 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 279721C817FAA71800EB40A8 /* OpenGLES.framework */; };
 		279721CC17FAA79300EB40A8 /* OpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 279721CB17FAA79300EB40A8 /* OpenGLView.m */; };
-		279721EF17FAAA7E00EB40A8 /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 279721D617FAAA7E00EB40A8 /* game.c */; };
-		279721F317FAAA7E00EB40A8 /* system_ios.m in Sources */ = {isa = PBXBuildFile; fileRef = 279721E017FAAA7E00EB40A8 /* system_ios.m */; };
-		279721F617FAAA7E00EB40A8 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 279721E717FAAA7E00EB40A8 /* timer.c */; };
+		27FC1C0517FB498300D3C6B5 /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 27FC1BF517FB498300D3C6B5 /* game.c */; };
+		27FC1C0617FB498300D3C6B5 /* system_ios.m in Sources */ = {isa = PBXBuildFile; fileRef = 27FC1BF917FB498300D3C6B5 /* system_ios.m */; };
+		27FC1C0717FB498300D3C6B5 /* mesh.c in Sources */ = {isa = PBXBuildFile; fileRef = 27FC1BFA17FB498300D3C6B5 /* mesh.c */; };
+		27FC1C0817FB498300D3C6B5 /* program.c in Sources */ = {isa = PBXBuildFile; fileRef = 27FC1BFC17FB498300D3C6B5 /* program.c */; };
+		27FC1C0917FB498300D3C6B5 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 27FC1BFF17FB498300D3C6B5 /* timer.c */; };
+		27FC1C0C17FB4A1600D3C6B5 /* graphics.c in Sources */ = {isa = PBXBuildFile; fileRef = 27FC1C0A17FB4A1600D3C6B5 /* graphics.c */; };
+		27FC1C1017FB4D8A00D3C6B5 /* stb_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 27FC1C0E17FB4D8A00D3C6B5 /* stb_image.c */; };
+		27FC1C1217FB50F800D3C6B5 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 27FC1C1117FB50F800D3C6B5 /* assets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		274F848317FB34A000F7C38E /* mesh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mesh.c; sourceTree = "<group>"; };
-		274F848417FB34A000F7C38E /* mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mesh.h; sourceTree = "<group>"; };
-		274F848517FB34A000F7C38E /* program.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = program.c; sourceTree = "<group>"; };
-		274F848617FB34A000F7C38E /* program.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = program.h; sourceTree = "<group>"; };
 		2797218117FAA53B00EB40A8 /* deferred_gles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deferred_gles.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2797218417FAA53B00EB40A8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2797218617FAA53B00EB40A8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -44,14 +43,25 @@
 		279721C817FAA71800EB40A8 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		279721CA17FAA79300EB40A8 /* OpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenGLView.h; sourceTree = "<group>"; };
 		279721CB17FAA79300EB40A8 /* OpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenGLView.m; sourceTree = "<group>"; };
-		279721D017FAAA7E00EB40A8 /* assert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = assert.h; sourceTree = "<group>"; };
-		279721D617FAAA7E00EB40A8 /* game.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = game.c; sourceTree = "<group>"; };
-		279721D717FAAA7E00EB40A8 /* game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = game.h; sourceTree = "<group>"; };
-		279721DC17FAAA7E00EB40A8 /* gl_include.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gl_include.h; sourceTree = "<group>"; };
-		279721E017FAAA7E00EB40A8 /* system_ios.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = system_ios.m; sourceTree = "<group>"; };
-		279721E617FAAA7E00EB40A8 /* system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
-		279721E717FAAA7E00EB40A8 /* timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timer.c; sourceTree = "<group>"; };
-		279721E817FAAA7E00EB40A8 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
+		27FC1BF117FB498300D3C6B5 /* assert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = assert.h; sourceTree = "<group>"; };
+		27FC1BF517FB498300D3C6B5 /* game.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = game.c; sourceTree = "<group>"; };
+		27FC1BF617FB498300D3C6B5 /* game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = game.h; sourceTree = "<group>"; };
+		27FC1BF717FB498300D3C6B5 /* gl_include.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gl_include.h; sourceTree = "<group>"; };
+		27FC1BF917FB498300D3C6B5 /* system_ios.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = system_ios.m; sourceTree = "<group>"; };
+		27FC1BFA17FB498300D3C6B5 /* mesh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mesh.c; sourceTree = "<group>"; };
+		27FC1BFB17FB498300D3C6B5 /* mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mesh.h; sourceTree = "<group>"; };
+		27FC1BFC17FB498300D3C6B5 /* program.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = program.c; sourceTree = "<group>"; };
+		27FC1BFD17FB498300D3C6B5 /* program.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = program.h; sourceTree = "<group>"; };
+		27FC1BFE17FB498300D3C6B5 /* system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
+		27FC1BFF17FB498300D3C6B5 /* timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timer.c; sourceTree = "<group>"; };
+		27FC1C0017FB498300D3C6B5 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
+		27FC1C0117FB498300D3C6B5 /* vec_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vec_math.h; sourceTree = "<group>"; };
+		27FC1C0217FB498300D3C6B5 /* vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertex.h; sourceTree = "<group>"; };
+		27FC1C0A17FB4A1600D3C6B5 /* graphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = graphics.c; sourceTree = "<group>"; };
+		27FC1C0B17FB4A1600D3C6B5 /* graphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = graphics.h; sourceTree = "<group>"; };
+		27FC1C0E17FB4D8A00D3C6B5 /* stb_image.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stb_image.c; sourceTree = "<group>"; };
+		27FC1C0F17FB4D8A00D3C6B5 /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
+		27FC1C1117FB50F800D3C6B5 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../../assets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,7 +83,9 @@
 		2797217817FAA53B00EB40A8 = {
 			isa = PBXGroup;
 			children = (
-				279721CD17FAAA7E00EB40A8 /* src */,
+				27FC1C1117FB50F800D3C6B5 /* assets */,
+				27FC1C0D17FB4D8A00D3C6B5 /* external */,
+				27FC1BEE17FB498300D3C6B5 /* src */,
 				279721B317FAA58500EB40A8 /* project */,
 				2797218317FAA53B00EB40A8 /* Frameworks */,
 				2797218217FAA53B00EB40A8 /* Products */,
@@ -132,32 +144,46 @@
 			path = en.lproj;
 			sourceTree = "<group>";
 		};
-		279721CD17FAAA7E00EB40A8 /* src */ = {
+		27FC1BEE17FB498300D3C6B5 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				274F848317FB34A000F7C38E /* mesh.c */,
-				274F848417FB34A000F7C38E /* mesh.h */,
-				274F848517FB34A000F7C38E /* program.c */,
-				274F848617FB34A000F7C38E /* program.h */,
-				279721D017FAAA7E00EB40A8 /* assert.h */,
-				279721D617FAAA7E00EB40A8 /* game.c */,
-				279721D717FAAA7E00EB40A8 /* game.h */,
-				279721DC17FAAA7E00EB40A8 /* gl_include.h */,
-				279721DF17FAAA7E00EB40A8 /* ios */,
-				279721E617FAAA7E00EB40A8 /* system.h */,
-				279721E717FAAA7E00EB40A8 /* timer.c */,
-				279721E817FAAA7E00EB40A8 /* timer.h */,
+				27FC1BF817FB498300D3C6B5 /* ios */,
+				27FC1BF117FB498300D3C6B5 /* assert.h */,
+				27FC1BF517FB498300D3C6B5 /* game.c */,
+				27FC1BF617FB498300D3C6B5 /* game.h */,
+				27FC1BF717FB498300D3C6B5 /* gl_include.h */,
+				27FC1BFA17FB498300D3C6B5 /* mesh.c */,
+				27FC1BFB17FB498300D3C6B5 /* mesh.h */,
+				27FC1BFC17FB498300D3C6B5 /* program.c */,
+				27FC1BFD17FB498300D3C6B5 /* program.h */,
+				27FC1BFE17FB498300D3C6B5 /* system.h */,
+				27FC1BFF17FB498300D3C6B5 /* timer.c */,
+				27FC1C0017FB498300D3C6B5 /* timer.h */,
+				27FC1C0117FB498300D3C6B5 /* vec_math.h */,
+				27FC1C0217FB498300D3C6B5 /* vertex.h */,
+				27FC1C0A17FB4A1600D3C6B5 /* graphics.c */,
+				27FC1C0B17FB4A1600D3C6B5 /* graphics.h */,
 			);
 			name = src;
 			path = ../../src;
 			sourceTree = "<group>";
 		};
-		279721DF17FAAA7E00EB40A8 /* ios */ = {
+		27FC1BF817FB498300D3C6B5 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				279721E017FAAA7E00EB40A8 /* system_ios.m */,
+				27FC1BF917FB498300D3C6B5 /* system_ios.m */,
 			);
 			path = ios;
+			sourceTree = "<group>";
+		};
+		27FC1C0D17FB4D8A00D3C6B5 /* external */ = {
+			isa = PBXGroup;
+			children = (
+				27FC1C0E17FB4D8A00D3C6B5 /* stb_image.c */,
+				27FC1C0F17FB4D8A00D3C6B5 /* stb_image.h */,
+			);
+			name = external;
+			path = ../../external;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -211,6 +237,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				27FC1C1217FB50F800D3C6B5 /* assets in Resources */,
 				279721C517FAA5AA00EB40A8 /* Images.xcassets in Resources */,
 				279721BF17FAA59D00EB40A8 /* InfoPlist.strings in Resources */,
 			);
@@ -223,14 +250,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				279721EF17FAAA7E00EB40A8 /* game.c in Sources */,
+				27FC1C0C17FB4A1600D3C6B5 /* graphics.c in Sources */,
+				27FC1C1017FB4D8A00D3C6B5 /* stb_image.c in Sources */,
 				279721C417FAA5AA00EB40A8 /* AppDelegate.m in Sources */,
-				274F848817FB34A000F7C38E /* program.c in Sources */,
 				279721CC17FAA79300EB40A8 /* OpenGLView.m in Sources */,
-				274F848717FB34A000F7C38E /* mesh.c in Sources */,
+				27FC1C0517FB498300D3C6B5 /* game.c in Sources */,
+				27FC1C0717FB498300D3C6B5 /* mesh.c in Sources */,
+				27FC1C0817FB498300D3C6B5 /* program.c in Sources */,
+				27FC1C0917FB498300D3C6B5 /* timer.c in Sources */,
+				27FC1C0617FB498300D3C6B5 /* system_ios.m in Sources */,
 				279721C017FAA59D00EB40A8 /* main.m in Sources */,
-				279721F617FAAA7E00EB40A8 /* timer.c in Sources */,
-				279721F317FAAA7E00EB40A8 /* system_ios.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

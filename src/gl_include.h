@@ -18,20 +18,26 @@
 
 /** @brief OpenGL Error code strings
  */
-#define ERROR_CASE(enum) case enum: return #enum
-static const char* _glErrorString(GLenum error)
+#define STATUS_CASE(enum) case enum: return #enum
+static const char* _glStatusString(GLenum error)
 {
     switch(error) {
-        ERROR_CASE(GL_NO_ERROR);
-        ERROR_CASE(GL_INVALID_ENUM);
-        ERROR_CASE(GL_INVALID_VALUE);
-        ERROR_CASE(GL_INVALID_OPERATION);
-        ERROR_CASE(GL_INVALID_FRAMEBUFFER_OPERATION);
-        ERROR_CASE(GL_OUT_OF_MEMORY);
+        STATUS_CASE(GL_NO_ERROR);
+        STATUS_CASE(GL_INVALID_ENUM);
+        STATUS_CASE(GL_INVALID_VALUE);
+        STATUS_CASE(GL_INVALID_OPERATION);
+        STATUS_CASE(GL_INVALID_FRAMEBUFFER_OPERATION);
+        STATUS_CASE(GL_OUT_OF_MEMORY);
+        STATUS_CASE(GL_FRAMEBUFFER_COMPLETE);
+        STATUS_CASE(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT);
+        STATUS_CASE(GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS);
+        STATUS_CASE(GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT);
+        STATUS_CASE(GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE);
+        STATUS_CASE(GL_FRAMEBUFFER_UNSUPPORTED);
     }
     return NULL;
 }
-#undef ERROR_CASE
+#undef STATUS_CASE
 
 /** @brief OpenGL Error checking wrapper
  */
@@ -44,7 +50,7 @@ static const char* _glErrorString(GLenum error)
             if(_glError != GL_NO_ERROR) {                   \
                 system_log("%s:%d:  %s Error: %s\n",        \
                             __FILE__, __LINE__,             \
-                            #x, _glErrorString(_glError));  \
+                            #x, _glStatusString(_glError));  \
             }                                               \
         } while(__LINE__ == -1)
 #endif /* #ifndef ASSERT_GL */
@@ -58,7 +64,7 @@ static const char* _glErrorString(GLenum error)
             if(_glError != GL_NO_ERROR) {               \
                 system_log("%s:%d:  OpenGL Error: %s\n",\
                             __FILE__, __LINE__,         \
-                            _glErrorString(_glError));  \
+                            _glStatusString(_glError));  \
             }                                           \
         } while(__LINE__ == -1)
 #endif /* #ifndef CheckGLError */

@@ -19,10 +19,9 @@ LOCAL_SRC_FILES := 	jni.c \
 					../../../src/graphics.c \
 					../../../src/timer.c \
                     ../../../src/game.c \
-                    ../../../src/gl_helper.c \
-                    ../../../src/geometry.cpp \
                     ../../../src/mesh.c \
-                    ../../../src/external/stb_image.c
+                    ../../../src/program.c \
+                    ../../../external/stb_image.c
 LOCAL_LDLIBS := -lGLESv2 -lEGL -llog -landroid
 
 include $(BUILD_SHARED_LIBRARY)

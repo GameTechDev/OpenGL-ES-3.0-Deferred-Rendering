@@ -3,717 +3,188 @@
  */
 #include "graphics.h"
 #include <stdlib.h>
-#include <string.h>
-#if defined(__APPLE__)
-    #include <OpenGLES/ES3/gl.h>
-    #include <OpenGLES/ES3/glext.h>
-#elif defined(__ANDROID__)
-    #include <GLES3/gl3.h>
-#else
-    #error Need an OpenGL implementation
-#endif
-#include "gl_helper.h"
-#include "geometry.h"
-#include "system.h"
 #include "assert.h"
-#include "vec_math.h"
+#include "gl_include.h"
+#include "program.h"
+#include "vertex.h"
 
 /* Defines
  */
-#define MAX_MESHES 32
-#define MAX_TEXTURES 64
-#define MAX_RENDER_COMMANDS 1024
-#define MAX_LIGHTS 64
 
 /* Types
  */
-
-struct Texture
-{
-    GLuint  texture;
-};
-
 struct Graphics
 {
-    struct {
-        GLuint  program;
-
-        GLuint  projection;
-        GLuint  view;
-        GLuint  world;
-
-        GLuint  albedo;
-        GLuint  normal;
-
-        GLuint  light_positions;
-        GLuint  light_colors;
-        GLuint  light_sizes;
-        GLuint  num_lights;
-
-        GLuint  camera_position;
-        GLuint  specular_color;
-        GLuint  specular_power;
-        GLuint  specular_coefficient;
-
-        GLuint  sun_direction;
-        GLuint  sun_color;
-    } forward_program;
-
-    struct {
-        struct {
-            GLuint  program;
-
-            GLuint  projection;
-            GLuint  view;
-            GLuint  world;
-
-            GLuint  normal;
-
-            GLuint  specular_power;
-        } pass1;
-        struct {
-            GLuint program;
-
-            GLuint  projection;
-            GLuint  view;
-            GLuint  world;
-
-            GLuint  gbuffer;
-            GLuint  depth;
-
-            GLuint inverse_proj;
-            GLuint inverse_view;
-            GLuint inverse_viewproj;
-
-            GLuint light_color;
-            GLuint light_position;
-            GLuint light_size;
-
-            GLuint camera_position;
-        } pass2;
-        GLuint  light_buffer;
-    } prepass_program;
-
-    GLuint  color_renderbuffer;
-    GLuint  depth_renderbuffer;
-    GLuint  depth_texture;
-    GLuint  framebuffer;
-
     int width;
     int height;
 
-    Mat4        projection_matrix;
-    Mat4        view_matrix;
-    Transform   view_transform;
+    GLint   default_framebuffer;
 
-    struct {
-        GLuint  program;
-        GLuint  fullscreen_texture;
-    } fullscreen_program;
+    GLuint  fullscreen_program;
+    GLuint  fullscreen_quad_vertex_buffer;
+    GLuint  fullscreen_quad_index_buffer;
+    GLuint  fullscreen_texture;
 
-    Mesh*  cube_mesh;
-    Mesh*  quad_mesh;
-    Mesh*   sphere_mesh;
-
-    RenderCommand   commands[MAX_RENDER_COMMANDS];
-    int num_commands;
-
-    Vec3    sun_direction;
-    Vec3    sun_color;
-
-    Vec3    light_positions[MAX_LIGHTS];
-    Vec3    light_colors[MAX_LIGHTS];
-    float   light_sizes[MAX_LIGHTS];
-    int     num_lights;
+    GLuint  framebuffer;
+    GLuint  color_texture;
+    GLuint  depth_texture;
 };
-
 
 /* Constants
  */
+static const struct {
+    float pos[2];
+    float tex[2];
+} kFullscreenVertices[] = {
+    { {  1.0f,  1.0f }, { 1.0f, 1.0f } },
+    { { -1.0f,  1.0f }, { 0.0f, 1.0f } },
+    { { -1.0f, -1.0f }, { 0.0f, 0.0f } },
+    { {  1.0f, -1.0f }, { 1.0f, 0.0f } },
+};
+static const uint32_t kFullscreenIndices[] = {
+    0, 2, 1,
+    0, 3, 2,
+};
 
 /* Variables
  */
 
 /* Internal functions
  */
-static void _create_framebuffer(Graphics* graphics)
+static void _create_fullscreen_quad(Graphics* G)
+{
+    G->fullscreen_program = create_program("fullscreen_vertex.glsl", "fullscreen_fragment.glsl");
+    ASSERT_GL(glUseProgram(G->fullscreen_program));
+    G->fullscreen_texture = glGetUniformLocation(G->fullscreen_program, "s_Texture");
+    ASSERT_GL(glBindAttribLocation(G->fullscreen_program , kPositionSlot, "a_Position"));
+    ASSERT_GL(glBindAttribLocation(G->fullscreen_program , kTexCoordSlot, "a_TexCoord"));
+    ASSERT_GL(glEnableVertexAttribArray(kPositionSlot));
+    ASSERT_GL(glEnableVertexAttribArray(kTexCoordSlot));
+    ASSERT_GL(glUseProgram(0));
+
+    /* Create vertex buffer */
+    ASSERT_GL(glGenBuffers(1, &G->fullscreen_quad_vertex_buffer));
+    ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, G->fullscreen_quad_vertex_buffer));
+    ASSERT_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(kFullscreenVertices), kFullscreenVertices, GL_STATIC_DRAW));
+    ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+
+    /* Create index buffer */
+    ASSERT_GL(glGenBuffers(1, &G->fullscreen_quad_index_buffer));
+    ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, G->fullscreen_quad_index_buffer));
+    ASSERT_GL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kFullscreenIndices), kFullscreenIndices, GL_STATIC_DRAW));
+    ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+}
+static void _draw_fullscreen_quad(Graphics* G)
+{
+    float* ptr = 0;
+    ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, G->fullscreen_quad_vertex_buffer));
+    ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, G->fullscreen_quad_index_buffer));
+    ASSERT_GL(glVertexAttribPointer(kPositionSlot,    2, GL_FLOAT, GL_FALSE, sizeof(kFullscreenVertices[0]), (void*)(ptr+=0)));
+    ASSERT_GL(glVertexAttribPointer(kNormalSlot,      2, GL_FLOAT, GL_FALSE, sizeof(kFullscreenVertices[0]), (void*)(ptr+=2)));
+    ASSERT_GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL));
+}
+static void _create_framebuffer(Graphics* G)
 {
     /* Color buffer */
-    glGenTextures(1, &graphics->color_renderbuffer);
-    glBindTexture(GL_TEXTURE_2D, graphics->color_renderbuffer);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    ASSERT_GL(glGenTextures(1, &G->color_texture));
+    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, G->color_texture));
+    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
     /* Depth buffer */
-    glGenTextures(1, &graphics->depth_renderbuffer);
-    glBindTexture(GL_TEXTURE_2D, graphics->depth_renderbuffer);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    CheckGLError();
+    ASSERT_GL(glGenTextures(1, &G->depth_texture));
+    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, G->depth_texture));
+    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
     /* Framebuffer */
-    glGenFramebuffers(1, &graphics->framebuffer);
+    ASSERT_GL(glGenFramebuffers(1, &G->framebuffer));
 
-
-    /* Pass2 light buffer */
-    glGenTextures(1, &graphics->prepass_program.light_buffer);
-    glBindTexture(GL_TEXTURE_2D, graphics->prepass_program.light_buffer);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    CheckGLError();
+    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, 0));
 }
-static void _resize_framebuffer(Graphics* graphics)
+static void _resize_framebuffer(Graphics* G)
 {
     GLenum framebuffer_status;
 
-
     /* Color buffer */
-    glBindTexture(GL_TEXTURE_2D, graphics->color_renderbuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, graphics->width, graphics->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-    CheckGLError();
+    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, G->color_texture));
+    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, G->width, G->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0));
 
     /* Depth buffer */
-    glBindTexture(GL_TEXTURE_2D, graphics->depth_renderbuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, graphics->width, graphics->height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
-    CheckGLError();
+    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, G->depth_texture));
+    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, G->width, G->height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
 
     /* Framebuffer */
-    glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, graphics->color_renderbuffer, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, graphics->depth_renderbuffer, 0);
+    ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, G->framebuffer));
+    ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, G->color_texture, 0));
+    ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, G->depth_texture, 0));
 
     framebuffer_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    switch (framebuffer_status) {
-        case GL_FRAMEBUFFER_COMPLETE: break;
-        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-            system_log("Framebuffer Object %d Error: Attachment Point Unconnected", graphics->framebuffer);
-            break;
-        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-            system_log("Framebuffer Object %d Error: Missing Attachment", graphics->framebuffer);
-            break;
-        case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
-            system_log("Framebuffer Object %d Error: Dimensions do not match", graphics->framebuffer);
-            break;
-        case GL_FRAMEBUFFER_UNSUPPORTED:
-            system_log("Framebuffer Object %d Error: Unsupported Framebuffer Configuration", graphics->framebuffer);
-            break;
-        default:
-            system_log("Framebuffer Object %d Error: Unkown Framebuffer Object Failure", graphics->framebuffer);
-            break;
+    if(framebuffer_status != GL_FRAMEBUFFER_COMPLETE) {
+        system_log("Framebuffer error: %s\n", _glStatusString(framebuffer_status));
+        assert(0);
     }
 
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    CheckGLError();
-
-    /* Color buffer */
-    glBindTexture(GL_TEXTURE_2D, graphics->prepass_program.light_buffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, graphics->width, graphics->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    CheckGLError();
-}
-static GLuint _create_program(const char* vertex_shader_file, const char* fragment_shader_file,
-                              const AttributeSlot* attribute_slots, int num_attributes )
-{
-    GLuint vertex_shader = gl_load_shader(vertex_shader_file, GL_VERTEX_SHADER);
-    GLuint fragment_shader = gl_load_shader(fragment_shader_file, GL_FRAGMENT_SHADER);
-    GLuint program;
-    GLint  link_status;
-    int ii;
-
-    /* Create program */
-    program = glCreateProgram();
-    CheckGLError();
-    glAttachShader(program, vertex_shader);
-    CheckGLError();
-    glAttachShader(program, fragment_shader);
-    CheckGLError();
-    for(ii=0;ii<num_attributes;++ii) {
-        glBindAttribLocation(program, attribute_slots[ii], kAttributeSlotNames[attribute_slots[ii]]);
-    }
-    CheckGLError();
-    glLinkProgram(program);
-    CheckGLError();
-    glGetProgramiv(program, GL_LINK_STATUS, &link_status);
-    CheckGLError();
-    if(link_status == GL_FALSE) {
-        char message[1024];
-        glGetProgramInfoLog(program, sizeof(message), 0, message);
-        system_log(message);
-        assert(link_status != GL_FALSE);
-    }
-    glDetachShader(program, fragment_shader);
-    glDetachShader(program, vertex_shader);
-    glDeleteShader(fragment_shader);
-    glDeleteShader(vertex_shader);
-    CheckGLError();
-
-    return program;
-}
-static void _setup_programs(Graphics* graphics)
-{
-    { /* Create 3D program */
-        AttributeSlot slots[] = {
-            kPositionSlot,
-            kNormalSlot,
-            kTangentSlot,
-            kBitangentSlot,
-            kTexCoordSlot
-        };
-        graphics->forward_program.program = _create_program("shaders/forward/SimpleVertex.glsl", "shaders/forward/SimpleFragment.glsl", slots, sizeof(slots)/sizeof(slots[0]));
-
-        glUseProgram(graphics->forward_program.program);
-
-        graphics->forward_program.projection = glGetUniformLocation(graphics->forward_program.program, "u_Projection");
-        graphics->forward_program.view = glGetUniformLocation(graphics->forward_program.program, "u_View");
-        graphics->forward_program.world = glGetUniformLocation(graphics->forward_program.program, "u_World");
-
-        graphics->forward_program.albedo = glGetUniformLocation(graphics->forward_program.program, "s_Albedo");
-        graphics->forward_program.normal = glGetUniformLocation(graphics->forward_program.program, "s_Normal");
-
-        graphics->forward_program.light_positions = glGetUniformLocation(graphics->forward_program.program, "u_LightPositions");
-        graphics->forward_program.light_colors = glGetUniformLocation(graphics->forward_program.program, "u_LightColors");
-        graphics->forward_program.light_sizes = glGetUniformLocation(graphics->forward_program.program, "u_LightSizes");
-        graphics->forward_program.num_lights = glGetUniformLocation(graphics->forward_program.program, "u_NumLights");
-
-        graphics->forward_program.camera_position = glGetUniformLocation(graphics->forward_program.program, "u_CameraPosition");
-
-        graphics->forward_program.specular_color = glGetUniformLocation(graphics->forward_program.program, "u_SpecularColor");
-        graphics->forward_program.specular_power   = glGetUniformLocation(graphics->forward_program.program, "u_SpecularPower");
-        graphics->forward_program.specular_coefficient = glGetUniformLocation(graphics->forward_program.program, "u_SpecularCoefficient");
-
-        graphics->forward_program.sun_color = glGetUniformLocation(graphics->forward_program.program, "u_SunColor");
-        graphics->forward_program.sun_direction = glGetUniformLocation(graphics->forward_program.program, "u_SunDirection");
-
-        glUniform1i(graphics->forward_program.albedo, 0);
-        glUniform1i(graphics->forward_program.normal, 1);
-
-        glEnableVertexAttribArray(kPositionSlot);
-        glEnableVertexAttribArray(kNormalSlot);
-        glEnableVertexAttribArray(kTexCoordSlot);
-        glEnableVertexAttribArray(kTangentSlot);
-        glEnableVertexAttribArray(kBitangentSlot);
-
-        glUseProgram(0);
-        system_log("Created program\n");
-    }
-    { /* Create light pre-pass program */
-        AttributeSlot slots[] = {
-            kPositionSlot,
-            kNormalSlot,
-            kTangentSlot,
-            kBitangentSlot,
-            kTexCoordSlot
-        };
-        /** Set up pass 1
-         */
-        graphics->prepass_program.pass1.program = _create_program("shaders/light_prepass/Pass1Vertex.glsl", "shaders/light_prepass/Pass1Fragment.glsl", slots, sizeof(slots)/sizeof(slots[0]));
-
-        graphics->prepass_program.pass1.projection = glGetUniformLocation(graphics->prepass_program.pass1.program, "u_Projection");
-        graphics->prepass_program.pass1.view = glGetUniformLocation(graphics->prepass_program.pass1.program, "u_View");
-        graphics->prepass_program.pass1.world = glGetUniformLocation(graphics->prepass_program.pass1.program, "u_World");
-
-        graphics->prepass_program.pass1.normal = glGetUniformLocation(graphics->prepass_program.pass1.program, "s_Normal");
-        graphics->prepass_program.pass1.specular_power   = glGetUniformLocation(graphics->prepass_program.pass1.program, "u_SpecularPower");
-
-        glUseProgram(graphics->prepass_program.pass1.program);
-        glUniform1i(graphics->prepass_program.pass1.normal, 0);
-        glEnableVertexAttribArray(kPositionSlot);
-        glEnableVertexAttribArray(kNormalSlot);
-        glEnableVertexAttribArray(kTexCoordSlot);
-        glEnableVertexAttribArray(kTangentSlot);
-        glEnableVertexAttribArray(kBitangentSlot);
-        glUseProgram(0);
-        system_log("Created prepass pass 1 program\n");
-
-        /** Set up pass 2
-         */
-        graphics->prepass_program.pass2.program = _create_program("shaders/light_prepass/Pass2Vertex.glsl", "shaders/light_prepass/Pass2Fragment.glsl", slots, 1);
-
-        graphics->prepass_program.pass2.projection = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_Projection");
-        graphics->prepass_program.pass2.view = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_View");
-        graphics->prepass_program.pass2.world = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_World");
-
-        graphics->prepass_program.pass2.gbuffer = glGetUniformLocation(graphics->prepass_program.pass2.program, "s_GBuffer");
-        graphics->prepass_program.pass2.depth = glGetUniformLocation(graphics->prepass_program.pass2.program, "s_Depth");
-
-        graphics->prepass_program.pass2.light_color   = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_LightColor");
-        graphics->prepass_program.pass2.light_position   = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_LightPosition");
-        graphics->prepass_program.pass2.light_size   = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_LightSize");
-
-        graphics->prepass_program.pass2.camera_position = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_CameraPosition");
-
-        graphics->prepass_program.pass2.inverse_proj = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_InverseProj");
-        graphics->prepass_program.pass2.inverse_view = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_InverseView");
-        graphics->prepass_program.pass2.inverse_viewproj = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_InverseViewProj");
-
-
-        glUseProgram(graphics->prepass_program.pass2.program);
-        glUniform1i(graphics->prepass_program.pass2.gbuffer, 0);
-        glUniform1i(graphics->prepass_program.pass2.depth, 1);
-        glEnableVertexAttribArray(kPositionSlot);
-        glUseProgram(0);
-        system_log("Created prepass pass 1 program\n");
-
-    }
-    CheckGLError();
-    { /* Fullscreen time */
-        AttributeSlot slots[] = {
-            kPositionSlot,
-            kTexCoordSlot
-        };
-        graphics->fullscreen_program.program = _create_program("fullscreen_vertex.glsl", "fullscreen_fragment.glsl", slots, 2);
-
-        glUseProgram(graphics->fullscreen_program.program);
-
-        graphics->fullscreen_program.fullscreen_texture = glGetUniformLocation(graphics->fullscreen_program.program, "s_Diffuse");
-
-        glEnableVertexAttribArray(kPositionSlot);
-        glEnableVertexAttribArray(kTexCoordSlot);
-
-        glUseProgram(0);
-
-        system_log("Created fullscreen program\n");
-    }
-    CheckGLError();
-}
-static void _draw_mesh(const Mesh* mesh)
-{
-    const VertexDescription* desc = kVertexDescriptions[mesh->type];
-    intptr_t ptr = 0;
-    glBindBuffer(GL_ARRAY_BUFFER, mesh->vertex_buffer);
-            CheckGLError();
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->index_buffer);
-            CheckGLError();
-    do {
-        glVertexAttribPointer(desc->slot, desc->count, GL_FLOAT, GL_FALSE, mesh->vertex_size, (void*)ptr);
-            CheckGLError();
-        ptr += sizeof(float) * desc->count;
-    } while((++desc)->count);
-    glDrawElements(GL_TRIANGLES, mesh->index_count, mesh->index_format, NULL);
-            CheckGLError();
+    ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
 /* External functions
  */
-Graphics* create_graphics(int width, int height)
+Graphics* create_graphics(void)
 {
-    Graphics* graphics = NULL;
+    Graphics* G = NULL;
 
-    /* Allocate device */
-    graphics = (Graphics*)calloc(1, sizeof(*graphics));
-    graphics->width = width;
-    graphics->height = height;
-    system_log("Graphics created. W: %d  H: %d\n", width, height);
+    /* Allocate graphics */
+    G = (Graphics*)calloc(1, sizeof(Graphics));
+    G->width = 1;
+    G->height = 1;
 
-    /* Perform GL initialization */
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glFrontFace(GL_CW);
-    CheckGLError();
-    glViewport(0, 0, width, height);
-    glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
-    glClearDepthf(1.0f);
-    CheckGLError();
+    /* Set up OpenGL */
+    ASSERT_GL(glClearColor(1.0f, 0.0f, 1.0f, 1.0f));
+    ASSERT_GL(glClearDepthf(1.0f));
     system_log("OpenGL version:\t%s\n", glGetString(GL_VERSION));
     system_log("OpenGL renderer:\t%s\n", glGetString(GL_RENDERER));
 
-    /* Perform other initialization */
-    _create_framebuffer(graphics);
-    _resize_framebuffer(graphics);
-    CheckGLError();
-    _setup_programs(graphics);
+    _create_fullscreen_quad(G);
+    _create_framebuffer(G);
 
-    graphics->projection_matrix = mat4_perspective_fov(kPiDiv2,
-                                                       width/(float)height,
-                                                       1.0f,
-                                                       1000.0f);
-    graphics->view_matrix = mat4_identity;
-
-    {
-        PosNormTanBitanTexVertex* new_vertices = calculate_tangets(kCubeVertices, 36,
-                                                              kCubeIndices, sizeof(kCubeIndices[0]),
-                                                              sizeof(kCubeIndices)/sizeof(kCubeIndices[0]));
-        graphics->cube_mesh = gl_create_mesh(new_vertices, 36*sizeof(PosNormTanBitanTexVertex),
-                                             kCubeIndices, sizeof(kCubeIndices),
-                                             sizeof(kCubeIndices)/sizeof(kCubeIndices[0]),
-                                             sizeof(PosNormTanBitanTexVertex), kPosNormTanBitanTexVertex);
-        free(new_vertices);
-    }
-    graphics->quad_mesh  = gl_create_mesh(kQuadVertices, sizeof(kQuadVertices),
-                                          kQuadIndices, sizeof(kQuadIndices),
-                                          sizeof(kQuadIndices)/sizeof(kQuadIndices[0]),
-                                          sizeof(kQuadVertices[0]), kPosNormTexVertex);
-
-    {
-        Mesh** meshes;
-        int num_meshes;
-        load_obj(graphics, "sphere.obj", &meshes, &num_meshes, NULL, NULL);
-        graphics->sphere_mesh = meshes[0];
-        free(meshes);
-    }
-
-    CheckGLError();
-    system_log("Graphics initialized\n");
-
-    { /* Print extensions */
-        char buffer[1024*16] = {0};
-        uint32_t ii;
-        strcpy(buffer,(const char*)glGetString(GL_EXTENSIONS));
-        for(ii=0;ii<strlen(buffer);++ii) {
-            if(buffer[ii] == ' ')
-                buffer[ii] = '\n';
-        }
-        system_log("%s\n", buffer);
-    }
-    return graphics;
+    return G;
 }
-void resize_graphics(Graphics* graphics, int width, int height)
+void destroy_graphics(Graphics* G)
 {
-    system_log("Graphics resize. W: %d  H: %d\n", width, height);
-    graphics->width = width;
-    graphics->height = height;
-    glViewport(0, 0, width, height);
-    _resize_framebuffer(graphics);
-    graphics->projection_matrix = mat4_perspective_fov(kPiDiv2,
-                                                       width/(float)height,
-                                                       1.0f,
-                                                       1000.0f);
+    destroy_program(G->fullscreen_program);
+    free(G);
 }
-void render_graphics(Graphics* graphics)
+void resize_graphics(Graphics* G, int width, int height)
 {
-    Mat4 inv_view_matrix = mat4_inverse(graphics->view_matrix);
-    Mat4 view_proj = mat4_multiply(inv_view_matrix, graphics->projection_matrix);
-    Mat4 inv_proj = mat4_inverse(graphics->projection_matrix);
-    Mat4 inv_view_proj = mat4_inverse(view_proj);
-    int ii;
+    G->width = width;
+    G->height = height;
 
-    GLint defaultFBO;
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
+    ASSERT_GL(glViewport(0, 0, width, height));
+    ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &G->default_framebuffer));
 
-    #if 1 /* Forward renderer */
-        /** Bind framebuffer
-         */
-        glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
-        glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        CheckGLError();
-
-        glUseProgram(graphics->forward_program.program);
-        CheckGLError();
-        glUniform3fv(graphics->forward_program.camera_position, 1, (float*)&graphics->view_transform.position);
-        glUniformMatrix4fv(graphics->forward_program.projection, 1, GL_FALSE, (float*)&graphics->projection_matrix);
-        glUniformMatrix4fv(graphics->forward_program.view, 1, GL_FALSE, (float*)&graphics->view_matrix);
-        /* Upload lights */
-        glUniform3fv(graphics->forward_program.light_positions, graphics->num_lights, (float*)graphics->light_positions);
-        glUniform3fv(graphics->forward_program.light_colors, graphics->num_lights, (float*)graphics->light_colors);
-        glUniform1fv(graphics->forward_program.light_sizes, graphics->num_lights, (float*)graphics->light_sizes);
-        glUniform1i(graphics->forward_program.num_lights, graphics->num_lights);
-        CheckGLError();
-
-        glUniform3fv(graphics->forward_program.sun_direction, 1, (float*)&graphics->sun_direction);
-        glUniform3fv(graphics->forward_program.sun_color, 1, (float*)&graphics->sun_color);
-        CheckGLError();
-
-        /* Loop through render commands */
-        for(ii=0;ii<graphics->num_commands;++ii) {
-            RenderCommand command = graphics->commands[ii];
-            glUniformMatrix4fv(graphics->forward_program.world, 1, GL_FALSE, (float*)&command.world);
-            glUniform3fv(graphics->forward_program.specular_color, 1, (float*)&command.material->specular_color);
-            glUniform1f(graphics->forward_program.specular_power  , command.material->specular_power);
-            glUniform1f(graphics->forward_program.specular_coefficient, command.material->specular_coefficient);
-            CheckGLError();
-
-            glActiveTexture(GL_TEXTURE0);
-            if(command.material->albedo_tex)
-                glBindTexture(GL_TEXTURE_2D, command.material->albedo_tex->texture);
-            glActiveTexture(GL_TEXTURE1);
-            if(command.material->normal_tex)
-                glBindTexture(GL_TEXTURE_2D, command.material->normal_tex->texture);
-
-            _draw_mesh(command.mesh);
-        }
-
-        graphics->num_commands = 0;
-        graphics->num_lights = 0;
-
-        CheckGLError();
-    #else
-        /** Bind framebuffer
-         */
-        glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
-        glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        CheckGLError();
-
-        /** Render pass 1
-         *  Geometry normals and specular power per-pixel
-         */
-        glUseProgram(graphics->prepass_program.pass1.program);
-        CheckGLError();
-        glUniformMatrix4fv(graphics->prepass_program.pass1.projection, 1, GL_FALSE, (float*)&graphics->projection_matrix);
-        glUniformMatrix4fv(graphics->prepass_program.pass1.view, 1, GL_FALSE, (float*)&graphics->view_matrix);
-
-        for(ii=0;ii<graphics->num_commands;++ii) {
-            RenderCommand command = graphics->commands[ii];
-            glUniformMatrix4fv(graphics->prepass_program.pass1.world, 1, GL_FALSE, (float*)&command.world);
-            glUniform1f(graphics->prepass_program.pass1.specular_power, command.material->specular_power);
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, command.material->normal_tex->texture);
-
-            _draw_mesh(command.mesh);
-        }
-        CheckGLError();
-
-        /** Render pass 2
-         *  N*L * light_color * attenuation
-         */
-
-        /* Disable depth write and enable full blending */
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE);
-        glDepthMask(GL_FALSE);
-        glDepthFunc(GL_GEQUAL);
-        glCullFace(GL_FRONT);
-
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, graphics->prepass_program.light_buffer, 0);
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        CheckGLError();
-        glUseProgram(graphics->prepass_program.pass2.program);
-        CheckGLError();
-        glUniformMatrix4fv(graphics->prepass_program.pass2.inverse_proj, 1, GL_FALSE, (float*)&inv_proj);
-        glUniformMatrix4fv(graphics->prepass_program.pass2.inverse_view, 1, GL_FALSE, (float*)&graphics->view_matrix);
-        glUniformMatrix4fv(graphics->prepass_program.pass2.inverse_viewproj, 1, GL_FALSE, (float*)&inv_view_proj);
-
-        glUniformMatrix4fv(graphics->prepass_program.pass2.projection, 1, GL_FALSE, (float*)&graphics->projection_matrix);
-        glUniformMatrix4fv(graphics->prepass_program.pass2.view, 1, GL_FALSE, (float*)&inv_view_matrix);
-        glUniform3fv(graphics->prepass_program.pass2.camera_position, 1, (float*)&graphics->view_transform.position);
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, graphics->color_renderbuffer);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, graphics->depth_renderbuffer);
-        CheckGLError();
-
-        graphics->num_lights = 1;
-        for(ii=0;ii<graphics->num_lights;++ii) {
-            Transform light_transform = {
-                quat_identity,
-                graphics->light_positions[ii],
-                graphics->light_sizes[ii]*10
-            };
-            Mat4 world = transform_get_matrix(light_transform);
-            Vec3 v = vec3_sub(graphics->view_transform.position, light_transform.position);
-
-            glUniformMatrix4fv(graphics->prepass_program.pass2.world, 1, GL_FALSE, (float*)&world);
-            glUniform3fv(graphics->prepass_program.pass2.light_position, 1, (float*)&graphics->light_positions[ii]);
-            glUniform3fv(graphics->prepass_program.pass2.light_color, 1, (float*)&graphics->light_colors[ii]);
-            glUniform1f(graphics->prepass_program.pass2.light_size, graphics->light_sizes[ii]);
-
-            _draw_mesh(graphics->sphere_mesh);
-            CheckGLError();
-        }
-
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, graphics->color_renderbuffer, 0);
-        CheckGLError();
-
-        /* Enable depth write */
-        glDepthMask(GL_TRUE);
-        glDisable(GL_BLEND);
-        glDepthFunc(GL_LESS);
-        glCullFace(GL_BACK);
-
-        graphics->num_commands = 0;
-        graphics->num_lights = 0;
-        CheckGLError();
-    #endif
-
-    /** Back to default
-     */
-    glBindFramebuffer(GL_FRAMEBUFFER, defaultFBO);
-
-    glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glUseProgram(graphics->fullscreen_program.program);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, graphics->color_renderbuffer);
-    //glBindTexture(GL_TEXTURE_2D, graphics->prepass_program.light_buffer);
-    CheckGLError();
-
-    _draw_mesh(graphics->quad_mesh);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    CheckGLError();
+    _resize_framebuffer(G);
 }
-void destroy_graphics(Graphics* graphics)
+void render_graphics(Graphics* G)
 {
-    free(graphics);
-}
-Mesh* cube_mesh(Graphics* graphics)
-{
-    return graphics->cube_mesh;
-}
-Mesh* quad_mesh(Graphics* graphics)
-{
-    return graphics->quad_mesh;
-}
-void add_render_command(Graphics* graphics, Mesh* mesh, Material* material, Mat4 world)
-{
-    int index = graphics->num_commands++;
-    assert(index < MAX_RENDER_COMMANDS);
-    graphics->commands[index].mesh = mesh;
-    graphics->commands[index].world = world;
-    graphics->commands[index].material = material;
-}
-void set_sun_light(Graphics* graphics, Vec3 direction, Vec3 color)
-{
-    graphics->sun_direction = direction;
-    graphics->sun_color = color;
-}
-void add_point_light(Graphics* graphics, Light light)
-{
-    int index = graphics->num_lights++;
-    assert(index < MAX_LIGHTS);
-    graphics->light_positions[index] = light.position;
-    graphics->light_colors[index] = light.color;
-    graphics->light_sizes[index] = light.size;
-}
-Texture* load_texture(Graphics* graphics, const char* filename)
-{
-    Texture* texture = (Texture*)calloc(1, sizeof(*texture));
-    texture->texture = gl_load_texture(filename);
-    return texture;
-    (void)sizeof(graphics);
-}
-void set_view_transform(Graphics* graphics, Transform view)
-{
-    graphics->view_transform = view;
-    graphics->view_matrix = mat4_inverse(transform_get_matrix(view));
-}
-void load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* num_meshes, Material** materials, int* num_materials)
-{
-    gl_load_obj(graphics, filename, meshes, num_meshes, materials, num_materials);
-}
-void destroy_mesh(Mesh* mesh)
-{
-    glDeleteBuffers(1, &mesh->vertex_buffer);
-    glDeleteBuffers(1, &mesh->index_buffer);
-    free(mesh);
-}
-void destroy_texture(Texture* texture)
-{
-    glDeleteTextures(1, &texture->texture);
-    free(texture);
-}
+    ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &G->default_framebuffer));
+    /* Bind framebuffer */
+    ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, G->framebuffer));
+    ASSERT_GL(glClearColor(0.3f, 0.6f, 0.9f, 1.0f));
+    ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-
+    /* Bind default framebuffer and render to the screen */
+    ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, G->default_framebuffer));
+    ASSERT_GL(glClearColor(1.0f, 0.0f, 1.0f, 1.0f));
+    ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    ASSERT_GL(glUseProgram(G->fullscreen_program));
+    ASSERT_GL(glActiveTexture(GL_TEXTURE0));
+    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, G->color_texture));
+    _draw_fullscreen_quad(G);
+    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, 0));
+}
