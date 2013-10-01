@@ -27,6 +27,12 @@
 
 /* Types
  */
+typedef struct RenderCommand
+{
+    Transform   transform;
+    Mesh*       mesh;
+    Material*   material;
+} RenderCommand;
 
 struct Texture
 {
@@ -526,7 +532,8 @@ void render_graphics(Graphics* graphics)
         /* Loop through render commands */
         for(ii=0;ii<graphics->num_commands;++ii) {
             RenderCommand command = graphics->commands[ii];
-            glUniformMatrix4fv(graphics->forward_program.world, 1, GL_FALSE, (float*)&command.world);
+            Mat4 model = transform_get_matrix(command.transform);
+            glUniformMatrix4fv(graphics->forward_program.world, 1, GL_FALSE, (float*)&model);
             glUniform3fv(graphics->forward_program.specular_color, 1, (float*)&command.material->specular_color);
             glUniform1f(graphics->forward_program.specular_power  , command.material->specular_power);
             glUniform1f(graphics->forward_program.specular_coefficient, command.material->specular_coefficient);
@@ -564,7 +571,8 @@ void render_graphics(Graphics* graphics)
 
         for(ii=0;ii<graphics->num_commands;++ii) {
             RenderCommand command = graphics->commands[ii];
-            glUniformMatrix4fv(graphics->prepass_program.pass1.world, 1, GL_FALSE, (float*)&command.world);
+            Mat4 model = transform_get_matrix(command.transform);
+            glUniformMatrix4fv(graphics->prepass_program.pass1.world, 1, GL_FALSE, (float*)&model);
             glUniform1f(graphics->prepass_program.pass1.specular_power, command.material->specular_power);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, command.material->normal_tex->texture);
@@ -667,12 +675,12 @@ Mesh* quad_mesh(Graphics* graphics)
 {
     return graphics->quad_mesh;
 }
-void add_render_command(Graphics* graphics, Mesh* mesh, Material* material, Mat4 world)
+void add_render_command(Graphics* graphics, Mesh* mesh, Material* material, Transform transform)
 {
     int index = graphics->num_commands++;
     assert(index < MAX_RENDER_COMMANDS);
     graphics->commands[index].mesh = mesh;
-    graphics->commands[index].world = world;
+    graphics->commands[index].transform = transform;
     graphics->commands[index].material = material;
 }
 void set_sun_light(Graphics* graphics, Vec3 direction, Vec3 color)

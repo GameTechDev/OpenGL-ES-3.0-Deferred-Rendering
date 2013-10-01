@@ -221,14 +221,6 @@ INLINE Vec2 vec2_negate(VEC2_INPUT v)
  * Vec3                                                                       *
 \******************************************************************************/
 static const Vec3 vec3_zero = {0.0f,0.0f,0.0f};
-INLINE Vec3 vec3_from_vec4(VEC4_INPUT v)
-{
-    Vec3 r;
-    r.x = v.x;
-    r.y = v.y;
-    r.z = v.z;
-    return r;
-}
 INLINE Vec3 vec3_create(float x, float y, float z)
 {
     Vec3 r;
@@ -390,15 +382,6 @@ INLINE Vec3 vec3_cross(VEC3_INPUT a, VEC3_INPUT b)
  * Vec4                                                                       *
 \******************************************************************************/
 static const Vec4 vec4_zero = {0.0f,0.0f,0.0f,0.0f};
-INLINE Vec4 vec4_from_vec3(VEC3_INPUT v, float w)
-{
-    Vec4 r;
-    r.x = v.x;
-    r.y = v.y;
-    r.z = v.z;
-    r.w = w;
-    return r;
-}
 INLINE Vec4 vec4_create(float x, float y, float z, float w)
 {
     Vec4 r;
@@ -564,16 +547,6 @@ static const Mat3 mat3_identity = {
     { 0.0f, 1.0f, 0.0f },
     { 0.0f, 0.0f, 1.0f },
 };
-INLINE Mat4 mat4_from_mat3(MAT3_INPUT m)
-{
-    Mat4 r = {
-        { m.r0.x, m.r0.y, m.r0.z, 0.0f },
-        { m.r1.x, m.r1.y, m.r1.z, 0.0f },
-        { m.r2.x, m.r2.y, m.r2.z, 0.0f },
-        {   0.0f,   0.0f,   0.0f, 1.0f },
-    };
-    return r;
-}
 INLINE Mat3 mat3_create(float f00, float f01, float f02,
                         float f10, float f11, float f12,
                         float f20, float f21, float f22)
@@ -754,15 +727,6 @@ static const Mat4 mat4_identity = {
     { 0.0f, 0.0f, 1.0f, 0.0f },
     { 0.0f, 0.0f, 0.0f, 1.0f },
 };
-INLINE Mat3 mat3_from_mat4(MAT4_INPUT m)
-{
-    Mat3 r = {
-        { m.r0.x, m.r0.y, m.r0.z },
-        { m.r1.x, m.r1.y, m.r1.z },
-        { m.r2.x, m.r2.y, m.r2.z },
-    };
-    return r;
-}
 INLINE Mat4 mat4_scalef(float x, float y, float z)
 {
     Mat4 r = mat4_identity;

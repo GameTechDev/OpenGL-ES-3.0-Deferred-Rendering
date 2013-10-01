@@ -225,4 +225,3 @@ pip-log.txt
 *.xcuserdatad
 gen/
 libs/
-*.sublime-workspace

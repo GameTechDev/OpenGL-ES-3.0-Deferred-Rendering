@@ -21,10 +21,6 @@
 		271E4EE617F9FE9E006EB3CD /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 271E4EE517F9FE9E006EB3CD /* assets */; };
 		2736D5BA17F383E200BE83E1 /* geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2736D5B917F383E200BE83E1 /* geometry.cpp */; };
 		2779292217F24E6E0090932F /* gl_helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 2779292017F24E6E0090932F /* gl_helper.c */; };
-		2788B3C317FA917400E9BF1E /* deferred_lighting_renderer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2788B3C117FA917400E9BF1E /* deferred_lighting_renderer.c */; };
-		2788B3C417FA917400E9BF1E /* forward_renderer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2788B3C217FA917400E9BF1E /* forward_renderer.c */; };
-		2788B3C717FA986700E9BF1E /* mesh.c in Sources */ = {isa = PBXBuildFile; fileRef = 2788B3C517FA986700E9BF1E /* mesh.c */; };
-		2788B3CE17FA9CE600E9BF1E /* program.c in Sources */ = {isa = PBXBuildFile; fileRef = 2788B3CC17FA9CE600E9BF1E /* program.c */; };
 		27AB28BB17F297BA0011651F /* stb_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 27AB28A917F297BA0011651F /* stb_image.c */; };
 		27F3529517EBC3F600FF4D22 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529417EBC3F600FF4D22 /* Foundation.framework */; };
 		27F3529717EBC3F600FF4D22 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F3529617EBC3F600FF4D22 /* CoreGraphics.framework */; };
@@ -59,15 +55,6 @@
 		2779292017F24E6E0090932F /* gl_helper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gl_helper.c; sourceTree = "<group>"; };
 		2779292117F24E6E0090932F /* gl_helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gl_helper.h; sourceTree = "<group>"; };
 		2779292317F24FD40090932F /* geometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = geometry.h; sourceTree = "<group>"; };
-		2788B3BF17FA8FC400E9BF1E /* renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = renderer.h; sourceTree = "<group>"; };
-		2788B3C117FA917400E9BF1E /* deferred_lighting_renderer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = deferred_lighting_renderer.c; sourceTree = "<group>"; };
-		2788B3C217FA917400E9BF1E /* forward_renderer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = forward_renderer.c; sourceTree = "<group>"; };
-		2788B3C517FA986700E9BF1E /* mesh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mesh.c; sourceTree = "<group>"; };
-		2788B3C617FA986700E9BF1E /* mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mesh.h; sourceTree = "<group>"; };
-		2788B3C817FA98A300E9BF1E /* gl_include.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gl_include.h; sourceTree = "<group>"; };
-		2788B3CA17FA9BE900E9BF1E /* vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertex.h; sourceTree = "<group>"; };
-		2788B3CC17FA9CE600E9BF1E /* program.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = program.c; sourceTree = "<group>"; };
-		2788B3CD17FA9CE600E9BF1E /* program.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = program.h; sourceTree = "<group>"; };
 		27AB28A917F297BA0011651F /* stb_image.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stb_image.c; sourceTree = "<group>"; };
 		27AB28AA17F297BA0011651F /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 		27F3529117EBC3F600FF4D22 /* deferred gles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "deferred gles.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -116,8 +103,6 @@
 		2715E74517ECB2A700442391 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				2788B3C117FA917400E9BF1E /* deferred_lighting_renderer.c */,
-				2788B3C217FA917400E9BF1E /* forward_renderer.c */,
 				27AB289217F297BA0011651F /* external */,
 				2715E75117ECB2CA00442391 /* ios */,
 				2715E74817ECB2A700442391 /* assert.h */,
@@ -133,13 +118,6 @@
 				2715E75917ECC60100442391 /* timer.c */,
 				2715E75A17ECC60100442391 /* timer.h */,
 				2715E74D17ECB2A700442391 /* vec_math.h */,
-				2788B3BF17FA8FC400E9BF1E /* renderer.h */,
-				2788B3C517FA986700E9BF1E /* mesh.c */,
-				2788B3C617FA986700E9BF1E /* mesh.h */,
-				2788B3C817FA98A300E9BF1E /* gl_include.h */,
-				2788B3CA17FA9BE900E9BF1E /* vertex.h */,
-				2788B3CC17FA9CE600E9BF1E /* program.c */,
-				2788B3CD17FA9CE600E9BF1E /* program.h */,
 			);
 			name = src;
 			path = ../../src;
@@ -267,10 +245,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2788B3CE17FA9CE600E9BF1E /* program.c in Sources */,
-				2788B3C717FA986700E9BF1E /* mesh.c in Sources */,
 				2715E74F17ECB2A700442391 /* graphics.c in Sources */,
-				2788B3C317FA917400E9BF1E /* deferred_lighting_renderer.c in Sources */,
 				2715E73D17ECADFA00442391 /* main.m in Sources */,
 				2715E76117ECF23E00442391 /* game.c in Sources */,
 				2715E73917ECADFA00442391 /* AppDelegate.m in Sources */,
@@ -279,7 +254,6 @@
 				2779292217F24E6E0090932F /* gl_helper.c in Sources */,
 				2736D5BA17F383E200BE83E1 /* geometry.cpp in Sources */,
 				2715E75B17ECC60100442391 /* timer.c in Sources */,
-				2788B3C417FA917400E9BF1E /* forward_renderer.c in Sources */,
 				27AB28BB17F297BA0011651F /* stb_image.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
