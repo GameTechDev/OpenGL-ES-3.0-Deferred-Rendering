@@ -43,7 +43,7 @@ Mesh* create_mesh(const Vertex* vertex_data, size_t vertex_data_size,
     ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
     /* Create index buffer */
-    ASSERT_GL(glGenBuffers(1, &vertex_buffer));
+    ASSERT_GL(glGenBuffers(1, &index_buffer));
     ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer));
     ASSERT_GL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_data_size, index_data, GL_STATIC_DRAW));
     ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));

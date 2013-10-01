@@ -21,6 +21,8 @@ LOCAL_SRC_FILES := 	jni.c \
                     ../../../src/game.c \
                     ../../../src/mesh.c \
                     ../../../src/program.c \
+                    ../../../src/utility.c \
+                    ../../../src/scene.cpp \
                     ../../../external/stb_image.c
 LOCAL_LDLIBS := -lGLESv2 -lEGL -llog -landroid
 

@@ -219,6 +219,9 @@ pip-log.txt
 #################
 *.o
 *.lib
+*.a
+*.d
+tools/exporter
 *.xcworkspacedata
 *.xcworkspace
 *.xcuserdata

@@ -83,22 +83,26 @@ static void _control_camera(Game* G, float delta_time)
  */
 Game* create_game(void)
 {
-    Game* game = (Game*)calloc(1, sizeof(*game));
-    game->timer = create_timer();
-    game->graphics = create_graphics();
+    Game* G = (Game*)calloc(1, sizeof(Game));
+    G->timer = create_timer();
+    G->graphics = create_graphics();
 
     /* Set up camera */
-    game->camera = transform_zero;
-    game->camera.orientation = quat_from_euler(0, -0.75f * kPi, 0);
-    game->camera.position.x = 4.0f;
-    game->camera.position.y = 2;
-    game->camera.position.z = 7.5f;
+    G->camera = transform_zero;
+    G->camera.orientation = quat_from_euler(0, -0.75f * kPi, 0);
+    G->camera.position.x = 4.0f;
+    G->camera.position.y = 2;
+    G->camera.position.z = 7.5f;
 
     /* Load scene */
-    create_scene("test.obj");
+    {
+        reset_timer(G->timer);
+        create_scene("lightHouse.obj");
+        system_log("Loading time: %f\n", get_delta_time(G->timer));
+    }
 
-    reset_timer(game->timer);
-    return game;
+    reset_timer(G->timer);
+    return G;
 }
 void destroy_game(Game* G)
 {
