@@ -89,6 +89,7 @@ struct Graphics
 
             GLuint inverse_proj;
             GLuint inverse_view;
+            GLuint inverse_viewproj;
 
             GLuint light_color;
             GLuint light_position;
@@ -107,7 +108,8 @@ struct Graphics
     int width;
     int height;
 
-    Mat4    projection_matrix;
+    Mat4        projection_matrix;
+    Mat4        view_matrix;
     Transform   view_transform;
 
     struct {
@@ -356,6 +358,7 @@ static void _setup_programs(Graphics* graphics)
 
         graphics->prepass_program.pass2.inverse_proj = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_InverseProj");
         graphics->prepass_program.pass2.inverse_view = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_InverseView");
+        graphics->prepass_program.pass2.inverse_viewproj = glGetUniformLocation(graphics->prepass_program.pass2.program, "u_InverseViewProj");
 
 
         glUseProgram(graphics->prepass_program.pass2.program);
@@ -438,7 +441,7 @@ Graphics* create_graphics(int width, int height)
                                                        width/(float)height,
                                                        1.0f,
                                                        1000.0f);
-    graphics->view_transform = transform_zero;
+    graphics->view_matrix = mat4_identity;
 
     {
         PosNormTanBitanTexVertex* new_vertices = calculate_tangets(kCubeVertices, 36,
@@ -492,18 +495,16 @@ void resize_graphics(Graphics* graphics, int width, int height)
 }
 void render_graphics(Graphics* graphics)
 {
-    Mat4 view_matrix = transform_get_matrix(graphics->view_transform);
-    Mat4 inv_view_matrix = mat4_inverse(view_matrix);
-    Mat4 view_proj = mat4_multiply(view_matrix, graphics->projection_matrix);
-    //Mat4 view_proj = mat4_multiply(graphics->projection_matrix, view_matrix);
-    Mat4 inv_view_proj = mat4_inverse(view_proj);
+    Mat4 inv_view_matrix = mat4_inverse(graphics->view_matrix);
+    Mat4 view_proj = mat4_multiply(inv_view_matrix, graphics->projection_matrix);
     Mat4 inv_proj = mat4_inverse(graphics->projection_matrix);
+    Mat4 inv_view_proj = mat4_inverse(view_proj);
     int ii;
 
     GLint defaultFBO;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
 
-    #if 0 /* Forward renderer */
+    #if 1 /* Forward renderer */
         /** Bind framebuffer
          */
         glBindFramebuffer(GL_FRAMEBUFFER, graphics->framebuffer);
@@ -516,7 +517,7 @@ void render_graphics(Graphics* graphics)
         CheckGLError();
         glUniform3fv(graphics->forward_program.camera_position, 1, (float*)&graphics->view_transform.position);
         glUniformMatrix4fv(graphics->forward_program.projection, 1, GL_FALSE, (float*)&graphics->projection_matrix);
-        glUniformMatrix4fv(graphics->forward_program.view, 1, GL_FALSE, (float*)&inv_view_matrix);
+        glUniformMatrix4fv(graphics->forward_program.view, 1, GL_FALSE, (float*)&graphics->view_matrix);
         /* Upload lights */
         glUniform3fv(graphics->forward_program.light_positions, graphics->num_lights, (float*)graphics->light_positions);
         glUniform3fv(graphics->forward_program.light_colors, graphics->num_lights, (float*)graphics->light_colors);
@@ -566,7 +567,7 @@ void render_graphics(Graphics* graphics)
         glUseProgram(graphics->prepass_program.pass1.program);
         CheckGLError();
         glUniformMatrix4fv(graphics->prepass_program.pass1.projection, 1, GL_FALSE, (float*)&graphics->projection_matrix);
-        glUniformMatrix4fv(graphics->prepass_program.pass1.view, 1, GL_FALSE, (float*)&inv_view_matrix);
+        glUniformMatrix4fv(graphics->prepass_program.pass1.view, 1, GL_FALSE, (float*)&graphics->view_matrix);
 
         for(ii=0;ii<graphics->num_commands;++ii) {
             RenderCommand command = graphics->commands[ii];
@@ -598,7 +599,8 @@ void render_graphics(Graphics* graphics)
         glUseProgram(graphics->prepass_program.pass2.program);
         CheckGLError();
         glUniformMatrix4fv(graphics->prepass_program.pass2.inverse_proj, 1, GL_FALSE, (float*)&inv_proj);
-        glUniformMatrix4fv(graphics->prepass_program.pass2.inverse_view, 1, GL_FALSE, (float*)&view_matrix);
+        glUniformMatrix4fv(graphics->prepass_program.pass2.inverse_view, 1, GL_FALSE, (float*)&graphics->view_matrix);
+        glUniformMatrix4fv(graphics->prepass_program.pass2.inverse_viewproj, 1, GL_FALSE, (float*)&inv_view_proj);
 
         glUniformMatrix4fv(graphics->prepass_program.pass2.projection, 1, GL_FALSE, (float*)&graphics->projection_matrix);
         glUniformMatrix4fv(graphics->prepass_program.pass2.view, 1, GL_FALSE, (float*)&inv_view_matrix);
@@ -615,8 +617,7 @@ void render_graphics(Graphics* graphics)
             Transform light_transform = {
                 quat_identity,
                 graphics->light_positions[ii],
-                //graphics->light_sizes[ii]
-                100.0f
+                graphics->light_sizes[ii]*10
             };
             Mat4 world = transform_get_matrix(light_transform);
             Vec3 v = vec3_sub(graphics->view_transform.position, light_transform.position);
@@ -626,8 +627,6 @@ void render_graphics(Graphics* graphics)
             glUniform3fv(graphics->prepass_program.pass2.light_color, 1, (float*)&graphics->light_colors[ii]);
             glUniform1f(graphics->prepass_program.pass2.light_size, graphics->light_sizes[ii]);
 
-
-        glDepthFunc(GL_ALWAYS);
             _draw_mesh(graphics->sphere_mesh);
             CheckGLError();
         }
@@ -655,8 +654,8 @@ void render_graphics(Graphics* graphics)
 
     glUseProgram(graphics->fullscreen_program.program);
     glActiveTexture(GL_TEXTURE0);
-    //glBindTexture(GL_TEXTURE_2D, graphics->color_renderbuffer);
-    glBindTexture(GL_TEXTURE_2D, graphics->prepass_program.light_buffer);
+    glBindTexture(GL_TEXTURE_2D, graphics->color_renderbuffer);
+    //glBindTexture(GL_TEXTURE_2D, graphics->prepass_program.light_buffer);
     CheckGLError();
 
     _draw_mesh(graphics->quad_mesh);
@@ -707,6 +706,7 @@ Texture* load_texture(Graphics* graphics, const char* filename)
 void set_view_transform(Graphics* graphics, Transform view)
 {
     graphics->view_transform = view;
+    graphics->view_matrix = mat4_inverse(transform_get_matrix(view));
 }
 void load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* num_meshes, Material** materials, int* num_materials)
 {

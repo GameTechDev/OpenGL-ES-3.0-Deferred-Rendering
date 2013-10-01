@@ -12,6 +12,8 @@ varying vec3 v_Normal;
 varying vec3 v_TangentWorldSpace;
 varying vec2 v_TexCoord;
 
+varying mat3 v_View;
+
 void main(void) {
     mat3 world3 = mat3(u_World);
     vec4 world_pos = u_World * a_Position;
@@ -19,6 +21,8 @@ void main(void) {
     v_TexCoord = a_TexCoord;
     v_Normal = world3 * a_Normal;
     v_TangentWorldSpace = world3 * a_Tangent;
+
+    v_View = mat3(u_View);
 
     gl_Position = u_Projection * u_View * world_pos;
 }

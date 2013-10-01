@@ -7,6 +7,8 @@ varying vec3 v_Normal;
 varying vec3 v_TangentWorldSpace;
 varying vec2 v_TexCoord;
 
+varying mat3 v_View;
+
 vec3 pack_normal(vec3 normal)
 {
     return (normal + 1.0) * 0.5;
@@ -28,6 +30,8 @@ void main(void) {
 
     mat3 TBN = mat3(T, B, N);
     normal = normalize(TBN*normal);
+
+    normal = v_View * normal;
 
     gl_FragColor = vec4(pack_normal(normal),u_SpecularPower);
 }
