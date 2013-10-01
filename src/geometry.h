@@ -17,14 +17,10 @@
 #endif
 #include "vec_math.h"
 #include "graphics.h"
+#include "mesh.h"
 
 /** Vertex types
  */
-typedef struct PosColorVertex
-{
-    Vec3    position;
-    Vec4    color;
-} PosColorVertex;
 typedef struct PosTexVertex
 {
     Vec3    position;
@@ -49,34 +45,11 @@ typedef enum VertexType
 {
     kPosNormTexVertex,
     kPosNormTanBitanTexVertex,
-    kPosColorVertex,
     kPosTexVertex,
 
     kNUM_VERTEX_TYPES
 } VertexType;
 
-
-typedef enum AttributeSlot
-{
-    kPositionSlot   = 0,
-    kNormalSlot,
-    kTexCoordSlot,
-    kTangentSlot,
-    kBitangentSlot,
-    kColorSlot,
-
-    kEmptySlot = -1
-} AttributeSlot;
-
-static const char* kAttributeSlotNames[] =
-{
-    "a_Position",   /* kPositionSlot */
-    "a_Normal",     /* kNormalSlot */
-    "a_TexCoord",   /* kTexCoordSlot */
-    "a_Tangent",    /* kTangentSlot */
-    "a_Bitangent",  /* kBitangentSlot */
-    "a_Color",      /* kColorSlot */
-};
 
 struct Mesh
 {
@@ -110,11 +83,6 @@ static const VertexDescription kVertexDescriptions[kNUM_VERTEX_TYPES][16] =
         { kTangentSlot,   3, },
         { kBitangentSlot, 3, },
         { kTexCoordSlot,  2, },
-        { kEmptySlot, 0 }
-    },
-    { /* kPosColorVertex */
-        { kPositionSlot,  3, },
-        { kColorSlot,     4, },
         { kEmptySlot, 0 }
     },
     { /* kPosTexVertex */

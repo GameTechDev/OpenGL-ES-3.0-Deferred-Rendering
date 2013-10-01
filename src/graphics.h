@@ -26,6 +26,12 @@ typedef struct Material
     float       specular_power;
     float       specular_coefficient;
 } Material;
+typedef struct RenderCommand
+{
+    Mat4        world;
+    Mesh*       mesh;
+    Material*   material;
+} RenderCommand;
 
 Graphics* create_graphics(int width, int height);
 void destroy_graphics(Graphics* graphics);
@@ -42,7 +48,7 @@ void load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* num
 void destroy_mesh(Mesh* mesh);
 
 void set_view_transform(Graphics* graphics, Transform view);
-void add_render_command(Graphics* graphics, Mesh* mesh, Material* material, Transform transform);
+void add_render_command(Graphics* graphics, Mesh* mesh, Material* material, Mat4 world);
 void set_sun_light(Graphics* graphics, Vec3 direction, Vec3 color);
 void add_point_light(Graphics* graphics, Light light);
 
