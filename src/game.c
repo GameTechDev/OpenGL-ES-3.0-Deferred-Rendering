@@ -165,11 +165,14 @@ void update_game(Game* game)
 
     _control_camera(game, delta_time);
 
+    /* Set view matrix first */
+    set_view_transform(game->graphics, game->camera);
+
     /* Render scene */
     t = transform_zero;
     //t.scale = 0.01f;
     for(ii=0;ii<game->num_terrain_meshes;++ii) {
-        add_render_command(game->graphics, game->terrain_meshes[ii], &game->terrain_materials[ii], t);
+        add_render_command(game->graphics, game->terrain_meshes[ii], &game->terrain_materials[ii], transform_get_matrix(t));
     }
 
     /* Render lights */
@@ -185,8 +188,6 @@ void update_game(Game* game)
 
         add_point_light(game->graphics, game->point_lights[ii]);
     }
-
-    set_view_transform(game->graphics, game->camera);
     set_sun_light(game->graphics, vec3_create(0, -1, 0), vec3_create(0.8f, 0.8f, 0.8f));
 
     /* Calculate FPS */
