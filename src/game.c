@@ -104,7 +104,7 @@ Game* create_game(void)
         system_log("Loading time: %f\n", get_delta_time(G->timer));
         G->sun_light.position = vec3_create(0.0f, 10.0f, 0.0f);
         G->sun_light.color = vec3_create(1, 1, 1);
-        G->sun_light.size = 100.0f;
+        G->sun_light.size = 3.0f;
     }
 
     reset_timer(G->timer);

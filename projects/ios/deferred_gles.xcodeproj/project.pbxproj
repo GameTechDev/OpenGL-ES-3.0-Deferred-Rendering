@@ -10,6 +10,7 @@
 		2717053317FBBC76003977A4 /* forward.c in Sources */ = {isa = PBXBuildFile; fileRef = 2717053117FBBC76003977A4 /* forward.c */; };
 		2743853E17FB5F97008D9C2C /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2743853C17FB5F97008D9C2C /* scene.cpp */; };
 		2743854117FB6071008D9C2C /* utility.c in Sources */ = {isa = PBXBuildFile; fileRef = 2743853F17FB6071008D9C2C /* utility.c */; };
+		2782A00217FC7DD20032058F /* light_prepass.c in Sources */ = {isa = PBXBuildFile; fileRef = 2782A00017FC7DD20032058F /* light_prepass.c */; };
 		2797218517FAA53B00EB40A8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218417FAA53B00EB40A8 /* Foundation.framework */; };
 		2797218717FAA53B00EB40A8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218617FAA53B00EB40A8 /* CoreGraphics.framework */; };
 		2797218917FAA53B00EB40A8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218817FAA53B00EB40A8 /* UIKit.framework */; };
@@ -39,6 +40,8 @@
 		2743853D17FB5F97008D9C2C /* scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene.h; sourceTree = "<group>"; };
 		2743853F17FB6071008D9C2C /* utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utility.c; sourceTree = "<group>"; };
 		2743854017FB6071008D9C2C /* utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utility.h; sourceTree = "<group>"; };
+		2782A00017FC7DD20032058F /* light_prepass.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = light_prepass.c; sourceTree = "<group>"; };
+		2782A00117FC7DD20032058F /* light_prepass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = light_prepass.h; sourceTree = "<group>"; };
 		2797218117FAA53B00EB40A8 /* deferred_gles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deferred_gles.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2797218417FAA53B00EB40A8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2797218617FAA53B00EB40A8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -186,6 +189,8 @@
 				27E51F9417FBB353002ECEFE /* texture.h */,
 				2717053117FBBC76003977A4 /* forward.c */,
 				2717053217FBBC76003977A4 /* forward.h */,
+				2782A00017FC7DD20032058F /* light_prepass.c */,
+				2782A00117FC7DD20032058F /* light_prepass.h */,
 			);
 			name = src;
 			path = ../../src;
@@ -286,6 +291,7 @@
 				27FC1C0817FB498300D3C6B5 /* program.c in Sources */,
 				27E51F9517FBB353002ECEFE /* texture.c in Sources */,
 				27FC1C0917FB498300D3C6B5 /* timer.c in Sources */,
+				2782A00217FC7DD20032058F /* light_prepass.c in Sources */,
 				27FC1C0617FB498300D3C6B5 /* system_ios.m in Sources */,
 				279721C017FAA59D00EB40A8 /* main.m in Sources */,
 			);

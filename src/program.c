@@ -31,14 +31,14 @@ static const char* kAttributeSlotNames[] =
  */
 static GLuint _load_shader(const char* filename, GLenum type)
 {
-    void*   data = NULL;
+    char*   data = NULL;
     size_t  data_size = 0;
     GLuint  shader = 0;
     GLint   compile_status = 0;
     int     result;
     GLint   shader_size = 0;
 
-    result = (int)load_file_data(filename, &data, &data_size);
+    result = (int)load_file_data(filename, (void*)&data, &data_size);
     if(result != 0) {
         system_log("Loading shader %s failed", filename);
         return 0;

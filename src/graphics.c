@@ -9,6 +9,7 @@
 #include "program.h"
 #include "vertex.h"
 #include "forward.h"
+#include "light_prepass.h"
 
 /* Defines
  */
@@ -21,7 +22,8 @@ struct Graphics
     int width;
     int height;
 
-    ForwardRenderer*    forward;
+    ForwardRenderer*        forward;
+    LightPrepassRenderer*   light_prepass;
 
     GLint   default_framebuffer;
 
@@ -164,8 +166,8 @@ Graphics* create_graphics(void)
     ASSERT_GL(glClearColor(1.0f, 0.0f, 1.0f, 1.0f));
     ASSERT_GL(glClearDepthf(1.0f));
     ASSERT_GL(glEnable(GL_DEPTH_TEST));
-    //ASSERT_GL(glEnable(GL_CULL_FACE));
-    //ASSERT_GL(glFrontFace(GL_CW));
+    ASSERT_GL(glEnable(GL_CULL_FACE));
+    ASSERT_GL(glFrontFace(GL_CW));
     system_log("OpenGL version:\t%s\n", glGetString(GL_VERSION));
     system_log("OpenGL renderer:\t%s\n", glGetString(GL_RENDERER));
     system_log("OpenGL extensions:\n");
@@ -186,11 +188,13 @@ Graphics* create_graphics(void)
 
     /* Set up renderers */
     G->forward = create_forward_renderer(G);
+    G->light_prepass = create_light_prepass_renderer(G);
 
     return G;
 }
 void destroy_graphics(Graphics* G)
 {
+    destroy_light_prepass_renderer(G->light_prepass);
     destroy_forward_renderer(G->forward);
     destroy_program(G->fullscreen_program);
     free(G);
@@ -205,22 +209,29 @@ void resize_graphics(Graphics* G, int width, int height)
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &G->default_framebuffer));
 
     _resize_framebuffer(G);
+    resize_forward_renderer(G->forward, width, height);
+    resize_light_prepass_renderer(G->light_prepass, width, height);
 
     system_log("Graphics resized: %d, %d\n", width, height);
 }
 void render_graphics(Graphics* G)
 {
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &G->default_framebuffer));
-    //system_log("Default framebuffer: %d\n", G->default_framebuffer);
     /* Bind framebuffer */
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, G->framebuffer));
     ASSERT_GL(glViewport(0, 0, G->width, G->height));
     ASSERT_GL(glClearColor(0.3f, 0.6f, 0.9f, 1.0f));
     ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-    render_forward(G->forward, G->proj_matrix, G->view_matrix,
-                   G->render_commands, G->num_render_commands,
-                   G->lights, G->num_lights);
+    if(1) {
+        render_forward(G->forward, G->proj_matrix, G->view_matrix,
+                       G->render_commands, G->num_render_commands,
+                       G->lights, G->num_lights);
+    } else if(0) {
+        render_light_prepass(G->light_prepass, G->proj_matrix, G->view_matrix,
+                             G->render_commands, G->num_render_commands,
+                             G->lights, G->num_lights);
+    }
     G->num_render_commands = 0;
     G->num_lights = 0;
 

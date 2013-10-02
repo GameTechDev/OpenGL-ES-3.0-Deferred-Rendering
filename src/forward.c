@@ -99,7 +99,7 @@ void destroy_forward_renderer(ForwardRenderer* R)
     destroy_program(R->program);
     free(R);
 }
-void resize_forward_renderer(ForwardRenderer* R)
+void resize_forward_renderer(ForwardRenderer* R, int width, int height)
 {
 }
 

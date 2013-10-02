@@ -3,35 +3,22 @@ uniform sampler2D s_Normal;
 
 uniform float   u_SpecularPower;
 
-varying vec3 v_Normal;
-varying vec3 v_TangentWorldSpace;
+varying vec3 v_NormalVS;
+varying vec3 v_TangentVS;
+varying vec3 v_BitangentVS;
 varying vec2 v_TexCoord;
-
-varying mat3 v_View;
-
-vec3 pack_normal(vec3 normal)
-{
-    return (normal + 1.0) * 0.5;
-}
-vec3 unpack_normal(vec3 normal)
-{
-    return normal * 2.0 - 1.0;
-}
 
 void main(void) {
     /** Load texture values
      */
     vec3 normal = normalize(texture2D(s_Normal, v_TexCoord).rgb*2.0 - 1.0);
-
-    /* Calculate normal */
-    vec3 N = normalize(v_Normal);
-    vec3 T = normalize(v_TangentWorldSpace - dot(v_TangentWorldSpace, N)*N);
-    vec3 B = cross(N,T);
+    
+    vec3 N = normalize(v_NormalVS);
+    vec3 T = normalize(v_TangentVS);
+    vec3 B = normalize(v_BitangentVS);
 
     mat3 TBN = mat3(T, B, N);
     normal = normalize(TBN*normal);
 
-    normal = v_View * normal;
-
-    gl_FragColor = vec4(pack_normal(normal),u_SpecularPower);
+    gl_FragColor = vec4((normal + 1.0) * 0.5, u_SpecularPower);
 }
