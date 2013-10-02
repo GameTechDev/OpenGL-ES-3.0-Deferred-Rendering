@@ -237,10 +237,13 @@ static Vertex* _calculate_tangets(const SimpleVertex* vertices, uint32_t num_ver
         Vec3 bitangent = vec3_sub(a,b);
         bitangent = vec3_mul_scalar(bitangent, r);
 
+
+        bitangent = vec3_normalize(bitangent);
         v0.bitangent = bitangent;
         v1.bitangent = bitangent;
         v2.bitangent = bitangent;
 
+        tangent = vec3_normalize(tangent);
         v0.tangent = tangent;
         v1.tangent = tangent;
         v2.tangent = tangent;

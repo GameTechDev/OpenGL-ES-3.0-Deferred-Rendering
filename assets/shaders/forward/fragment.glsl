@@ -21,12 +21,11 @@ void main(void) {
     vec3 final_color = vec3(0);
     
     vec3 N = normalize(v_NormalVS);
-    vec3 T = normalize(v_TangentVS - dot(v_TangentVS, N)*N);
-    vec3 B = cross(N,T);
+    vec3 T = normalize(v_TangentVS);
+    vec3 B = normalize(v_BitangentVS);
 
     mat3 TBN = mat3(T, B, N);
     normal = normalize(TBN*normal);
-    //normal = v_NormalVS;
     
     for(int ii=0; ii < u_NumLights; ++ii) {
         vec3 light_color = u_LightColors[ii];

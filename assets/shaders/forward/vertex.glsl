@@ -25,7 +25,7 @@ void main(void) {
     v_TexCoord = a_TexCoord;
     v_NormalVS = world3 * a_Normal;
     v_TangentVS = world3 * a_Tangent;
-    v_TangentVS = world3 * a_Bitangent;
+    v_BitangentVS = world3 * a_Bitangent;
 
     gl_Position = u_Projection * view_pos;
 }
