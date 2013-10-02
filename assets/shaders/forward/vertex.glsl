@@ -22,8 +22,8 @@ void main(void) {
 
     v_PositionVS = vec3(world_pos);
     v_TexCoord = a_TexCoord;
-    v_NormalVS = view3 * world3 * a_Normal;
-    v_TangentVS = view3 * world3 * a_Tangent;
+    v_NormalVS = world3 * a_Normal;
+    v_TangentVS = world3 * a_Tangent;
 
     gl_Position = u_Projection * view_pos;
 }

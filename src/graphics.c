@@ -43,13 +43,13 @@ struct Graphics
 /* Constants
  */
 static const struct {
-    float pos[2];
+    float pos[3];
     float tex[2];
 } kFullscreenVertices[] = {
-    { {  1.0f,  1.0f }, { 1.0f, 1.0f } },
-    { { -1.0f,  1.0f }, { 0.0f, 1.0f } },
-    { { -1.0f, -1.0f }, { 0.0f, 0.0f } },
-    { {  1.0f, -1.0f }, { 1.0f, 0.0f } },
+    { {  1.0f,  1.0f, 0.0f }, { 1.0f, 1.0f } },
+    { { -1.0f,  1.0f, 0.0f }, { 0.0f, 1.0f } },
+    { { -1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f } },
+    { {  1.0f, -1.0f, 0.0f }, { 1.0f, 0.0f } },
 };
 static const uint32_t kFullscreenIndices[] = {
     0, 2, 1,
@@ -66,8 +66,8 @@ static void _create_fullscreen_quad(Graphics* G)
     G->fullscreen_program = create_program("fullscreen_vertex.glsl", "fullscreen_fragment.glsl");
     ASSERT_GL(glUseProgram(G->fullscreen_program));
     G->fullscreen_texture = glGetUniformLocation(G->fullscreen_program, "s_Texture");
-    ASSERT_GL(glBindAttribLocation(G->fullscreen_program , kPositionSlot, "a_Position"));
-    ASSERT_GL(glBindAttribLocation(G->fullscreen_program , kTexCoordSlot, "a_TexCoord"));
+    ASSERT_GL(glBindAttribLocation(G->fullscreen_program , 0, "a_Position"));
+    ASSERT_GL(glBindAttribLocation(G->fullscreen_program , 1, "a_TexCoord"));
     ASSERT_GL(glEnableVertexAttribArray(kPositionSlot));
     ASSERT_GL(glEnableVertexAttribArray(kTexCoordSlot));
     ASSERT_GL(glUseProgram(0));
@@ -89,8 +89,8 @@ static void _draw_fullscreen_quad(Graphics* G)
     float* ptr = 0;
     ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, G->fullscreen_quad_vertex_buffer));
     ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, G->fullscreen_quad_index_buffer));
-    ASSERT_GL(glVertexAttribPointer(kPositionSlot,    2, GL_FLOAT, GL_FALSE, sizeof(kFullscreenVertices[0]), (void*)(ptr+=0)));
-    ASSERT_GL(glVertexAttribPointer(kTexCoordSlot,    2, GL_FLOAT, GL_FALSE, sizeof(kFullscreenVertices[0]), (void*)(ptr+=2)));
+    ASSERT_GL(glVertexAttribPointer(0,    3, GL_FLOAT, GL_FALSE, sizeof(kFullscreenVertices[0]), (void*)(ptr+=0)));
+    ASSERT_GL(glVertexAttribPointer(1,    2, GL_FLOAT, GL_FALSE, sizeof(kFullscreenVertices[0]), (void*)(ptr+=3)));
     ASSERT_GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL));
 }
 static void _create_framebuffer(Graphics* G)
@@ -151,8 +151,8 @@ Graphics* create_graphics(void)
 
     /* Allocate graphics */
     G = (Graphics*)calloc(1, sizeof(Graphics));
-    G->width = 1;
-    G->height = 1;
+    G->width = 1024;
+    G->height = 1024;
 
     /* Set up OpenGL */
     ASSERT_GL(glClearColor(1.0f, 0.0f, 1.0f, 1.0f));
@@ -191,6 +191,7 @@ void resize_graphics(Graphics* G, int width, int height)
 
     system_log("Graphics resized: %d, %d\n", width, height);
 }
+static Texture _t = 0;
 void render_graphics(Graphics* G)
 {
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &G->default_framebuffer));
@@ -201,6 +202,16 @@ void render_graphics(Graphics* G)
     ASSERT_GL(glClearColor(0.3f, 0.6f, 0.9f, 1.0f));
     ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
+    if(0){
+        if(_t == 0) {
+            _t = load_texture("land_diffuse.png");
+        }
+        ASSERT_GL(glUseProgram(G->fullscreen_program));
+        ASSERT_GL(glActiveTexture(GL_TEXTURE0));
+        ASSERT_GL(glBindTexture(GL_TEXTURE_2D, _t));
+        _draw_fullscreen_quad(G);
+        ASSERT_GL(glBindTexture(GL_TEXTURE_2D, 0));
+    }
     render_forward(G->forward, G->proj_matrix, G->view_matrix, G->render_commands, G->num_render_commands);
     G->num_render_commands = 0;
 

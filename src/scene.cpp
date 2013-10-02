@@ -306,8 +306,6 @@ static void _load_obj(const char* path, const char* filename, SceneData* scene)
 
     int textured = 0;
 
-    Vec2 tex = {0.5f, 0.5f};
-    texcoords.push_back(tex);
 
     char* file_data = NULL;
     char* original_data = NULL;
@@ -357,6 +355,9 @@ static void _load_obj(const char* path, const char* filename, SceneData* scene)
     normals.reserve(num_total_normals);
     texcoords.reserve(num_total_texcoords+1);
     all_triangles.resize(num_meshes);
+    
+    Vec2 tex = {0.5f, 0.5f};
+    texcoords.push_back(tex);
 
     scene->meshes = (MeshData*)realloc(scene->meshes, sizeof(MeshData)*scene->num_meshes);
     scene->models = (ModelData*)realloc(scene->models, sizeof(ModelData)*scene->num_models);

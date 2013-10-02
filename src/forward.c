@@ -65,6 +65,12 @@ ForwardRenderer* create_forward_renderer(Graphics* G)
     ASSERT_GL(glBindAttribLocation(R->program, kBitangentSlot,   kAttributeSlotNames[kBitangentSlot]));
     ASSERT_GL(glBindAttribLocation(R->program, kTexCoordSlot,    kAttributeSlotNames[kTexCoordSlot]));
 
+    ASSERT_GL(glEnableVertexAttribArray(kPositionSlot));
+    ASSERT_GL(glEnableVertexAttribArray(kNormalSlot));
+    ASSERT_GL(glEnableVertexAttribArray(kTangentSlot));
+    ASSERT_GL(glEnableVertexAttribArray(kBitangentSlot));
+    ASSERT_GL(glEnableVertexAttribArray(kTexCoordSlot));
+
     ASSERT_GL(glUniform1i(R->s_Albedo, 0));
     ASSERT_GL(glUniform1i(R->s_Normal, 1));
     ASSERT_GL(glUseProgram(0));

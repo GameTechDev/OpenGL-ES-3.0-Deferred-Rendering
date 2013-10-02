@@ -7,9 +7,7 @@ DEFINES     +=
 
 C_STD   = -std=gnu89
 CXX_STD = -std=c++98
-WARNINGS    +=   -Wall -Wextra -Wpointer-arith \
-                 -Wwrite-strings  -Wredundant-decls -Winline -Wno-long-long \
-                 -Wuninitialized
+WARNINGS    +=
 
 LOCAL_MODULE    := libandroidinterface
 LOCAL_CFLAGS    := $(INCLUDES) $(WARNINGS) $(C_STD)
