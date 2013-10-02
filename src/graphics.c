@@ -194,7 +194,6 @@ void resize_graphics(Graphics* G, int width, int height)
 
     system_log("Graphics resized: %d, %d\n", width, height);
 }
-static Texture _t = 0;
 void render_graphics(Graphics* G)
 {
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &G->default_framebuffer));
@@ -205,16 +204,6 @@ void render_graphics(Graphics* G)
     ASSERT_GL(glClearColor(0.3f, 0.6f, 0.9f, 1.0f));
     ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-    if(0){
-        if(_t == 0) {
-            _t = load_texture("land_diffuse.png");
-        }
-        ASSERT_GL(glUseProgram(G->fullscreen_program));
-        ASSERT_GL(glActiveTexture(GL_TEXTURE0));
-        ASSERT_GL(glBindTexture(GL_TEXTURE_2D, _t));
-        _draw_fullscreen_quad(G);
-        ASSERT_GL(glBindTexture(GL_TEXTURE_2D, 0));
-    }
     render_forward(G->forward, G->proj_matrix, G->view_matrix, G->render_commands, G->num_render_commands);
     G->num_render_commands = 0;
 
