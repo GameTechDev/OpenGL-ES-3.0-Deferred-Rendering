@@ -218,8 +218,11 @@ void render_graphics(Graphics* G)
     ASSERT_GL(glClearColor(0.3f, 0.6f, 0.9f, 1.0f));
     ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-    render_forward(G->forward, G->proj_matrix, G->view_matrix, G->render_commands, G->num_render_commands);
+    render_forward(G->forward, G->proj_matrix, G->view_matrix,
+                   G->render_commands, G->num_render_commands,
+                   G->lights, G->num_lights);
     G->num_render_commands = 0;
+    G->num_lights = 0;
 
     /* Bind default framebuffer and render to the screen */
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, G->default_framebuffer));

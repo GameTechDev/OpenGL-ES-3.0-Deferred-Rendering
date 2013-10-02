@@ -634,7 +634,7 @@ SceneData* _load_scene_data(const char* filename)
 
     SceneData* data = (SceneData*)calloc(1, sizeof(SceneData));
     _load_obj(path, filename, data);
-    _print_scene_data(data);
+    //_print_scene_data(data);
     return data;
 }
 void _free_scene_data(SceneData* S)

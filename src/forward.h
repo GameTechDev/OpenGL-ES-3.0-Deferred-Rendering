@@ -16,6 +16,7 @@ void destroy_forward_renderer(ForwardRenderer* R);
 void resize_forward_renderer(ForwardRenderer* R);
 
 void render_forward(ForwardRenderer* R, Mat4 proj_matrix, Mat4 view_matrix,
-                   Model* models, int num_models);
+                    const Model* models, int num_models,
+                    const Light* lights, int num_lights);
 
 #endif /* include guard */
