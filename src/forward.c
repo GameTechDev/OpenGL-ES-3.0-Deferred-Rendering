@@ -17,6 +17,9 @@
  */
 struct ForwardRenderer
 {
+    int     width;
+    int     height;
+
     GLuint  program;
 
     GLuint  u_World;
@@ -101,6 +104,8 @@ void destroy_forward_renderer(ForwardRenderer* R)
 }
 void resize_forward_renderer(ForwardRenderer* R, int width, int height)
 {
+    R->width = width;
+    R->height = height;
 }
 
 void render_forward(ForwardRenderer* R, Mat4 proj_matrix, Mat4 view_matrix,
@@ -122,6 +127,10 @@ void render_forward(ForwardRenderer* R, Mat4 proj_matrix, Mat4 view_matrix,
         light_colors[ii] = lights[ii].color;
         light_sizes[ii] = lights[ii].size;
     }
+
+    ASSERT_GL(glViewport(0, 0, R->width, R->height));
+    ASSERT_GL(glClearColor(0.3f, 0.6f, 0.9f, 1.0f));
+    ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
     ASSERT_GL(glUseProgram(R->program));
     ASSERT_GL(glUniformMatrix4fv(R->u_Projection, 1, GL_FALSE, (float*)&proj_matrix));

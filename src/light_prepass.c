@@ -108,8 +108,8 @@ static void _draw_point_light(LightPrepassRenderer* R)
 {
     ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, R->cube_vertex_buffer));
     ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, R->cube_index_buffer));
-    ASSERT_GL(glVertexAttribPointer(kPositionSlot, 3, GL_FLOAT, GL_FALSE, 0, (void*)0));
-    ASSERT_GL(glDrawElements(GL_TRIANGLES, sizeof(kCubeIndices)/sizeof(kCubeIndices[0]), GL_UNSIGNED_INT, NULL));
+    ASSERT_GL(glVertexAttribPointer(kPositionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3), (void*)0));
+    ASSERT_GL(glDrawElements(GL_TRIANGLES, sizeof(kCubeIndices)/sizeof(kCubeIndices[0]), GL_UNSIGNED_SHORT, NULL));
 }
 
 /* External functions
@@ -251,7 +251,7 @@ void render_light_prepass(LightPrepassRenderer* R, Mat4 proj_matrix, Mat4 view_m
 {
     GLint default_framebuffer;
     int ii;
-    
+
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &default_framebuffer));
 
     /** Pass 1
@@ -266,7 +266,7 @@ void render_light_prepass(LightPrepassRenderer* R, Mat4 proj_matrix, Mat4 view_m
     ASSERT_GL(glUniformMatrix4fv(R->pass1.u_Projection, 1, GL_FALSE, (float*)&proj_matrix));
     ASSERT_GL(glUniformMatrix4fv(R->pass1.u_View, 1, GL_FALSE, (float*)&view_matrix));
 
-    for(ii=0;ii<num_models;++ii) {
+    for(ii=4;ii<num_models;++ii) {
         Mat4 world_matrix = transform_get_matrix(models[ii].transform);
         /* Material */
         ASSERT_GL(glUniform1f(R->pass1.u_SpecularPower, models[ii].material->specular_power));
@@ -277,16 +277,21 @@ void render_light_prepass(LightPrepassRenderer* R, Mat4 proj_matrix, Mat4 view_m
         draw_mesh(models[ii].mesh);
     }
 
+    ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, default_framebuffer));
+    ASSERT_GL(glViewport(0, 0, R->width, R->height));
+    ASSERT_GL(glClearColor(0.3f, 0.6f, 0.9f, 1.0f));
+    ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
+    //return;
     /** Pass 2
      */
-    ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, default_framebuffer));
     ASSERT_GL(glEnable(GL_BLEND));
     ASSERT_GL(glBlendFunc(GL_ONE, GL_ONE));
     ASSERT_GL(glDepthMask(GL_FALSE));
     ASSERT_GL(glDepthFunc(GL_GEQUAL));
     ASSERT_GL(glCullFace(GL_FRONT));
 
+    view_matrix = proj_matrix = mat4_identity;
     ASSERT_GL(glUseProgram(R->pass2.program));
     ASSERT_GL(glUniformMatrix4fv(R->pass2.u_Projection, 1, GL_FALSE, (float*)&proj_matrix));
     ASSERT_GL(glUniformMatrix4fv(R->pass2.u_View, 1, GL_FALSE, (float*)&view_matrix));
@@ -294,11 +299,12 @@ void render_light_prepass(LightPrepassRenderer* R, Mat4 proj_matrix, Mat4 view_m
     for(ii=0;ii<num_lights;++ii) {
         Mat4 world = mat4_translate(lights[ii].position);
         world.r0.x = world.r1.y = world.r2.z = lights[ii].size;
+        world = mat4_identity;
         ASSERT_GL(glUniformMatrix4fv(R->pass2.u_World, 1, GL_FALSE, (float*)&world));
         ASSERT_GL(glActiveTexture(GL_TEXTURE0));
         ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer_color_texture));
-        ASSERT_GL(glActiveTexture(GL_TEXTURE1));
-        ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer_depth_texture));
+//        ASSERT_GL(glActiveTexture(GL_TEXTURE1));
+//        ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer_depth_texture));
         _draw_point_light(R);
     }
 
