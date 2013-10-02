@@ -34,6 +34,8 @@ Texture load_texture(const char* filename)
     int         result;
 
     result = load_file_data(filename, &file_data, &file_size);
+    if(result != 0)
+        system_log("Loading texture failed: %s\n", filename);
     assert(result == 0);
 
     texture_data = stbi_load_from_memory(file_data, (int)file_size, &width, &height, &components, 0);

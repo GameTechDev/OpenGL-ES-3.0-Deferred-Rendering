@@ -15,14 +15,7 @@
 
 /* Constants
  */
-//static const char* kAttributeSlotNames[] =
-//{
-//    "a_Position",   /* kPositionSlot */
-//    "a_Normal",     /* kNormalSlot */
-//    "a_TexCoord",   /* kTexCoordSlot */
-//    "a_Tangent",    /* kTangentSlot */
-//    "a_Bitangent",  /* kBitangentSlot */
-//};
+
 
 /* Variables
  */
@@ -81,13 +74,6 @@ Program create_program(const char* vertex_shader_filename,
     program = glCreateProgram();
     ASSERT_GL(glAttachShader(program, vertex_shader));
     ASSERT_GL(glAttachShader(program, fragment_shader));
-
-//    ASSERT_GL(glBindAttribLocation(program, kPositionSlot,    kAttributeSlotNames[kPositionSlot]));
-//    ASSERT_GL(glBindAttribLocation(program, kNormalSlot,      kAttributeSlotNames[kNormalSlot]));
-//    ASSERT_GL(glBindAttribLocation(program, kTangentSlot,     kAttributeSlotNames[kTangentSlot]));
-//    ASSERT_GL(glBindAttribLocation(program, kBitangentSlot,   kAttributeSlotNames[kBitangentSlot]));
-//    ASSERT_GL(glBindAttribLocation(program, kTexCoordSlot,    kAttributeSlotNames[kTexCoordSlot]));
-
     ASSERT_GL(glLinkProgram(program));
     ASSERT_GL(glGetProgramiv(program, GL_LINK_STATUS, &link_status));
     if(link_status == GL_FALSE) {

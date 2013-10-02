@@ -7,9 +7,11 @@
 #include "gl_include.h"
 #include "program.h"
 #include "vertex.h"
+#include "forward.h"
 
 /* Defines
  */
+#define MAX_RENDER_COMMANDS 1024
 
 /* Types
  */
@@ -17,6 +19,8 @@ struct Graphics
 {
     int width;
     int height;
+
+    ForwardRenderer*    forward;
 
     GLint   default_framebuffer;
 
@@ -28,6 +32,12 @@ struct Graphics
     GLuint  framebuffer;
     GLuint  color_texture;
     GLuint  depth_texture;
+
+    Mat4    proj_matrix;
+    Mat4    view_matrix;
+
+    Model   render_commands[MAX_RENDER_COMMANDS];
+    int     num_render_commands;
 };
 
 /* Constants
@@ -80,7 +90,7 @@ static void _draw_fullscreen_quad(Graphics* G)
     ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, G->fullscreen_quad_vertex_buffer));
     ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, G->fullscreen_quad_index_buffer));
     ASSERT_GL(glVertexAttribPointer(kPositionSlot,    2, GL_FLOAT, GL_FALSE, sizeof(kFullscreenVertices[0]), (void*)(ptr+=0)));
-    ASSERT_GL(glVertexAttribPointer(kNormalSlot,      2, GL_FLOAT, GL_FALSE, sizeof(kFullscreenVertices[0]), (void*)(ptr+=2)));
+    ASSERT_GL(glVertexAttribPointer(kTexCoordSlot,    2, GL_FLOAT, GL_FALSE, sizeof(kFullscreenVertices[0]), (void*)(ptr+=2)));
     ASSERT_GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL));
 }
 static void _create_framebuffer(Graphics* G)
@@ -147,16 +157,24 @@ Graphics* create_graphics(void)
     /* Set up OpenGL */
     ASSERT_GL(glClearColor(1.0f, 0.0f, 1.0f, 1.0f));
     ASSERT_GL(glClearDepthf(1.0f));
+    ASSERT_GL(glEnable(GL_DEPTH_TEST));
+    //ASSERT_GL(glEnable(GL_CULL_FACE));
+    //ASSERT_GL(glFrontFace(GL_CW));
     system_log("OpenGL version:\t%s\n", glGetString(GL_VERSION));
     system_log("OpenGL renderer:\t%s\n", glGetString(GL_RENDERER));
 
+    /* Set up self */
     _create_fullscreen_quad(G);
     _create_framebuffer(G);
+
+    /* Set up renderers */
+    G->forward = create_forward_renderer(G);
 
     return G;
 }
 void destroy_graphics(Graphics* G)
 {
+    destroy_forward_renderer(G->forward);
     destroy_program(G->fullscreen_program);
     free(G);
 }
@@ -164,6 +182,7 @@ void resize_graphics(Graphics* G, int width, int height)
 {
     G->width = width;
     G->height = height;
+    G->proj_matrix = mat4_perspective_fov(kPiDiv2, width/(float)height, 1.0f, 1000.0f);
 
     ASSERT_GL(glViewport(0, 0, width, height));
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &G->default_framebuffer));
@@ -175,13 +194,19 @@ void resize_graphics(Graphics* G, int width, int height)
 void render_graphics(Graphics* G)
 {
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &G->default_framebuffer));
+    //system_log("Default framebuffer: %d\n", G->default_framebuffer);
     /* Bind framebuffer */
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, G->framebuffer));
+    ASSERT_GL(glViewport(0, 0, G->width, G->height));
     ASSERT_GL(glClearColor(0.3f, 0.6f, 0.9f, 1.0f));
     ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
+    render_forward(G->forward, G->proj_matrix, G->view_matrix, G->render_commands, G->num_render_commands);
+    G->num_render_commands = 0;
+
     /* Bind default framebuffer and render to the screen */
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, G->default_framebuffer));
+    ASSERT_GL(glViewport(0, 0, G->width, G->height));
     ASSERT_GL(glClearColor(1.0f, 0.0f, 1.0f, 1.0f));
     ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     ASSERT_GL(glUseProgram(G->fullscreen_program));
@@ -189,4 +214,15 @@ void render_graphics(Graphics* G)
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, G->color_texture));
     _draw_fullscreen_quad(G);
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, 0));
+}
+
+void set_view_matrix(Graphics* G, Mat4 view)
+{
+    G->view_matrix = view;
+}
+void add_render_command(Graphics* G, Model model)
+{
+    int index = G->num_render_commands++;
+    assert(index <= MAX_RENDER_COMMANDS);
+    G->render_commands[index] = model;
 }

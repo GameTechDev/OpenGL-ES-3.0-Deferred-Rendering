@@ -21,6 +21,7 @@ LOCAL_SRC_FILES := 	jni.c \
                     ../../../src/game.c \
                     ../../../src/mesh.c \
                     ../../../src/program.c \
+                    ../../../src/forward.c \
                     ../../../src/utility.c \
                     ../../../src/texture.c \
                     ../../../src/scene.cpp \

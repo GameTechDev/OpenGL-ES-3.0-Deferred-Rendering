@@ -9,6 +9,7 @@
 #include "vec_math.h"
 #include "mesh.h"
 
+typedef struct Graphics Graphics;
 typedef struct Scene Scene;
 typedef struct SceneData SceneData;
 typedef struct Material
@@ -30,6 +31,7 @@ typedef struct Model
 
 Scene* create_scene(const char* filename);
 void destroy_scene(Scene* S);
+void render_scene(Scene* S, Graphics* G);
 
 SceneData* _load_scene_data(const char* filename);
 void _free_scene_data(SceneData* S);

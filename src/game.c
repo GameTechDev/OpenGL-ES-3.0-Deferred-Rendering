@@ -121,6 +121,8 @@ void update_game(Game* G)
     float delta_time = (float)get_delta_time(G->timer);
 
     _control_camera(G, delta_time);
+    set_view_matrix(G->graphics, mat4_inverse(transform_get_matrix(G->camera)));
+    render_scene(G->scene, G->graphics);
 
     /* Calculate FPS */
     G->fps_time += delta_time;

@@ -8,6 +8,7 @@ extern "C" {
 #include "utility.h"
 #include "system.h"
 #include "assert.h"
+#include "graphics.h"
 }
 #include <stdlib.h>
 #include <string.h>
@@ -572,16 +573,18 @@ static void _scene_from_scenedata(const SceneData* data, Scene* scene)
     /* Models */
     scene->models = (Model*)calloc(data->num_models, sizeof(Model));
     for(ii=0;ii<data->num_models;++ii) {
+        const char* this_mesh_name = data->models[ii].mesh_name;
+        const char* this_material_name = data->models[ii].material_name;
         Material* mat = NULL;
         Mesh* mesh = NULL;
         for(int jj=0; jj<scene->num_materials; ++jj) {
-            if(strcmp(scene->materials[ii].name, data->models[jj].material_name) == 0) {
+            if(strcmp(this_material_name, data->materials[jj].name) == 0) {
                 mat = scene->materials + ii;
                 break;
             }
         }
         for(int jj=0; jj<scene->num_meshes; ++jj) {
-            if(strcmp(data->meshes[ii].name, data->models[jj].mesh_name) == 0) {
+            if(strcmp(this_mesh_name, data->meshes[jj].name) == 0) {
                 mesh = scene->meshes[ii];
                 break;
             }
@@ -629,6 +632,13 @@ void destroy_scene(Scene* S)
     free(S->materials);
     free(S->models);
     free(S);
+}
+void render_scene(Scene* S, Graphics* G)
+{
+    int ii;
+    for(ii=0;ii<S->num_models;++ii) {
+        add_render_command(G, S->models[ii]);
+    }
 }
 SceneData* _load_scene_data(const char* filename)
 {

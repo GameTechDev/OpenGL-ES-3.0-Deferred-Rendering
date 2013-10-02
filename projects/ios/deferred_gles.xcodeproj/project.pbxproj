@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2717053317FBBC76003977A4 /* forward.c in Sources */ = {isa = PBXBuildFile; fileRef = 2717053117FBBC76003977A4 /* forward.c */; };
 		2743853E17FB5F97008D9C2C /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2743853C17FB5F97008D9C2C /* scene.cpp */; };
 		2743854117FB6071008D9C2C /* utility.c in Sources */ = {isa = PBXBuildFile; fileRef = 2743853F17FB6071008D9C2C /* utility.c */; };
 		2797218517FAA53B00EB40A8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2797218417FAA53B00EB40A8 /* Foundation.framework */; };
@@ -31,6 +32,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2717053117FBBC76003977A4 /* forward.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = forward.c; sourceTree = "<group>"; };
+		2717053217FBBC76003977A4 /* forward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = forward.h; sourceTree = "<group>"; };
 		2743853C17FB5F97008D9C2C /* scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scene.cpp; sourceTree = "<group>"; };
 		2743853D17FB5F97008D9C2C /* scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene.h; sourceTree = "<group>"; };
 		2743853F17FB6071008D9C2C /* utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utility.c; sourceTree = "<group>"; };
@@ -178,6 +181,8 @@
 				2743854017FB6071008D9C2C /* utility.h */,
 				27E51F9317FBB353002ECEFE /* texture.c */,
 				27E51F9417FBB353002ECEFE /* texture.h */,
+				2717053117FBBC76003977A4 /* forward.c */,
+				2717053217FBBC76003977A4 /* forward.h */,
 			);
 			name = src;
 			path = ../../src;
@@ -270,6 +275,7 @@
 				2743853E17FB5F97008D9C2C /* scene.cpp in Sources */,
 				279721C417FAA5AA00EB40A8 /* AppDelegate.m in Sources */,
 				279721CC17FAA79300EB40A8 /* OpenGLView.m in Sources */,
+				2717053317FBBC76003977A4 /* forward.c in Sources */,
 				27FC1C0517FB498300D3C6B5 /* game.c in Sources */,
 				2743854117FB6071008D9C2C /* utility.c in Sources */,
 				27FC1C0717FB498300D3C6B5 /* mesh.c in Sources */,
