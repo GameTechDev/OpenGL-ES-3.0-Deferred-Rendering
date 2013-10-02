@@ -109,7 +109,9 @@ void render_forward(ForwardRenderer* R, Mat4 proj_matrix, Mat4 view_matrix,
     int     ii;
     
     for(ii=0;ii<num_lights;++ii) {
-        light_positions[ii] = lights[ii].position;
+        Vec4 position = vec4_from_vec3(lights[ii].position, 1.0f);
+        position = mat4_mul_vector(position, view_matrix);
+        light_positions[ii] = vec3_from_vec4(position);
         light_colors[ii] = lights[ii].color;
         light_sizes[ii] = lights[ii].size;
     }

@@ -21,11 +21,11 @@ void main(void) {
     vec4 world_pos = u_World * a_Position;
     vec4 view_pos = u_View * world_pos;
 
-    v_PositionVS = vec3(world_pos);
+    v_PositionVS = vec3(view_pos);
+    v_NormalVS = view3 * world3 * a_Normal;
+    v_TangentVS = view3 * world3 * a_Tangent;
+    v_BitangentVS = view3 * world3 * a_Bitangent;
     v_TexCoord = a_TexCoord;
-    v_NormalVS = world3 * a_Normal;
-    v_TangentVS = world3 * a_Tangent;
-    v_BitangentVS = world3 * a_Bitangent;
 
     gl_Position = u_Projection * view_pos;
 }
