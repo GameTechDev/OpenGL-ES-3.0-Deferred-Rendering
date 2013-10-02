@@ -104,7 +104,7 @@ Game* create_game(void)
         system_log("Loading time: %f\n", get_delta_time(G->timer));
         G->sun_light.position = vec3_create(0.0f, 10.0f, 0.0f);
         G->sun_light.color = vec3_create(1, 1, 1);
-        G->sun_light.size = 3.0f;
+        G->sun_light.size = 10.0f;
     }
 
     reset_timer(G->timer);
@@ -126,13 +126,31 @@ void update_game(Game* G)
 
     _control_camera(G, delta_time);
     set_view_matrix(G->graphics, mat4_inverse(transform_get_matrix(G->camera)));
-    add_light(G->graphics, G->sun_light);
+    //add_light(G->graphics, G->sun_light);
     render_scene(G->scene, G->graphics);
+
+    { /* Lights */
+        int ii;
+        static float rotate = 0.0f;
+        rotate += delta_time*(k2Pi/32);
+        for(ii=0;ii<2;++ii) {
+            Light light = {0};
+            float angle = ii*(kPi)+rotate;
+            Quaternion q = quat_from_euler(0, angle, 0);
+            Vec3 direction = quat_get_z_axis(q);
+            light.position = vec3_mul_scalar(direction, 7.0f);
+            light.position.y = 2.0f;
+            light.color = vec3_create(1.0f, 0.0f, 0.0f);
+            light.size = 4.0f;
+
+            add_light(G->graphics, light);
+        }
+    }
 
     /* Calculate FPS */
     G->fps_time += delta_time;
     G->fps_count++;
-    
+
     if(G->fps_time >= 1.0f) {
         system_log("FPS: %f\n", G->fps_count/G->fps_time);
         G->fps_time -= 1.0f;
