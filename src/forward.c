@@ -22,7 +22,7 @@ struct ForwardRenderer
     GLuint  u_World;
     GLuint  u_View;
     GLuint  u_Projection;
-    
+
     GLuint  s_Albedo;
     GLuint  s_Normal;
 
@@ -32,6 +32,10 @@ struct ForwardRenderer
     GLuint  u_NumLights;
 
     GLuint  u_CameraPosition;
+
+    GLuint  u_SpecularColor;
+    GLuint  u_SpecularPower;
+    GLuint  u_SpecularCoefficient;
 };
 
 /* Constants
@@ -71,8 +75,10 @@ ForwardRenderer* create_forward_renderer(Graphics* G)
     ASSERT_GL(GetUniformLocation(R, program, u_LightColors));
     ASSERT_GL(GetUniformLocation(R, program, u_LightSizes));
     ASSERT_GL(GetUniformLocation(R, program, u_NumLights));
-    
-    ASSERT_GL(GetUniformLocation(R, program, u_CameraPosition));
+
+    ASSERT_GL(GetUniformLocation(R, program, u_SpecularColor));
+    ASSERT_GL(GetUniformLocation(R, program, u_SpecularPower));
+    ASSERT_GL(GetUniformLocation(R, program, u_SpecularCoefficient));
 
     ASSERT_GL(glUseProgram(R->program));
 
@@ -101,13 +107,14 @@ void render_forward(ForwardRenderer* R, Mat4 proj_matrix, Mat4 view_matrix,
                     const Model* models, int num_models,
                     const Light* lights, int num_lights)
 {
-    Mat4    inv_view = mat4_inverse(view_matrix);
-    Vec3    camera_position = vec3_from_vec4(inv_view.r3);
+    //Mat4    inv_view = mat4_inverse(view_matrix);
+    //Mat4    inv_proj = mat4_inverse(proj_matrix);
     Vec3    light_positions[MAX_LIGHTS];
     Vec3    light_colors[MAX_LIGHTS];
     float   light_sizes[MAX_LIGHTS];
     int     ii;
-    
+
+    /* Fill out light buffer and transform to view space */
     for(ii=0;ii<num_lights;++ii) {
         Vec4 position = vec4_from_vec3(lights[ii].position, 1.0f);
         position = mat4_mul_vector(position, view_matrix);
@@ -123,14 +130,19 @@ void render_forward(ForwardRenderer* R, Mat4 proj_matrix, Mat4 view_matrix,
     ASSERT_GL(glUniform3fv(R->u_LightColors, num_lights, (float*)light_colors));
     ASSERT_GL(glUniform1fv(R->u_LightSizes, num_lights, (float*)light_sizes));
     ASSERT_GL(glUniform1i(R->u_NumLights, num_lights));
-    ASSERT_GL(glUniform3fv(R->u_CameraPosition, 1, (float*)&camera_position));
+
     for(ii=0;ii<num_models;++ii) {
         Mat4 world_matrix = transform_get_matrix(models[ii].transform);
-        ASSERT_GL(glUniformMatrix4fv(R->u_World, 1, GL_FALSE, (float*)&world_matrix));
+        /* Material */
+        ASSERT_GL(glUniform3fv(R->u_SpecularColor, 1, (float*)&models[ii].material->specular_color));
+        ASSERT_GL(glUniform1f(R->u_SpecularPower, models[ii].material->specular_power));
+        ASSERT_GL(glUniform1f(R->u_SpecularCoefficient, models[ii].material->specular_coefficient));
         ASSERT_GL(glActiveTexture(GL_TEXTURE0));
         ASSERT_GL(glBindTexture(GL_TEXTURE_2D, models[ii].material->albedo));
         ASSERT_GL(glActiveTexture(GL_TEXTURE1));
         ASSERT_GL(glBindTexture(GL_TEXTURE_2D, models[ii].material->normal));
+        /* Mesh */
+        ASSERT_GL(glUniformMatrix4fv(R->u_World, 1, GL_FALSE, (float*)&world_matrix));
         draw_mesh(models[ii].mesh);
     }
 }
