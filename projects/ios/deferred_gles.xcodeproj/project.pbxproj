@@ -19,6 +19,7 @@
 		279721C717FAA71000EB40A8 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 279721C617FAA71000EB40A8 /* GLKit.framework */; };
 		279721C917FAA71800EB40A8 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 279721C817FAA71800EB40A8 /* OpenGLES.framework */; };
 		279721CC17FAA79300EB40A8 /* OpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 279721CB17FAA79300EB40A8 /* OpenGLView.m */; };
+		27E51F9517FBB353002ECEFE /* texture.c in Sources */ = {isa = PBXBuildFile; fileRef = 27E51F9317FBB353002ECEFE /* texture.c */; };
 		27FC1C0517FB498300D3C6B5 /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 27FC1BF517FB498300D3C6B5 /* game.c */; };
 		27FC1C0617FB498300D3C6B5 /* system_ios.m in Sources */ = {isa = PBXBuildFile; fileRef = 27FC1BF917FB498300D3C6B5 /* system_ios.m */; };
 		27FC1C0717FB498300D3C6B5 /* mesh.c in Sources */ = {isa = PBXBuildFile; fileRef = 27FC1BFA17FB498300D3C6B5 /* mesh.c */; };
@@ -49,6 +50,8 @@
 		279721C817FAA71800EB40A8 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		279721CA17FAA79300EB40A8 /* OpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenGLView.h; sourceTree = "<group>"; };
 		279721CB17FAA79300EB40A8 /* OpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenGLView.m; sourceTree = "<group>"; };
+		27E51F9317FBB353002ECEFE /* texture.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = texture.c; sourceTree = "<group>"; };
+		27E51F9417FBB353002ECEFE /* texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = texture.h; sourceTree = "<group>"; };
 		27FC1BF117FB498300D3C6B5 /* assert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = assert.h; sourceTree = "<group>"; };
 		27FC1BF517FB498300D3C6B5 /* game.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = game.c; sourceTree = "<group>"; };
 		27FC1BF617FB498300D3C6B5 /* game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = game.h; sourceTree = "<group>"; };
@@ -173,6 +176,8 @@
 				2743853D17FB5F97008D9C2C /* scene.h */,
 				2743853F17FB6071008D9C2C /* utility.c */,
 				2743854017FB6071008D9C2C /* utility.h */,
+				27E51F9317FBB353002ECEFE /* texture.c */,
+				27E51F9417FBB353002ECEFE /* texture.h */,
 			);
 			name = src;
 			path = ../../src;
@@ -269,6 +274,7 @@
 				2743854117FB6071008D9C2C /* utility.c in Sources */,
 				27FC1C0717FB498300D3C6B5 /* mesh.c in Sources */,
 				27FC1C0817FB498300D3C6B5 /* program.c in Sources */,
+				27E51F9517FBB353002ECEFE /* texture.c in Sources */,
 				27FC1C0917FB498300D3C6B5 /* timer.c in Sources */,
 				27FC1C0617FB498300D3C6B5 /* system_ios.m in Sources */,
 				279721C017FAA59D00EB40A8 /* main.m in Sources */,
@@ -341,6 +347,7 @@
 				SDKROOT = iphoneos;
 				SYMROOT = bin;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "../.. ../../src/**";
 			};
 			name = Debug;
 		};
@@ -389,6 +396,7 @@
 				SDKROOT = iphoneos;
 				SYMROOT = bin;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "../.. ../../src/**";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

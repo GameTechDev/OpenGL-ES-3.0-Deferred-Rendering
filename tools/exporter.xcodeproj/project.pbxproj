@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		2743855817FB6E0E008D9C2C /* exporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2743855717FB6E0E008D9C2C /* exporter.cpp */; };
 		2743855A17FB6E21008D9C2C /* utility.c in Sources */ = {isa = PBXBuildFile; fileRef = 2743855917FB6E21008D9C2C /* utility.c */; };
+		27EE35AB17FBACDA002A95AA /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27EE35A917FBACDA002A95AA /* scene.cpp */; };
+		27EE35AE17FBB08B002A95AA /* system_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 27EE35AD17FBB08B002A95AA /* system_macosx.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,6 +29,9 @@
 		2743854B17FB6DDA008D9C2C /* exporter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = exporter; sourceTree = BUILT_PRODUCTS_DIR; };
 		2743855717FB6E0E008D9C2C /* exporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = exporter.cpp; sourceTree = SOURCE_ROOT; };
 		2743855917FB6E21008D9C2C /* utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = utility.c; path = ../../src/utility.c; sourceTree = "<group>"; };
+		27EE35A917FBACDA002A95AA /* scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scene.cpp; path = ../../src/scene.cpp; sourceTree = "<group>"; };
+		27EE35AA17FBACDA002A95AA /* scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scene.h; path = ../../src/scene.h; sourceTree = "<group>"; };
+		27EE35AD17FBB08B002A95AA /* system_macosx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = system_macosx.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,10 +64,22 @@
 		2743854D17FB6DDA008D9C2C /* exporter */ = {
 			isa = PBXGroup;
 			children = (
+				27EE35A917FBACDA002A95AA /* scene.cpp */,
+				27EE35AA17FBACDA002A95AA /* scene.h */,
 				2743855717FB6E0E008D9C2C /* exporter.cpp */,
 				2743855917FB6E21008D9C2C /* utility.c */,
+				27EE35AC17FBB08B002A95AA /* macosx */,
 			);
 			path = exporter;
+			sourceTree = "<group>";
+		};
+		27EE35AC17FBB08B002A95AA /* macosx */ = {
+			isa = PBXGroup;
+			children = (
+				27EE35AD17FBB08B002A95AA /* system_macosx.c */,
+			);
+			name = macosx;
+			path = ../../src/macosx;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -117,6 +134,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				2743855A17FB6E21008D9C2C /* utility.c in Sources */,
+				27EE35AB17FBACDA002A95AA /* scene.cpp in Sources */,
+				27EE35AE17FBB08B002A95AA /* system_macosx.c in Sources */,
 				2743855817FB6E0E008D9C2C /* exporter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -160,6 +179,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SYMROOT = bin;
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
@@ -193,6 +213,7 @@
 				OBJROOT = obj;
 				SDKROOT = macosx;
 				SYMROOT = bin;
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};

@@ -17,4 +17,8 @@ const char* get_line_from_buffer(char* line, size_t line_size, const char* buffe
 
 const char* get_extension_from_filename(const char* filename);
 
+void split_filename(char* path, size_t path_size,
+                    char* file, size_t file_size,
+                    const char* filename);
+
 #endif /* include guard */

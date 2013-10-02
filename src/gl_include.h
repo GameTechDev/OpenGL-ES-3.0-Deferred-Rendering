@@ -13,7 +13,7 @@
 #else
     #error Need an OpenGL implementation
 #endif
-
+#include "assert.h"
 #include "system.h"
 
 /** @brief OpenGL Error code strings

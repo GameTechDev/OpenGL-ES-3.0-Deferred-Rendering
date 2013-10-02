@@ -68,9 +68,9 @@ void draw_mesh(const Mesh* M)
     ASSERT_GL(glVertexAttribPointer(kTexCoordSlot,    2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(ptr+=3)));
     ASSERT_GL(glDrawElements(GL_TRIANGLES, M->index_count, GL_UNSIGNED_INT, NULL));
 }
-void _destroy_mesh(Mesh* M)
+void destroy_mesh(Mesh* M)
 {
-    glDeleteBuffers(1,&M->vertex_buffer);
-    glDeleteBuffers(1,&M->index_buffer);
+    ASSERT_GL(glDeleteBuffers(1,&M->vertex_buffer));
+    ASSERT_GL(glDeleteBuffers(1,&M->index_buffer));
     free(M);
 }

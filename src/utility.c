@@ -65,3 +65,32 @@ const char* get_extension_from_filename(const char* filename)
     }
     return NULL;
 }
+void split_filename(char* path, size_t path_size,
+                    char* file, size_t file_size,
+                    const char* filename)
+{
+    const char* end = filename + strlen(filename);
+    const char* curr = end;
+
+    if(filename == NULL) {
+        strncpy(path, "\0", path_size);
+        strncpy(file, "\0", file_size);
+        return;
+    }
+
+    while(curr > filename) {
+        char c = *(curr - 1);
+        if(c == '/')
+            break;
+        curr--;
+    }
+    if(curr == filename) {
+        /* No path found */
+        strncpy(path, "\0", path_size);
+    } else {
+        strncpy(path, filename, path_size);
+        path[curr-filename] = '\0';
+    }
+    strncpy(file, curr, end-curr);
+}
+

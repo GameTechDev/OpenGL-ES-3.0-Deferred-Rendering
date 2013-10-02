@@ -2,7 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-INCLUDES    +=  -I../../src -I../../src/external
+INCLUDES    +=  -I../../src -I../../external -I../../
 DEFINES     +=
 
 C_STD   = -std=gnu89
@@ -22,6 +22,7 @@ LOCAL_SRC_FILES := 	jni.c \
                     ../../../src/mesh.c \
                     ../../../src/program.c \
                     ../../../src/utility.c \
+                    ../../../src/texture.c \
                     ../../../src/scene.cpp \
                     ../../../external/stb_image.c
 LOCAL_LDLIBS := -lGLESv2 -lEGL -llog -landroid
