@@ -38,7 +38,9 @@ struct Graphics
     Mat4    view_matrix;
 
     Model   render_commands[MAX_RENDER_COMMANDS];
+    Light   lights[MAX_LIGHTS];
     int     num_render_commands;
+    int     num_lights;
 };
 
 /* Constants
@@ -170,7 +172,7 @@ Graphics* create_graphics(void)
     { /* Print extensions */
         char buffer[1024*16] = {0};
         uint32_t ii;
-        strcpy(buffer,(const char*)glGetString(GL_EXTENSIONS));
+        strlcpy(buffer,(const char*)glGetString(GL_EXTENSIONS), sizeof(buffer));
         for(ii=0;ii<strlen(buffer);++ii) {
             if(buffer[ii] == ' ')
                 buffer[ii] = '\n';
@@ -240,4 +242,10 @@ void add_render_command(Graphics* G, Model model)
     int index = G->num_render_commands++;
     assert(index <= MAX_RENDER_COMMANDS);
     G->render_commands[index] = model;
+}
+void add_light(Graphics* G, Light light)
+{
+    int index = G->num_lights++;
+    assert(index <= MAX_LIGHTS);
+    G->lights[index] = light;
 }

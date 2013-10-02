@@ -11,6 +11,7 @@
 
 /* Defines
  */
+#define GetUniformLocation(R, program, uniform) R->uniform = glGetUniformLocation(R->program, #uniform)
 
 /* Types
  */
@@ -21,6 +22,11 @@ struct ForwardRenderer
     GLuint  u_World;
     GLuint  u_View;
     GLuint  u_Projection;
+
+    GLuint  u_LightPositions;
+    GLuint  u_LightColors;
+    GLuint  u_LightSizes;
+    GLuint  u_NumLights;
 
     GLuint  s_Albedo;
     GLuint  s_Normal;
@@ -51,12 +57,18 @@ ForwardRenderer* create_forward_renderer(Graphics* G)
     ForwardRenderer* R = (ForwardRenderer*)calloc(1,sizeof(*R));
     R->program = create_program("shaders/forward/vertex.glsl", "shaders/forward/fragment.glsl", slots);
 
-    ASSERT_GL(R->u_Projection = glGetUniformLocation(R->program, "u_Projection"));
-    ASSERT_GL(R->u_View = glGetUniformLocation(R->program, "u_View"));
-    ASSERT_GL(R->u_World = glGetUniformLocation(R->program, "u_World"));
+    ASSERT_GL(GetUniformLocation(R, program, u_Projection));
+    ASSERT_GL(GetUniformLocation(R, program, u_View));
+    ASSERT_GL(GetUniformLocation(R, program, u_World));
 
-    ASSERT_GL(R->s_Normal = glGetUniformLocation(R->program, "s_Normal"));
-    ASSERT_GL(R->s_Albedo = glGetUniformLocation(R->program, "s_Albedo"));
+    ASSERT_GL(GetUniformLocation(R, program, s_Normal));
+    ASSERT_GL(GetUniformLocation(R, program, s_Albedo));
+
+
+    ASSERT_GL(GetUniformLocation(R, program, u_LightPositions));
+    ASSERT_GL(GetUniformLocation(R, program, u_LightColors));
+    ASSERT_GL(GetUniformLocation(R, program, u_LightSizes));
+    ASSERT_GL(GetUniformLocation(R, program, u_NumLights));
 
     ASSERT_GL(glUseProgram(R->program));
 
