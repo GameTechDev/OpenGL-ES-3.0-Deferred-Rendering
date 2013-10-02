@@ -285,7 +285,7 @@ static void _load_obj(const char* path, const char* filename, SceneData* scene)
     std::vector<Vec3> normals;
     std::vector<Vec2> texcoords;
 
-    std::vector<std::vector<int3> >  all_indices;
+    std::vector<std::vector<Triangle> >  all_triangles;
     std::vector<std::string>  mesh_material_pairs;
     std::vector<std::string>  mesh_names;
 
@@ -339,7 +339,7 @@ static void _load_obj(const char* path, const char* filename, SceneData* scene)
     positions.reserve(num_total_vertices);
     normals.reserve(num_total_normals);
     texcoords.reserve(num_total_texcoords+1);
-    all_indices.resize(num_meshes);
+    all_triangles.resize(num_meshes);
     
     Vec2 tex = {0.5f, 0.5f};
     texcoords.push_back(tex);
@@ -382,7 +382,7 @@ static void _load_obj(const char* path, const char* filename, SceneData* scene)
     //
     // Load mesh data
     //
-    int current_indices = -1;
+    std::vector<Triangle>* mesh_triangles = &all_triangles[0] - 1;
     MeshData* current_mesh = (scene->meshes - 1) + orig_num_meshes;
     ModelData* current_model = (scene->models - 1) + orig_num_models;
 
@@ -399,11 +399,9 @@ static void _load_obj(const char* path, const char* filename, SceneData* scene)
         sscanf(line, "%s", line_header);
 
         if(strcmp(line_header, "usemtl") == 0) {
-            ++current_indices;
+            ++mesh_triangles;
             ++current_mesh;
             ++current_model;
-
-            all_indices.push_back(std::vector<int3>());
 
             memset(current_mesh, 0, sizeof(*current_mesh));
             memset(current_model, 0, sizeof(*current_model));
@@ -461,16 +459,19 @@ static void _load_obj(const char* path, const char* filename, SceneData* scene)
                     matches = 13;
                 }
             }
-            
-            std::vector<int3>& indices = all_indices[current_indices];
-
-            indices.push_back(triangle[0]);
-            indices.push_back(triangle[1]);
-            indices.push_back(triangle[2]);
+            Triangle tri = {
+                triangle[0],
+                triangle[1],
+                triangle[2],
+            };
+            mesh_triangles->push_back(tri);
             if(matches == 13) {
-                indices.push_back(triangle[0]);
-                indices.push_back(triangle[2]);
-                indices.push_back(triangle[3]);
+                Triangle tri2 = {
+                    triangle[0],
+                    triangle[2],
+                    triangle[3],
+                };
+                mesh_triangles->push_back(tri2);
             }
         }
         prev_line = this_line;
@@ -479,38 +480,39 @@ static void _load_obj(const char* path, const char* filename, SceneData* scene)
     //
     // Create meshes
     //
-    current_indices = -1;
+    mesh_triangles = &all_triangles[0];
     current_mesh = scene->meshes + orig_num_meshes;
     current_model = scene->models + orig_num_models;
 
     for(uint32_t kk=0; kk<num_meshes;++kk) {
-        std::vector<int3>& indices = all_indices[kk];
-
         std::map<int3, uint32_t> m;
         std::vector<SimpleVertex> v;
         std::vector<uint32_t> i;
-        uint32_t num_indices = (uint32_t)indices.size();
-        for(uint32_t ii=0;ii<num_indices;++ii) {
-            int3 index = indices[ii];
-            std::map<int3, uint32_t>::iterator iter = m.find(index);
-            if(iter != m.end()) {
-                /* Already exists */
-                i.push_back(iter->second);
-            } else {
-                /* Add it */
-                int pos_index = indices[ii].p-1;
-                int tex_index = indices[ii].t;
-                int norm_index = indices[ii].n-1;
-                SimpleVertex vertex;
-                vertex.position = positions[pos_index];
-                vertex.texcoord = texcoords[tex_index];
-                vertex.normal = normals[norm_index];
-                /* Flip v-channel */
-                vertex.texcoord.y = 1.0f-vertex.texcoord.y;
+        uint32_t num_triangles = (uint32_t)mesh_triangles->size();
+        for(uint32_t jj=0;jj<num_triangles;++jj) {
+            const Triangle& triangle = (*mesh_triangles)[jj];
+            for(uint32_t ii=0;ii<3;++ii) {
+                int3 index = triangle.vertex[ii];
+                std::map<int3, uint32_t>::iterator iter = m.find(index);
+                if(iter != m.end()) {
+                    /* Already exists */
+                    i.push_back((uint32_t)iter->second);
+                } else {
+                    /* Add it */
+                    int pos_index = index.p-1;
+                    int tex_index = index.t;
+                    int norm_index = index.n-1;
+                    SimpleVertex vertex;
+                    vertex.position = positions[pos_index];
+                    vertex.texcoord = texcoords[tex_index];
+                    vertex.normal = normals[norm_index];
+                    /* Flip v-channel */
+                    vertex.texcoord.y = 1.0f-vertex.texcoord.y;
 
-                i.push_back((int)v.size());
-                m[index] = (int)v.size();
-                v.push_back(vertex);
+                    i.push_back((uint32_t)v.size());
+                    m[index] = (uint32_t)v.size();
+                    v.push_back(vertex);
+                }
             }
         }
 
@@ -523,6 +525,7 @@ static void _load_obj(const char* path, const char* filename, SceneData* scene)
 
         current_mesh++;
         current_model++;
+        mesh_triangles++;
     }
     free_file_data(original_data);
 }
