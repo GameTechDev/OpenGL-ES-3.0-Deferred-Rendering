@@ -274,23 +274,178 @@ struct Triangle
 {
     int3    vertex[3];
 };
-//FILE* mesh_file = fopen((mesh_name + ".mesh").c_str(), "wb");
-//
-//// mtl_name_len
-//uint32_t material_name_len = (uint32_t)strlen(mesh_material_pairs[(uint32_t)jj].c_str());
-//fwrite(&material_name_len, 1, sizeof(material_name_len), mesh_file);
-//// mtl_name
-//fwrite(mesh_material_pairs[(uint32_t)jj].c_str(), 1, material_name_len, mesh_file);
-//// vertex count
-//fwrite(&vertex_count, 1, sizeof(vertex_count), mesh_file);
-//// index count
-//fwrite(&index_count, 1, sizeof(index_count), mesh_file);
-//// vertices
-//fwrite(new_vertices, sizeof(Vertex), vertex_count, mesh_file);
-//// indices
-//fwrite(&i[0], sizeof(uint32_t), index_count, mesh_file);
-//
-//fclose(mesh_file);
+/* This is pretty ugly, but functional code. There are probably more efficient
+    ways of loading obj's.
+ */
+void gl_load_obj(Graphics* graphics, const char* filename,
+                 Mesh*** meshes, int* num_meshes,
+                 Material** materials, int* num_materials)
+{
+    std::vector<Vec3> positions;
+    std::vector<Vec3> normals;
+    std::vector<Vec2> texcoords;
+
+    std::vector<std::vector<int3> >  all_indices;
+    std::vector<std::string>  mesh_material_pairs;
+    int current_indices = -1;
+
+    std::map<std::string, Material> all_materials;
+
+    int textured = 0;
+
+    Vec2 tex = {0.5f, 0.5f};
+    texcoords.push_back(tex);
+
+    char* file_data = NULL;
+    char* original_data = NULL;
+    size_t file_size = 0;
+    int matches;
+
+    load_file_data(filename, (void**)&file_data, &file_size);
+    original_data = file_data;
+
+    while(1) {
+        if(file_data == NULL)
+            break;
+        char line[1024] = {0};
+        file_data = (char*)get_line_from_buffer(line, sizeof(line), file_data);
+        char line_header[16] = {0};
+        sscanf(line, "%s", line_header);
+
+        if(strcmp(line_header, "v") == 0) {
+            Vec3 v;
+            matches = sscanf(line, "%s %f %f %f\n", line_header, &v.x, &v.y, &v.z);
+            assert(matches == 4);
+            positions.push_back(v);
+            textured = 0;
+        } else if(strcmp(line_header, "vt") == 0) {
+            Vec2 t;
+            matches = sscanf(line, "%s %f %f\n", line_header, &t.x, &t.y);
+            assert(matches == 3);
+            texcoords.push_back(t);
+            textured = 1;
+        } else if(strcmp(line_header, "vn") == 0) {
+            Vec3 n;
+            matches = sscanf(line, "%s %f %f %f\n", line_header, &n.x, &n.y, &n.z);
+            assert(matches == 4);
+            normals.push_back(n);
+        } else if(strcmp(line_header, "usemtl") == 0) {
+            char name[256];
+            matches = sscanf(line, "%s %s\n", line_header, name);
+            assert(matches == 2);
+            all_indices.push_back(std::vector<int3>());
+            mesh_material_pairs.push_back(name);
+            current_indices++;
+        } else if(strcmp(line_header, "mtllib") == 0 && materials) {
+            char mtl_filename[256];
+            matches = sscanf(line, "%s %s\n", line_header, mtl_filename);
+            assert(matches == 2);
+            //_load_mtl_file(graphics, mtl_filename, all_materials);
+        } else if(strcmp(line_header, "f") == 0) {
+            int3 triangle[4];
+            if(textured) {
+                matches = sscanf(line, "%s %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d\n",
+                                 line_header,
+                                 &triangle[0].p, &triangle[0].t, &triangle[0].n,
+                                 &triangle[1].p, &triangle[1].t, &triangle[1].n,
+                                 &triangle[2].p, &triangle[2].t, &triangle[2].n,
+                                 &triangle[3].p, &triangle[3].t, &triangle[3].n);
+                if(matches != 10 && matches != 13) {
+                    system_log("Can't load this OBJ\n");
+                    free_file_data(original_data);
+                }
+            } else {
+                matches = sscanf(line, "%s %d//%d %d//%d %d//%d %d//%d\n",
+                                 line_header,
+                                 &triangle[0].p, &triangle[0].n,
+                                 &triangle[1].p, &triangle[1].n,
+                                 &triangle[2].p, &triangle[2].n,
+                                 &triangle[3].p, &triangle[3].n);
+                if(matches != 7 && matches != 9) {
+                    system_log("Can't load this OBJ\n");
+                    free_file_data(original_data);
+                }
+                triangle[0].t = 0;
+                triangle[1].t = 0;
+                triangle[2].t = 0;
+                if(matches == 9) {
+                    triangle[3].t = 0;
+                    matches = 13;
+                }
+            }
+            std::vector<int3>& indices = all_indices[current_indices];
+
+            indices.push_back(triangle[0]);
+            indices.push_back(triangle[1]);
+            indices.push_back(triangle[2]);
+            if(matches == 13) {
+                indices.push_back(triangle[0]);
+                indices.push_back(triangle[2]);
+                indices.push_back(triangle[3]);
+            }
+        }
+    }
+    free_file_data(original_data);
+
+    std::vector<Mesh*> all_meshes;
+    for(int jj=0; jj<(int)all_indices.size();++jj) {
+        std::vector<int3>& indices = all_indices[jj];
+
+        std::map<int3, int> m;
+        std::vector<SimpleVertex> v;
+        std::vector<uint32_t> i;
+        int num_indices = (int)indices.size();
+        for(int ii=0;ii<num_indices;++ii) {
+            int3 index = indices[ii];
+            std::map<int3, int>::iterator iter = m.find(index);
+            if(iter != m.end()) {
+                /* Already exists */
+                i.push_back(iter->second);
+            } else {
+                /* Add it */
+                int pos_index = indices[ii].p-1;
+                int tex_index = indices[ii].t;
+                int norm_index = indices[ii].n-1;
+                SimpleVertex vertex;
+                vertex.position = positions[pos_index];
+                vertex.texcoord = texcoords[tex_index];
+                vertex.normal = normals[norm_index];
+                /* Flip v-channel */
+                vertex.texcoord.y = 1.0f-vertex.texcoord.y;
+
+                i.push_back((int)v.size());
+                m[index] = (int)v.size();
+                v.push_back(vertex);
+            }
+        }
+        int vertex_count = (int)v.size();
+        int index_count = (int)i.size();
+        Vertex* new_vertices = _calculate_tangets(&v[0], vertex_count, &i[0], index_count);
+
+        Mesh* mesh = create_mesh(new_vertices, vertex_count*sizeof(Vertex),
+                                    &i[0], index_count*sizeof(uint32_t),
+                                    index_count);
+
+        delete [] new_vertices;
+
+        all_meshes.push_back(mesh);
+    }
+    *meshes = (Mesh**)calloc(all_meshes.size(),sizeof(Mesh*));
+    for(int ii=0;ii<(int)all_meshes.size(); ++ii) {
+        (*meshes)[ii] = all_meshes[ii];
+    }
+    *num_meshes = (int)all_meshes.size();
+
+    if(materials) {
+        *materials = (Material*)calloc(all_materials.size(),sizeof(Material));
+        for(int ii=0;ii<(int)mesh_material_pairs.size();++ii) {
+            (*materials)[ii] = all_materials[mesh_material_pairs[ii]];
+        }
+        *num_materials = (int)all_materials.size();
+    }
+
+    (void)sizeof(graphics);
+}
 
 static void _load_obj(const char* path, const char* filename, SceneData* scene)
 {
@@ -550,12 +705,17 @@ static void _scene_from_scenedata(const SceneData* data, Scene* scene)
     scene->num_materials = data->num_materials;
     scene->num_models = data->num_models;
 
+    Mesh** meshes;
+    int num_meshes;
+    gl_load_obj(NULL, "lightHouse.obj", &meshes, &num_meshes, NULL, NULL);
+
     /* Meshes */
     scene->meshes = (Mesh**)calloc(data->num_meshes, sizeof(Mesh*));
     for(ii=0;ii<data->num_meshes;++ii) {
         scene->meshes[ii] = create_mesh(data->meshes[ii].vertices, data->meshes[ii].vertex_count*sizeof(Vertex),
                                         data->meshes[ii].indices, data->meshes[ii].index_count*sizeof(uint32_t),
                                         data->meshes[ii].index_count);
+        scene->meshes[ii] = meshes[ii];
     }
 
     /* Materials */

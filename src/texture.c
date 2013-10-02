@@ -45,7 +45,7 @@ Texture load_texture(const char* filename)
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, texture));
 
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST));
+    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
 
@@ -80,7 +80,7 @@ Texture load_texture(const char* filename)
     }
 
     ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, texture_data));
-    ASSERT_GL(glGenerateMipmap(GL_TEXTURE_2D));
+    //ASSERT_GL(glGenerateMipmap(GL_TEXTURE_2D));
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, 0));
 
     stbi_image_free(texture_data);

@@ -8,11 +8,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
-    self.window.rootViewController = [[OpenGLView alloc] initWithNibName:nil bundle:nil];
-    [self.window makeKeyAndVisible];
-    
+//    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+//    // Override point for customization after application launch.
+//    self.window.rootViewController = [[OpenGLView alloc] initWithNibName:nil bundle:nil];
+//    [self.window makeKeyAndVisible];
+//    
     return YES;
 }
 
