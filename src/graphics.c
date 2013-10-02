@@ -3,6 +3,7 @@
  */
 #include "graphics.h"
 #include <stdlib.h>
+#include <string.h>
 #include "assert.h"
 #include "gl_include.h"
 #include "program.h"
@@ -165,6 +166,17 @@ Graphics* create_graphics(void)
     //ASSERT_GL(glFrontFace(GL_CW));
     system_log("OpenGL version:\t%s\n", glGetString(GL_VERSION));
     system_log("OpenGL renderer:\t%s\n", glGetString(GL_RENDERER));
+    system_log("OpenGL extensions:\n");
+    { /* Print extensions */
+        char buffer[1024*16] = {0};
+        uint32_t ii;
+        strcpy(buffer,(const char*)glGetString(GL_EXTENSIONS));
+        for(ii=0;ii<strlen(buffer);++ii) {
+            if(buffer[ii] == ' ')
+                buffer[ii] = '\n';
+        }
+        system_log("%s\n", buffer);
+    }
 
     /* Set up self */
     _create_fullscreen_quad(G);
