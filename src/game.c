@@ -99,16 +99,8 @@ Game* create_game(void)
     /* Load scene */
     {
         reset_timer(G->timer);
-        create_scene("lightHouse.obj");
+        G->scene = create_scene("lightHouse.obj");
         system_log("Loading time: %f\n", get_delta_time(G->timer));
-    }
-
-    {
-        char path[256] = {0};
-        char file[256] = {0};
-        split_filename(path, sizeof(path), file, sizeof(file), "standard/path/file.ext");
-        split_filename(path, sizeof(path), file, sizeof(file), "standard_path_file.ext");
-        split_filename(path, sizeof(path), file, sizeof(file), "");
     }
 
     reset_timer(G->timer);

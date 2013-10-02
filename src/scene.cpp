@@ -179,6 +179,7 @@ static void _load_mtl_file(const char* path, const char* filename, SceneData* sc
 
         if(strcmp(line_header, "newmtl") == 0) {
             current_material++;
+            memset(current_material, 0, sizeof(*current_material));
             matches = sscanf(line, "%s %s\n", line_header, current_material->name);
             current_material->specular_power = 16.0f;
             assert(matches == 2);
@@ -414,6 +415,9 @@ static void _load_obj(const char* path, const char* filename, SceneData* scene)
             ++mesh_triangles;
             ++current_mesh;
             ++current_model;
+
+            memset(current_mesh, 0, sizeof(*current_mesh));
+            memset(current_model, 0, sizeof(*current_model));
             // Get material name
             char material_name[256];
             matches = sscanf(line, "%s %s\n", line_header, material_name);
@@ -570,14 +574,14 @@ static void _scene_from_scenedata(const SceneData* data, Scene* scene)
     for(ii=0;ii<data->num_models;++ii) {
         Material* mat = NULL;
         Mesh* mesh = NULL;
-        for(int ii=0; ii<scene->num_materials; ++ii) {
-            if(strcmp(scene->materials[ii].name, data->models[ii].material_name) == 0) {
+        for(int jj=0; jj<scene->num_materials; ++jj) {
+            if(strcmp(scene->materials[ii].name, data->models[jj].material_name) == 0) {
                 mat = scene->materials + ii;
                 break;
             }
         }
-        for(int ii=0; ii<scene->num_meshes; ++ii) {
-            if(strcmp(data->meshes[ii].name, data->models[ii].mesh_name) == 0) {
+        for(int jj=0; jj<scene->num_meshes; ++jj) {
+            if(strcmp(data->meshes[ii].name, data->models[jj].mesh_name) == 0) {
                 mesh = scene->meshes[ii];
                 break;
             }
