@@ -15,7 +15,14 @@
 
 /* Constants
  */
-
+static const char* kAttributeSlotNames[] =
+{
+    "a_Position",   /* kPositionSlot */
+    "a_Normal",     /* kNormalSlot */
+    "a_Tangent",    /* kTangentSlot */
+    "a_Bitangent",  /* kBitangentSlot */
+    "a_TexCoord",   /* kTexCoordSlot */
+};
 
 /* Variables
  */
@@ -59,7 +66,8 @@ static GLuint _load_shader(const char* filename, GLenum type)
 /* External functions
  */
 Program create_program(const char* vertex_shader_filename,
-                       const char* fragment_shader_filename)
+                       const char* fragment_shader_filename,
+                       const AttributeSlot* slots)
 {
     GLuint  vertex_shader;
     GLuint  fragment_shader;
@@ -74,6 +82,10 @@ Program create_program(const char* vertex_shader_filename,
     program = glCreateProgram();
     ASSERT_GL(glAttachShader(program, vertex_shader));
     ASSERT_GL(glAttachShader(program, fragment_shader));
+    while(slots && *slots != kEmptySlot) {
+        ASSERT_GL(glBindAttribLocation(program, *slots,    kAttributeSlotNames[*slots]));
+        ++slots;
+    }
     ASSERT_GL(glLinkProgram(program));
     ASSERT_GL(glGetProgramiv(program, GL_LINK_STATUS, &link_status));
     if(link_status == GL_FALSE) {

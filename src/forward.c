@@ -28,14 +28,6 @@ struct ForwardRenderer
 
 /* Constants
  */
-static const char* kAttributeSlotNames[] =
-{
-    "a_Position",   /* kPositionSlot */
-    "a_Normal",     /* kNormalSlot */
-    "a_TexCoord",   /* kTexCoordSlot */
-    "a_Tangent",    /* kTangentSlot */
-    "a_Bitangent",  /* kBitangentSlot */
-};
 
 /* Variables
  */
@@ -48,8 +40,16 @@ static const char* kAttributeSlotNames[] =
 
 ForwardRenderer* create_forward_renderer(Graphics* G)
 {
+    AttributeSlot slots[] = {
+        kPositionSlot,
+        kNormalSlot,
+        kTangentSlot,
+        kBitangentSlot,
+        kTexCoordSlot,
+        kEmptySlot
+    };
     ForwardRenderer* R = (ForwardRenderer*)calloc(1,sizeof(*R));
-    R->program = create_program("shaders/forward/vertex.glsl", "shaders/forward/fragment.glsl");
+    R->program = create_program("shaders/forward/vertex.glsl", "shaders/forward/fragment.glsl", slots);
 
     ASSERT_GL(R->u_Projection = glGetUniformLocation(R->program, "u_Projection"));
     ASSERT_GL(R->u_View = glGetUniformLocation(R->program, "u_View"));
@@ -59,11 +59,6 @@ ForwardRenderer* create_forward_renderer(Graphics* G)
     ASSERT_GL(R->s_Albedo = glGetUniformLocation(R->program, "s_Albedo"));
 
     ASSERT_GL(glUseProgram(R->program));
-    ASSERT_GL(glBindAttribLocation(R->program, kPositionSlot,    kAttributeSlotNames[kPositionSlot]));
-    ASSERT_GL(glBindAttribLocation(R->program, kNormalSlot,      kAttributeSlotNames[kNormalSlot]));
-    ASSERT_GL(glBindAttribLocation(R->program, kTangentSlot,     kAttributeSlotNames[kTangentSlot]));
-    ASSERT_GL(glBindAttribLocation(R->program, kBitangentSlot,   kAttributeSlotNames[kBitangentSlot]));
-    ASSERT_GL(glBindAttribLocation(R->program, kTexCoordSlot,    kAttributeSlotNames[kTexCoordSlot]));
 
     ASSERT_GL(glEnableVertexAttribArray(kPositionSlot));
     ASSERT_GL(glEnableVertexAttribArray(kNormalSlot));

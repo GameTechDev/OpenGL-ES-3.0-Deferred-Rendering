@@ -63,11 +63,14 @@ static const uint32_t kFullscreenIndices[] = {
  */
 static void _create_fullscreen_quad(Graphics* G)
 {
-    G->fullscreen_program = create_program("fullscreen_vertex.glsl", "fullscreen_fragment.glsl");
+    AttributeSlot slots[] = {
+        kPositionSlot,
+        kTexCoordSlot,
+        kEmptySlot
+    };
+    G->fullscreen_program = create_program("fullscreen_vertex.glsl", "fullscreen_fragment.glsl", slots);
     ASSERT_GL(glUseProgram(G->fullscreen_program));
-    G->fullscreen_texture = glGetUniformLocation(G->fullscreen_program, "s_Texture");
-    ASSERT_GL(glBindAttribLocation(G->fullscreen_program , 0, "a_Position"));
-    ASSERT_GL(glBindAttribLocation(G->fullscreen_program , 1, "a_TexCoord"));
+    ASSERT_GL(G->fullscreen_texture = glGetUniformLocation(G->fullscreen_program, "s_Texture"));
     ASSERT_GL(glEnableVertexAttribArray(kPositionSlot));
     ASSERT_GL(glEnableVertexAttribArray(kTexCoordSlot));
     ASSERT_GL(glUseProgram(0));
@@ -89,8 +92,8 @@ static void _draw_fullscreen_quad(Graphics* G)
     float* ptr = 0;
     ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, G->fullscreen_quad_vertex_buffer));
     ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, G->fullscreen_quad_index_buffer));
-    ASSERT_GL(glVertexAttribPointer(0,    3, GL_FLOAT, GL_FALSE, sizeof(kFullscreenVertices[0]), (void*)(ptr+=0)));
-    ASSERT_GL(glVertexAttribPointer(1,    2, GL_FLOAT, GL_FALSE, sizeof(kFullscreenVertices[0]), (void*)(ptr+=3)));
+    ASSERT_GL(glVertexAttribPointer(kPositionSlot,    3, GL_FLOAT, GL_FALSE, sizeof(kFullscreenVertices[0]), (void*)(ptr+=0)));
+    ASSERT_GL(glVertexAttribPointer(kTexCoordSlot,    2, GL_FLOAT, GL_FALSE, sizeof(kFullscreenVertices[0]), (void*)(ptr+=3)));
     ASSERT_GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL));
 }
 static void _create_framebuffer(Graphics* G)
