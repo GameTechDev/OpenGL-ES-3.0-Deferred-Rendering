@@ -42,17 +42,21 @@ static const char* _glStatusString(GLenum error)
 /** @brief OpenGL Error checking wrapper
  */
 #ifndef ASSERT_GL
-    #define ASSERT_GL(x)                                    \
-        do {                                                \
-            GLenum _glError;                                \
-            x;                                              \
-            _glError = glGetError();                        \
-            if(_glError != GL_NO_ERROR) {                   \
-                system_log("%s:%d:  %s Error: %s\n",        \
-                            __FILE__, __LINE__,             \
-                            #x, _glStatusString(_glError));  \
-            }                                               \
-        } while(__LINE__ == -1)
+    #ifndef NDEBUG
+        #define ASSERT_GL(x)                                    \
+            do {                                                \
+                GLenum _glError;                                \
+                x;                                              \
+                _glError = glGetError();                        \
+                if(_glError != GL_NO_ERROR) {                   \
+                    system_log("%s:%d:  %s Error: %s\n",        \
+                                __FILE__, __LINE__,             \
+                                #x, _glStatusString(_glError)); \
+                }                                               \
+            } while(__LINE__ == -1)
+    #else
+        #define ASSERT_GL(x)
+    #endif /* NDEBUG */
 #endif /* #ifndef ASSERT_GL */
 
 /** @brief Manual OpenGL error checking
