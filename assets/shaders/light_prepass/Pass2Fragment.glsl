@@ -12,13 +12,6 @@ uniform float   u_LightSize;
 
 varying vec3    v_PositionVS;
 
-
-float DepthToZPosition(float depth)
-{
-    vec2 camerarange = vec2(1.0,1000.0);
-    return camerarange.x / (camerarange.y - depth * (camerarange.y - camerarange.x)) * camerarange.y;
-}
-
 void main(void) {
     /** Load texture values
      */
@@ -34,10 +27,11 @@ void main(void) {
     //view_pos = u_InvProj * view_pos;
     //view_pos /= view_pos.w;
 
-    float 
+    float near_plane = 1.0;
+    float far_plane = 100.0;
     vec3 view_ray = vec3(v_PositionVS.xy/v_PositionVS.z, 1.0);
-    float ProjA = 1000.0 / (1000.0 - 1.0);
-    float ProjB = (-1000.0 * 1.0) / (1000.0 - 1.0);
+    float ProjA = far_plane / (far_plane - near_plane);
+    float ProjB = (-far_plane * near_plane) / (far_plane - near_plane);
     float linear_depth = ProjB / (depth - ProjA);
     vec3 view_pos = view_ray * linear_depth;
 
@@ -56,8 +50,9 @@ void main(void) {
     vec3 diffuse = u_LightColor * n_dot_l;
     vec3 specular = vec3(1.0) * vec3(min(1.0, pow(r_dot_l, specular_power))) * u_LightColor;
 
-    vec3 final_color = attenuation * (diffuse);
+    vec3 final_color = (diffuse);
 
-    gl_FragColor = vec4(final_color,1.0);
-    gl_FragColor = vec4(view_pos.z/10.0);
+    gl_FragColor = vec4(dist/10.0);
+    //gl_FragColor = vec4(view_pos.z/10.0);
+    //gl_FragColor = vec4(v_PositionVS/10.0,1.0);
 }
