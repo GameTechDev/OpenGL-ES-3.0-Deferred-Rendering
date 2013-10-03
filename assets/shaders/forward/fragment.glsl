@@ -49,7 +49,7 @@ void main(void) {
         vec3 diffuse = albedo * light_color * n_dot_l;
         vec3 specular = specular_color * vec3(min(1.0, pow(r_dot_l, u_SpecularPower))) * light_color;
 
-        final_color += attenuation * (diffuse);
+        final_color += attenuation * (diffuse + specular);
     }
     vec3 ambient = vec3(0.0);
     gl_FragColor = vec4(ambient*albedo + (1.0-ambient)*final_color,1.0);

@@ -216,33 +216,26 @@ void resize_graphics(Graphics* G, int width, int height)
 }
 void render_graphics(Graphics* G)
 {
-    GLint default_framebuffer;
-    ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &default_framebuffer));
-    /* Bind framebuffer */
-    ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, G->framebuffer));
+    GLint device_framebuffer;
+    ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &device_framebuffer));
 
+    /* Render scene */
     if(0) {
-        render_forward(G->forward, G->proj_matrix, G->view_matrix,
+        render_forward(G->forward, G->framebuffer,
+                       G->proj_matrix, G->view_matrix,
                        G->render_commands, G->num_render_commands,
                        G->lights, G->num_lights);
     } else if(1) {
-        render_light_prepass(G->light_prepass, G->proj_matrix, G->view_matrix,
+        render_light_prepass(G->light_prepass, G->framebuffer,
+                             G->proj_matrix, G->view_matrix,
                              G->render_commands, G->num_render_commands,
                              G->lights, G->num_lights);
     }
     G->num_render_commands = 0;
     G->num_lights = 0;
 
-    #if 0
-    ASSERT_GL(glUseProgram(G->fullscreen_program));
-    ASSERT_GL(glActiveTexture(GL_TEXTURE0));
-    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, 3));
-    _draw_fullscreen_quad(G);
-    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, 0));
-    #endif
-
     /* Bind default framebuffer and render to the screen */
-    ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, default_framebuffer));
+    ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, device_framebuffer));
     ASSERT_GL(glViewport(0, 0, G->width, G->height));
     ASSERT_GL(glClearColor(1.0f, 0.0f, 1.0f, 1.0f));
     ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));

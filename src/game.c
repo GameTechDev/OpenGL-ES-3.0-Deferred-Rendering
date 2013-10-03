@@ -102,7 +102,7 @@ Game* create_game(void)
         reset_timer(G->timer);
         G->scene = create_scene("lightHouse.obj");
         system_log("Loading time: %f\n", get_delta_time(G->timer));
-        G->sun_light.position = vec3_create(0.0f, 10.0f, 0.0f);
+        G->sun_light.position = vec3_create(0.0f, 5.0f, 0.0f);
         G->sun_light.color = vec3_create(1, 1, 1);
         G->sun_light.size = 10.0f;
     }
@@ -126,10 +126,10 @@ void update_game(Game* G)
 
     _control_camera(G, delta_time);
     set_view_matrix(G->graphics, mat4_inverse(transform_get_matrix(G->camera)));
-    //add_light(G->graphics, G->sun_light);
+    add_light(G->graphics, G->sun_light);
     render_scene(G->scene, G->graphics);
 
-    { /* Lights */
+    if(1){ /* Lights */
         int ii;
         static float rotate = 0.0f;
         rotate += delta_time*(k2Pi/32);
