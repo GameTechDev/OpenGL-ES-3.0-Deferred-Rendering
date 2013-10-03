@@ -21,7 +21,7 @@
 		279721C717FAA71000EB40A8 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 279721C617FAA71000EB40A8 /* GLKit.framework */; };
 		279721C917FAA71800EB40A8 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 279721C817FAA71800EB40A8 /* OpenGLES.framework */; };
 		279721CC17FAA79300EB40A8 /* OpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 279721CB17FAA79300EB40A8 /* OpenGLView.m */; };
-		27A3FC6217FBF24D000DAC71 /* iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 27A3FC6117FBF24D000DAC71 /* iPhone.storyboard */; };
+		27A3FC6217FBF24D000DAC71 /* main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 27A3FC6117FBF24D000DAC71 /* main.storyboard */; };
 		27E51F9517FBB353002ECEFE /* texture.c in Sources */ = {isa = PBXBuildFile; fileRef = 27E51F9317FBB353002ECEFE /* texture.c */; };
 		27FC1C0517FB498300D3C6B5 /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 27FC1BF517FB498300D3C6B5 /* game.c */; };
 		27FC1C0617FB498300D3C6B5 /* system_ios.m in Sources */ = {isa = PBXBuildFile; fileRef = 27FC1BF917FB498300D3C6B5 /* system_ios.m */; };
@@ -57,7 +57,7 @@
 		279721C817FAA71800EB40A8 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		279721CA17FAA79300EB40A8 /* OpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenGLView.h; sourceTree = "<group>"; };
 		279721CB17FAA79300EB40A8 /* OpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenGLView.m; sourceTree = "<group>"; };
-		27A3FC6117FBF24D000DAC71 /* iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = iPhone.storyboard; sourceTree = "<group>"; };
+		27A3FC6117FBF24D000DAC71 /* main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = main.storyboard; sourceTree = "<group>"; };
 		27E51F9317FBB353002ECEFE /* texture.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = texture.c; sourceTree = "<group>"; };
 		27E51F9417FBB353002ECEFE /* texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = texture.h; sourceTree = "<group>"; };
 		27FC1BF117FB498300D3C6B5 /* assert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = assert.h; sourceTree = "<group>"; };
@@ -139,7 +139,7 @@
 				279721B417FAA58F00EB40A8 /* Supporting Files */,
 				279721CA17FAA79300EB40A8 /* OpenGLView.h */,
 				279721CB17FAA79300EB40A8 /* OpenGLView.m */,
-				27A3FC6117FBF24D000DAC71 /* iPhone.storyboard */,
+				27A3FC6117FBF24D000DAC71 /* main.storyboard */,
 			);
 			name = project;
 			sourceTree = "<group>";
@@ -268,7 +268,7 @@
 				27FC1C1217FB50F800D3C6B5 /* assets in Resources */,
 				279721C517FAA5AA00EB40A8 /* Images.xcassets in Resources */,
 				279721BF17FAA59D00EB40A8 /* InfoPlist.strings in Resources */,
-				27A3FC6217FBF24D000DAC71 /* iPhone.storyboard in Resources */,
+				27A3FC6217FBF24D000DAC71 /* main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
