@@ -10,6 +10,8 @@ uniform vec3    u_LightColor;
 uniform vec3    u_LightPosition;
 uniform float   u_LightSize;
 
+varying vec3    v_PositionVS;
+
 
 float DepthToZPosition(float depth)
 {
@@ -28,9 +30,16 @@ void main(void) {
     float depth = texture2D(s_Depth, tex_coord).r;
 
     //depth = DepthToZPosition(depth);
-    vec4 view_pos = vec4(tex_coord*2.0 - 1.0, depth, 1.0);
-    view_pos = u_InvProj * view_pos;
-    view_pos /= view_pos.w;
+    //vec4 view_pos = vec4(tex_coord.x*2.0 - 1.0, (tex_coord.y*2.0 - 1.0), depth, 1.0);
+    //view_pos = u_InvProj * view_pos;
+    //view_pos /= view_pos.w;
+
+    float 
+    vec3 view_ray = vec3(v_PositionVS.xy/v_PositionVS.z, 1.0);
+    float ProjA = 1000.0 / (1000.0 - 1.0);
+    float ProjB = (-1000.0 * 1.0) / (1000.0 - 1.0);
+    float linear_depth = ProjB / (depth - ProjA);
+    vec3 view_pos = view_ray * linear_depth;
 
     vec3 light_dir = u_LightPosition - view_pos.rgb;
     float dist = length(light_dir);
@@ -50,5 +59,5 @@ void main(void) {
     vec3 final_color = attenuation * (diffuse);
 
     gl_FragColor = vec4(final_color,1.0);
-
+    gl_FragColor = vec4(view_pos.z/10.0);
 }

@@ -54,4 +54,5 @@ void main(void) {
     }
     vec3 ambient = vec3(0.0);
     gl_FragColor = vec4(ambient*albedo + (1.0-ambient)*final_color,1.0);
+    gl_FragColor = vec4(v_PositionVS.z/10.0);
 }

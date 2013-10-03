@@ -203,7 +203,7 @@ void resize_graphics(Graphics* G, int width, int height)
 {
     G->width = width;
     G->height = height;
-    G->proj_matrix = mat4_perspective_fov(kPiDiv2, width/(float)height, 1.0f, 1000.0f);
+    G->proj_matrix = mat4_perspective_fov(kPiDiv2, width/(float)height, 1.0f, 100.0f);
 
     ASSERT_GL(glViewport(0, 0, width, height));
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &G->default_framebuffer));

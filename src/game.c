@@ -129,7 +129,7 @@ void update_game(Game* G)
     add_light(G->graphics, G->sun_light);
     render_scene(G->scene, G->graphics);
 
-    if(1){ /* Lights */
+    if(0){ /* Lights */
         int ii;
         static float rotate = 0.0f;
         rotate += delta_time*(k2Pi/32);
