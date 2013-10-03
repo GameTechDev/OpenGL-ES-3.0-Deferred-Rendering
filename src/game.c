@@ -13,6 +13,7 @@
 
 /* Defines
  */
+#define NUM_LIGHTS 6
 
 /* Types
  */
@@ -26,6 +27,7 @@ struct Game
     Transform   camera;
     Scene*      scene;
     Light       sun_light;
+    Light       lights[NUM_LIGHTS];
 
     /* Input */
     TouchPoint  points[16];
@@ -98,14 +100,18 @@ Game* create_game(void)
     G->camera.position.z = 7.5f;
 
     /* Load scene */
-    {
-        reset_timer(G->timer);
-        G->scene = create_scene("lightHouse.obj");
-        system_log("Loading time: %f\n", get_delta_time(G->timer));
-        G->sun_light.position = vec3_create(0.0f, 5.0f, 0.0f);
-        G->sun_light.color = vec3_create(1, 1, 1);
-        G->sun_light.size = 10.0f;
-    }
+    reset_timer(G->timer);
+    G->scene = create_scene("lightHouse.obj");
+    G->sun_light.position = vec3_create(0.0f, 5.0f, 0.0f);
+    G->sun_light.color = vec3_create(1, 1, 1);
+    G->sun_light.size = 10.0f;
+
+    G->lights[0].color = vec3_create(1, 0, 0);
+    G->lights[1].color = vec3_create(1, 1, 0);
+    G->lights[2].color = vec3_create(0, 1, 0);
+    G->lights[3].color = vec3_create(1, 0, 1);
+    G->lights[4].color = vec3_create(0, 0, 1);
+    G->lights[5].color = vec3_create(0, 1, 1);
 
     reset_timer(G->timer);
     return G;
@@ -130,20 +136,18 @@ void update_game(Game* G)
     render_scene(G->scene, G->graphics);
 
     if(1) { /* Lights */
-        int ii;
         static float rotate = 0.0f;
+        int ii;
         rotate += delta_time*(k2Pi/32);
-        for(ii=0;ii<2;++ii) {
-            Light light = {0};
-            float angle = ii*(kPi)+rotate;
+        for(ii=0;ii<NUM_LIGHTS;++ii) {
+            float angle = ii*(k2Pi/NUM_LIGHTS)+rotate;
             Quaternion q = quat_from_euler(0, angle, 0);
             Vec3 direction = quat_get_z_axis(q);
-            light.position = vec3_mul_scalar(direction, 7.0f);
-            light.position.y = 2.0f;
-            light.color = vec3_create(1.0f, 0.0f, 0.0f);
-            light.size = 4.0f;
+            G->lights[ii].position = vec3_mul_scalar(direction, 7.0f);
+            G->lights[ii].position.y = 2.0f;
+            G->lights[ii].size = 4.0f;
 
-            add_light(G->graphics, light);
+            add_light(G->graphics, G->lights[ii]);
         }
     }
 
