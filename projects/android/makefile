@@ -53,7 +53,7 @@ clean:
 #
 # Only build the native (C and/or C++) code
 native:
-	ndk-build -j
+	ndk-build
 
 # > make debug
 #

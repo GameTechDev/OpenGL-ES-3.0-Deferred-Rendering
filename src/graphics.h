@@ -1,49 +1,31 @@
 /*! @file graphics.h
- *  @brief OpenGL interface
+ *  @brief Graphics interface
  *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
  */
 #ifndef __graphics_h__
 #define __graphics_h__
 
-#include <stdint.h>
-#include "vec_math.h"
+#include "scene.h"
+
+#define MAX_LIGHTS 64
 
 typedef struct Graphics Graphics;
-typedef struct Mesh Mesh;
-typedef struct Texture Texture;
 typedef struct Light
 {
     Vec3    position;
     Vec3    color;
     float   size;
 } Light;
-typedef struct Material
-{
-    char        name[64];
-    Texture*    albedo_tex;
-    Texture*    normal_tex;
-    Vec3        specular_color;
-    float       specular_power;
-    float       specular_coefficient;
-} Material;
 
-Graphics* create_graphics(int width, int height);
-void destroy_graphics(Graphics* graphics);
-void resize_graphics(Graphics* graphics, int width, int height);
+Graphics* create_graphics(void);
+void destroy_graphics(Graphics* G);
 
-void render_graphics(Graphics* graphics);
-Mesh* cube_mesh(Graphics* graphics);
-Mesh* quad_mesh(Graphics* graphics);
+void resize_graphics(Graphics* G, int width, int height);
 
-Texture* load_texture(Graphics* graphics, const char* filename);
-void destroy_texture(Texture* texture);
+void set_view_matrix(Graphics* G, Mat4 view);
+void add_render_command(Graphics* G, Model model);
+void add_light(Graphics* G, Light light);
 
-void load_obj(Graphics* graphics, const char* filename, Mesh*** meshes, int* num_meshes, Material** materials, int* num_materials);
-void destroy_mesh(Mesh* mesh);
-
-void set_view_transform(Graphics* graphics, Transform view);
-void add_render_command(Graphics* graphics, Mesh* mesh, Material* material, Transform transform);
-void set_sun_light(Graphics* graphics, Vec3 direction, Vec3 color);
-void add_point_light(Graphics* graphics, Light light);
+void render_graphics(Graphics* G);
 
 #endif /* include guard */

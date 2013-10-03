@@ -7,6 +7,9 @@
 #include "timer.h"
 #include "graphics.h"
 #include "vec_math.h"
+#include "scene.h"
+
+#include "utility.h"
 
 /* Defines
  */
@@ -15,28 +18,22 @@
  */
 struct Game
 {
+    /* Engine objects */
     Timer*      timer;
     Graphics*   graphics;
 
-    Mesh**      terrain_meshes;
-    int         num_terrain_meshes;
-    Material*   terrain_materials;
-    int         num_terrain_materials;
-
+    /* Game objects */
     Transform   camera;
+    Scene*      scene;
+    Light       sun_light;
 
+    /* Input */
     TouchPoint  points[16];
     int         num_points;
-
     Vec2        prev_single;
     Vec2        prev_double;
 
-    Material    grass_material;
-    Material    color_material;
-    Material    terrain_material;
-
-    Light       point_lights[8];
-
+    /* FPS Counting */
     float       fps_time;
     int         fps_count;
 };
@@ -49,207 +46,168 @@ struct Game
 
 /* Internal functions
  */
-static void _control_camera(Game* game, float delta_time)
+static void _control_camera(Game* G, float delta_time)
 {
-    if(game->num_points == 1) {
-        Vec2 curr = game->points[0].pos;
-        Vec2 delta = vec2_sub(curr, game->prev_single);
+    if(G->num_points == 1) {
+        Vec2 curr = G->points[0].pos;
+        Vec2 delta = vec2_sub(curr, G->prev_single);
 
         /* L-R rotation */
         Quaternion q = quat_from_axis_anglef(0, 1, 0, delta_time*delta.x*0.2f);
-        game->camera.orientation = quat_multiply(game->camera.orientation, q);
+        G->camera.orientation = quat_multiply(G->camera.orientation, q);
 
         /* U-D rotation */
         q = quat_from_axis_anglef(1, 0, 0, delta_time*delta.y*0.2f);
-        game->camera.orientation = quat_multiply(q, game->camera.orientation);
+        G->camera.orientation = quat_multiply(q, G->camera.orientation);
 
-        game->prev_single = curr;
-    } else if(game->num_points == 2) {
+        G->prev_single = curr;
+    } else if(G->num_points == 2) {
         float camera_speed = 0.1f;
-        Vec3 look = quat_get_z_axis(game->camera.orientation);
-        Vec3 right = quat_get_x_axis(game->camera.orientation);
-        Vec3 up = quat_get_y_axis(game->camera.orientation);
-        Vec2 avg = vec2_add(game->points[0].pos, game->points[1].pos);
+        Vec3 look = quat_get_z_axis(G->camera.orientation);
+        Vec3 right = quat_get_x_axis(G->camera.orientation);
+        Vec2 avg = vec2_add(G->points[0].pos, G->points[1].pos);
         Vec2 delta;
 
         avg = vec2_mul_scalar(avg, 0.5f);
-        delta = vec2_sub(avg, game->prev_double);
+        delta = vec2_sub(avg, G->prev_double);
 
         look = vec3_mul_scalar(look, -delta.y*camera_speed);
         right = vec3_mul_scalar(right, delta.x*camera_speed);
 
 
-        game->camera.position = vec3_add(game->camera.position, look);
-        game->camera.position = vec3_add(game->camera.position, right);
+        G->camera.position = vec3_add(G->camera.position, look);
+        G->camera.position = vec3_add(G->camera.position, right);
 
-        game->prev_double = avg;
-    }
-}
-static void _print_touches(Game* game)
-{
-    int ii;
-    system_log("Num points: %d\n", game->num_points);
-    for(ii=0;ii<game->num_points;++ii) {
-        system_log("\t%d: (%d, %d)\n", game->points[ii].index, (int)game->points[ii].pos.x, (int)game->points[ii].pos.y);
+        G->prev_double = avg;
     }
 }
 
 /* External functions
  */
-Game* create_game(int width, int height)
+Game* create_game(void)
 {
-    Game* game = (Game*)calloc(1, sizeof(*game));
-    game->graphics = create_graphics(width, height);
-    game->timer = create_timer();
+    Game* G = (Game*)calloc(1, sizeof(Game));
+    G->timer = create_timer();
+    G->graphics = create_graphics();
 
-    game->camera = transform_zero;
-    game->camera.orientation = quat_from_euler(0, kPi*-0.75f, 0);
-    game->camera.position.x = 4.0f;
-    game->camera.position.y = 2;
-    game->camera.position.z = 7.5f;
+    /* Set up camera */
+    G->camera = transform_zero;
+    G->camera.orientation = quat_from_euler(0, -0.75f * kPi, 0);
+    G->camera.position.x = 4.0f;
+    G->camera.position.y = 2;
+    G->camera.position.z = 7.5f;
 
-    //game->terrain_mesh = create_mesh(game->graphics, "lightHouse.obj");
-
-    /** Grass material
-     */
-    game->grass_material.albedo_tex = load_texture(game->graphics, "grass.jpg");
-    game->grass_material.normal_tex = NULL;
-    game->grass_material.specular_color = vec3_create(0.0f, 0.0f, 0.0f);
-    game->grass_material.specular_power = 0.0f;
-    game->grass_material.specular_coefficient = 0.0f;
-
-    /** Color material
-     */
-    game->color_material.albedo_tex = load_texture(game->graphics, "texture.png");
-    game->color_material.normal_tex = NULL;
-    game->color_material.specular_color = vec3_create(1.0f, 1.0f, 1.0f);
-    game->color_material.specular_power = 32.0f;
-    game->color_material.specular_coefficient = 1.0f;
-
-    /** terrain material
-     */
-    game->terrain_material.albedo_tex = load_texture(game->graphics, "land_diffuse.png");
-    game->terrain_material.normal_tex = load_texture(game->graphics, "land_normal.png");
-    game->terrain_material.specular_color = vec3_create(0.0f, 0.0f, 0.0f);
-    game->terrain_material.specular_power = 0.0f;
-    game->terrain_material.specular_coefficient = 0.0f;
-
-    /* Load terrain obj */
-    load_obj(game->graphics, "lightHouse.obj", &game->terrain_meshes, &game->num_terrain_meshes, &game->terrain_materials, &game->num_terrain_materials);
-
-    reset_timer(game->timer);
-    return game;
-}
-void destroy_game(Game* game)
-{
-    int ii;
-    for(ii=0;ii<game->num_terrain_meshes;++ii) {
-        destroy_mesh(game->terrain_meshes[ii]);
-    }
-    free(game->terrain_meshes);
-    free(game->terrain_materials);
-    destroy_timer(game->timer);
-    destroy_graphics(game->graphics);
-    destroy_game(game);
-}
-void resize_game(Game* game, int width, int height)
-{
-    resize_graphics(game->graphics, width, height);
-}
-void update_game(Game* game)
-{
-    static float degrees = 0.0f;
-    Transform t = transform_zero;
-    float delta_time = (float)get_delta_time(game->timer);
-    int ii;
-
-    _control_camera(game, delta_time);
-
-    /* Render scene */
-    t = transform_zero;
-    //t.scale = 0.01f;
-    for(ii=0;ii<game->num_terrain_meshes;++ii) {
-        add_render_command(game->graphics, game->terrain_meshes[ii], &game->terrain_materials[ii], t);
+    /* Load scene */
+    {
+        reset_timer(G->timer);
+        G->scene = create_scene("lightHouse.obj");
+        system_log("Loading time: %f\n", get_delta_time(G->timer));
+        G->sun_light.position = vec3_create(0.0f, 5.0f, 0.0f);
+        G->sun_light.color = vec3_create(1, 1, 1);
+        G->sun_light.size = 10.0f;
     }
 
-    /* Render lights */
-    degrees += delta_time*(k2Pi/32);
-    for(ii=0;ii<8;++ii) {
-        float angle = ii*(k2Pi/8)+degrees;
-        Quaternion q = quat_from_euler(0, angle, 0);
-        Vec3 direction = quat_get_z_axis(q);
-        game->point_lights[ii].position = vec3_mul_scalar(direction, 7.0f);
-        game->point_lights[ii].position.y = 2.0f;
-        game->point_lights[ii].color = vec3_create(1.0f, 0.0f, 0.0f);
-        game->point_lights[ii].size = 4.0f;
+    reset_timer(G->timer);
+    return G;
+}
+void destroy_game(Game* G)
+{
+    destroy_timer(G->timer);
+    destroy_graphics(G->graphics);
+    free(G);
+}
+void resize_game(Game* G, int width, int height)
+{
+    resize_graphics(G->graphics, width, height);
+}
+void update_game(Game* G)
+{
+    float delta_time = (float)get_delta_time(G->timer);
 
-        add_point_light(game->graphics, game->point_lights[ii]);
+    _control_camera(G, delta_time);
+    set_view_matrix(G->graphics, mat4_inverse(transform_get_matrix(G->camera)));
+    add_light(G->graphics, G->sun_light);
+    render_scene(G->scene, G->graphics);
+
+    if(1) { /* Lights */
+        int ii;
+        static float rotate = 0.0f;
+        rotate += delta_time*(k2Pi/32);
+        for(ii=0;ii<2;++ii) {
+            Light light = {0};
+            float angle = ii*(kPi)+rotate;
+            Quaternion q = quat_from_euler(0, angle, 0);
+            Vec3 direction = quat_get_z_axis(q);
+            light.position = vec3_mul_scalar(direction, 7.0f);
+            light.position.y = 2.0f;
+            light.color = vec3_create(1.0f, 0.0f, 0.0f);
+            light.size = 4.0f;
+
+            add_light(G->graphics, light);
+        }
     }
-
-    set_view_transform(game->graphics, game->camera);
-    set_sun_light(game->graphics, vec3_create(0, -1, 0), vec3_create(0.8f, 0.8f, 0.8f));
 
     /* Calculate FPS */
-    game->fps_time += delta_time;
-    game->fps_count++;
-    
-    if(game->fps_time >= 1.0f) {
-        system_log("FPS: %f\n", game->fps_count/game->fps_time);
-        game->fps_time -= 1.0f;
-        game->fps_count = 0;
+    G->fps_time += delta_time;
+    G->fps_count++;
+
+    if(G->fps_time >= 1.0f) {
+        system_log("FPS: %f\n", G->fps_count/G->fps_time);
+        G->fps_time -= 1.0f;
+        G->fps_count = 0;
     }
 }
-void render_game(Game* game)
+void render_game(Game* G)
 {
-    render_graphics(game->graphics);
+    render_graphics(G->graphics);
 }
-void add_touch_points(Game* game, int num_touch_points, TouchPoint* points)
+void add_touch_points(Game* G, int num_touch_points, TouchPoint* points)
 {
     int ii;
     for(ii=0;ii<num_touch_points;++ii) {
-        game->points[game->num_points++] = points[ii];
+        G->points[G->num_points++] = points[ii];
     }
 
-    if(game->num_points == 1) {
-        game->prev_single = game->points[0].pos;
-    } else if(game->num_points == 2) {
-        Vec2 avg = vec2_add(game->points[0].pos, game->points[1].pos);
+    if(G->num_points == 1) {
+        G->prev_single = G->points[0].pos;
+    } else if(G->num_points == 2) {
+        Vec2 avg = vec2_add(G->points[0].pos, G->points[1].pos);
         avg = vec2_mul_scalar(avg, 0.5f);
-        game->prev_double = avg;
+        G->prev_double = avg;
     }
 }
-void update_touch_points(Game* game, int num_touch_points, TouchPoint* points)
+void update_touch_points(Game* G, int num_touch_points, TouchPoint* points)
 {
     int ii, jj;
-    for(ii=0;ii<game->num_points;++ii) {
+    for(ii=0;ii<G->num_points;++ii) {
         for(jj=0;jj<num_touch_points;++jj) {
-            if(game->points[ii].index == points[jj].index) {
-                game->points[ii] = points[jj];
+            if(G->points[ii].index == points[jj].index) {
+                G->points[ii] = points[jj];
                 break;
             }
         }
     }
 }
-void remove_touch_points(Game* game, int num_touch_points, TouchPoint* points)
+void remove_touch_points(Game* G, int num_touch_points, TouchPoint* points)
 {
-    int orig_num_points = game->num_points;
+    int orig_num_points = G->num_points;
     int ii, jj;
     for(ii=0;ii<orig_num_points;++ii) {
         for(jj=0;jj<num_touch_points;++jj) {
-            if(game->points[ii].index == points[jj].index) {
+            if(G->points[ii].index == points[jj].index) {
                 /* This is the removed touch, swap it with the end of the list */
-                game->points[ii] = game->points[--game->num_points];
+                G->points[ii] = G->points[--G->num_points];
                 break;
             }
         }
     }
 
-    if(game->num_points == 1) {
-        game->prev_single = game->points[0].pos;
-    } else if(game->num_points == 2) {
-        Vec2 avg = vec2_add(game->points[0].pos, game->points[1].pos);
+    if(G->num_points == 1) {
+        G->prev_single = G->points[0].pos;
+    } else if(G->num_points == 2) {
+        Vec2 avg = vec2_add(G->points[0].pos, G->points[1].pos);
         avg = vec2_mul_scalar(avg, 0.5f);
-        game->prev_double = avg;
+        G->prev_double = avg;
     }
 }
 

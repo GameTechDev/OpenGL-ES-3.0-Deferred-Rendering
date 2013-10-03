@@ -11,10 +11,12 @@ static Game* _game = NULL;
 
 JNIEXPORT void JNICALL Java_com_intel_deferredgles_JNIWrapper_init(JNIEnv * env, jobject obj, int width, int height)
 {
-    _game = create_game(width, height);
+    _game = create_game();
 
     UNUSED_PARAMETER(env);
     UNUSED_PARAMETER(obj);
+    UNUSED_PARAMETER(width);
+    UNUSED_PARAMETER(height);
 }
 JNIEXPORT void JNICALL Java_com_intel_deferredgles_JNIWrapper_resize(JNIEnv * env, jobject obj, int width, int height)
 {
