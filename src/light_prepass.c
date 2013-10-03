@@ -76,12 +76,12 @@ struct LightPrepassRenderer
  *            |/        |/
  *            2---------3
  *
- *   front: { 0, 1, 2 }, { 0, 2, 3 }
- *   right: { 4, 0, 3 }, { 4, 3, 7 }
- *     top: { 4, 5, 1 }, { 4, 1, 0 }
- *    left: { 1, 5, 6 }, { 1, 6, 2 }
- *  bottom: { 3, 2, 6 }, { 3, 6, 7 }
- *    back: { 5, 4, 7 }, { 5, 7, 6 }
+ *   front: { 0, 2, 1 }, { 0, 3, 2 }
+ *   right: { 4, 3, 0 }, { 4, 7, 3 }
+ *     top: { 4, 1, 5 }, { 4, 0, 1 }
+ *    left: { 1, 6, 5 }, { 1, 2, 6 }
+ *  bottom: { 3, 6, 2 }, { 3, 7, 6 }
+ *    back: { 5, 7, 4 }, { 5, 6, 7 }
  *
  */
 static const Vec3 kCubeVertices[] =
@@ -98,12 +98,12 @@ static const Vec3 kCubeVertices[] =
 
 static const uint16_t kCubeIndices[] =
 {
-    0, 1, 2,   0, 2, 3,  /* front */
-    4, 0, 3,   4, 3, 7,  /* right */
-    4, 5, 1,   4, 1, 0,  /* top */
-    1, 5, 6,   1, 6, 2,  /* left */
-    3, 2, 6,   3, 6, 7,  /* bottom */
-    5, 4, 7,   5, 7, 6,  /* back */
+    0, 2, 1,   0, 3, 2,  /* front */
+    4, 3, 0,   4, 7, 3,  /* right */
+    4, 1, 5,   4, 0, 1,  /* top */
+    1, 6, 5,   1, 2, 6,  /* left */
+    3, 6, 2,   3, 7, 6,  /* bottom */
+    5, 7, 4,   5, 6, 7,  /* back */
 };
 
 /* Variables
@@ -303,7 +303,7 @@ void render_light_prepass(LightPrepassRenderer* R, GLuint default_framebuffer,
 
     ASSERT_GL(glEnable(GL_BLEND));
     ASSERT_GL(glBlendFunc(GL_ONE, GL_ONE));
-    //ASSERT_GL(glCullFace(GL_FRONT));
+    ASSERT_GL(glCullFace(GL_FRONT));
     ASSERT_GL(glDepthMask(GL_FALSE));
     ASSERT_GL(glDepthFunc(GL_GEQUAL));
 
@@ -315,10 +315,15 @@ void render_light_prepass(LightPrepassRenderer* R, GLuint default_framebuffer,
 
     for(ii=0;ii<num_lights;++ii) {
         float size = lights[ii].size;
-        Mat4 world = mat4_scalef(size,size,size);
-        Vec4 position = vec4_from_vec3(lights[ii].position, 1.0f);
-        position = mat4_mul_vector(position, view_matrix);
+        Mat4 world = mat4_identity;
+        Vec4 position = vec4_zero;
+
+        world = mat4_scalef(size,size,size);
         world.r3 = vec4_from_vec3(lights[ii].position,1.0f);
+
+        position = vec4_from_vec3(lights[ii].position, 1.0f);
+        position = mat4_mul_vector(position, view_matrix);
+
         ASSERT_GL(glUniformMatrix4fv(R->pass2.u_World, 1, GL_FALSE, (float*)&world));
         ASSERT_GL(glUniform3fv(R->pass2.u_LightPosition, 1, (float*)&position));
         ASSERT_GL(glUniform3fv(R->pass2.u_LightColor, 1, (float*)&lights[ii].color));
@@ -330,7 +335,6 @@ void render_light_prepass(LightPrepassRenderer* R, GLuint default_framebuffer,
         _draw_point_light(R);
     }
 
-    ASSERT_GL(glEnable(GL_DEPTH_TEST));
     ASSERT_GL(glDisable(GL_BLEND));
     ASSERT_GL(glDepthMask(GL_TRUE));
     ASSERT_GL(glDepthFunc(GL_LESS));

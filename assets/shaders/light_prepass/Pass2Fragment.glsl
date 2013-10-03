@@ -35,7 +35,7 @@ void main(void) {
     float linear_depth = ProjB / (depth - ProjA);
     vec3 view_pos = view_ray * linear_depth;
 
-    vec3 light_dir = u_LightPosition - view_pos.rgb;
+    vec3 light_dir = u_LightPosition - view_pos;
     float dist = length(light_dir);
     float size = u_LightSize;
     float attenuation = 1.0 - pow( clamp(dist/size, 0.0, 1.0), 2.0);
@@ -51,8 +51,10 @@ void main(void) {
     vec3 specular = vec3(1.0) * vec3(min(1.0, pow(r_dot_l, specular_power))) * u_LightColor;
 
     vec3 final_color = (diffuse);
-
     gl_FragColor = vec4(dist/10.0);
+    gl_FragColor = vec4(final_color, 1.0);
+    gl_FragColor = vec4(view_pos.z/10.0);
+
     //gl_FragColor = vec4(view_pos.z/10.0);
     //gl_FragColor = vec4(v_PositionVS/10.0,1.0);
 }
