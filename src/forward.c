@@ -142,7 +142,7 @@ void render_forward(ForwardRenderer* R, GLuint default_framebuffer,
     ASSERT_GL(glUniform1fv(R->u_LightSizes, num_lights, (float*)light_sizes));
     ASSERT_GL(glUniform1i(R->u_NumLights, num_lights));
 
-    for(ii=4;ii<num_models;++ii) {
+    for(ii=0;ii<num_models;++ii) {
         Mat4 world_matrix = transform_get_matrix(models[ii].transform);
         /* Material */
         ASSERT_GL(glUniform3fv(R->u_SpecularColor, 1, (float*)&models[ii].material->specular_color));

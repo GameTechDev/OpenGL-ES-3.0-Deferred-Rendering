@@ -31,7 +31,6 @@ void main(void) {
     mat3 TBN = mat3(T, B, N);
     normal = normalize(TBN*normal);
 
-    albedo = vec3(1);
     vec3 final_color = vec3(0);
     for(int ii=0; ii < u_NumLights; ++ii) {
         vec3 light_color = u_LightColors[ii];
@@ -51,8 +50,7 @@ void main(void) {
         vec3 specular = specular_color * vec3(min(1.0, pow(r_dot_l, u_SpecularPower))) * light_color;
 
         final_color += attenuation * (diffuse + specular);
-        final_color = diffuse;
     }
-    vec3 ambient = vec3(0.0);
+    vec3 ambient = vec3(0.1);
     gl_FragColor = vec4(ambient*albedo + (1.0-ambient)*final_color,1.0);
 }

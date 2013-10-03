@@ -10,8 +10,6 @@ uniform vec3    u_LightColor;
 uniform vec3    u_LightPosition;
 uniform float   u_LightSize;
 
-varying vec3    v_PositionVS;
-
 void main(void) {
     /** Load texture values
      */
@@ -22,6 +20,7 @@ void main(void) {
     float specular_power = gbuffer_val.a;
     float depth = texture2D(s_Depth, tex_coord).r;
 
+    /* Calculate the pixel's position in view space */
     vec4 view_pos = vec4(tex_coord*2.0 - 1.0, depth, 1.0);
     view_pos = u_InvProj * view_pos;
     view_pos /= view_pos.w;
@@ -41,12 +40,7 @@ void main(void) {
     vec3 diffuse = u_LightColor * n_dot_l;
     vec3 specular = vec3(1.0) * vec3(min(1.0, pow(r_dot_l, specular_power))) * u_LightColor;
 
-    vec3 final_color = (diffuse);
-    //final_color = view_pos/10.0;
+    vec3 final_color = attenuation * (diffuse);
 
-    gl_FragColor = vec4(dist/10.0);
     gl_FragColor = vec4(final_color, 1.0);
-
-    //gl_FragColor = vec4(view_pos.z/10.0);
-    //gl_FragColor = vec4(v_PositionVS/10.0,1.0);
 }

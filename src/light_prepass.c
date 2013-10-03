@@ -281,7 +281,7 @@ void render_light_prepass(LightPrepassRenderer* R, GLuint default_framebuffer,
     ASSERT_GL(glUniformMatrix4fv(R->pass1.u_Projection, 1, GL_FALSE, (float*)&proj_matrix));
     ASSERT_GL(glUniformMatrix4fv(R->pass1.u_View, 1, GL_FALSE, (float*)&view_matrix));
 
-    for(ii=4;ii<num_models;++ii) {
+    for(ii=0;ii<num_models;++ii) {
         Mat4 world_matrix = transform_get_matrix(models[ii].transform);
         /* Material */
         ASSERT_GL(glUniform1f(R->pass1.u_SpecularPower, models[ii].material->specular_power));
