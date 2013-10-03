@@ -22,20 +22,11 @@ void main(void) {
     float specular_power = gbuffer_val.a;
     float depth = texture2D(s_Depth, tex_coord).r;
 
-    //depth = DepthToZPosition(depth);
-    //vec4 view_pos = vec4(tex_coord.x*2.0 - 1.0, (tex_coord.y*2.0 - 1.0), depth, 1.0);
-    //view_pos = u_InvProj * view_pos;
-    //view_pos /= view_pos.w;
+    vec4 view_pos = vec4(tex_coord*2.0 - 1.0, depth, 1.0);
+    view_pos = u_InvProj * view_pos;
+    view_pos /= view_pos.w;
 
-    float near_plane = 1.0;
-    float far_plane = 100.0;
-    vec3 view_ray = vec3(v_PositionVS.xy/v_PositionVS.z, 1.0);
-    float ProjA = far_plane / (far_plane - near_plane);
-    float ProjB = (-far_plane * near_plane) / (far_plane - near_plane);
-    float linear_depth = ProjB / (depth - ProjA);
-    vec3 view_pos = view_ray * linear_depth;
-
-    vec3 light_dir = u_LightPosition - view_pos;
+    vec3 light_dir = u_LightPosition - vec3(view_pos);
     float dist = length(light_dir);
     float size = u_LightSize;
     float attenuation = 1.0 - pow( clamp(dist/size, 0.0, 1.0), 2.0);
@@ -51,9 +42,10 @@ void main(void) {
     vec3 specular = vec3(1.0) * vec3(min(1.0, pow(r_dot_l, specular_power))) * u_LightColor;
 
     vec3 final_color = (diffuse);
+    //final_color = view_pos/10.0;
+
     gl_FragColor = vec4(dist/10.0);
     gl_FragColor = vec4(final_color, 1.0);
-    gl_FragColor = vec4(view_pos.z/10.0);
 
     //gl_FragColor = vec4(view_pos.z/10.0);
     //gl_FragColor = vec4(v_PositionVS/10.0,1.0);
