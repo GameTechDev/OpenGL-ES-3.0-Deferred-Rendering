@@ -30,7 +30,8 @@ void main(void) {
 
     mat3 TBN = mat3(T, B, N);
     normal = normalize(TBN*normal);
-    
+
+    albedo = vec3(1);
     vec3 final_color = vec3(0);
     for(int ii=0; ii < u_NumLights; ++ii) {
         vec3 light_color = u_LightColors[ii];

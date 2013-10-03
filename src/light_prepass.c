@@ -48,7 +48,12 @@ struct LightPrepassRenderer
         GLuint  u_View;
         GLuint  u_Projection;
 
+        GLuint  u_InvProj;
         GLuint  u_Viewport;
+
+        GLuint  u_LightColor;
+        GLuint  u_LightPosition;
+        GLuint  u_LightSize;
 
         GLuint  s_GBuffer;
         GLuint  s_Depth;
@@ -196,11 +201,17 @@ LightPrepassRenderer* create_light_prepass_renderer(Graphics* G)
     ASSERT_GL(GetUniformLocation(R, pass2, program, u_Projection));
     ASSERT_GL(GetUniformLocation(R, pass2, program, u_View));
     ASSERT_GL(GetUniformLocation(R, pass2, program, u_World));
-    
+
+    ASSERT_GL(GetUniformLocation(R, pass2, program, u_InvProj));
     ASSERT_GL(GetUniformLocation(R, pass2, program, u_Viewport));
 
     ASSERT_GL(GetUniformLocation(R, pass2, program, s_GBuffer));
     ASSERT_GL(GetUniformLocation(R, pass2, program, s_Depth));
+
+
+    ASSERT_GL(GetUniformLocation(R, pass2, program, u_LightColor));
+    ASSERT_GL(GetUniformLocation(R, pass2, program, u_LightPosition));
+    ASSERT_GL(GetUniformLocation(R, pass2, program, u_LightSize));
 
     ASSERT_GL(glUseProgram(R->pass2.program));
 
@@ -254,6 +265,7 @@ void render_light_prepass(LightPrepassRenderer* R, GLuint default_framebuffer,
                           const Model* models, int num_models,
                           const Light* lights, int num_lights)
 {
+    Mat4 inv_proj = mat4_inverse(proj_matrix);
     float viewport[] = { R->width, R->height };
     int ii;
 
@@ -286,24 +298,31 @@ void render_light_prepass(LightPrepassRenderer* R, GLuint default_framebuffer,
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, default_framebuffer));
     ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, R->gbuffer_depth_texture, 0));
     ASSERT_GL(glViewport(0, 0, R->width, R->height));
-    ASSERT_GL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+    ASSERT_GL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
     ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT));
 
     ASSERT_GL(glEnable(GL_BLEND));
     ASSERT_GL(glBlendFunc(GL_ONE, GL_ONE));
-    ASSERT_GL(glCullFace(GL_FRONT));
+    //ASSERT_GL(glCullFace(GL_FRONT));
     ASSERT_GL(glDepthMask(GL_FALSE));
     ASSERT_GL(glDepthFunc(GL_GEQUAL));
 
     ASSERT_GL(glUseProgram(R->pass2.program));
     ASSERT_GL(glUniformMatrix4fv(R->pass2.u_Projection, 1, GL_FALSE, (float*)&proj_matrix));
     ASSERT_GL(glUniformMatrix4fv(R->pass2.u_View, 1, GL_FALSE, (float*)&view_matrix));
+    ASSERT_GL(glUniformMatrix4fv(R->pass2.u_InvProj, 1, GL_FALSE, (float*)&inv_proj));
     ASSERT_GL(glUniform2fv(R->pass2.u_Viewport, 1, viewport));
 
     for(ii=0;ii<num_lights;++ii) {
-        Mat4 world = mat4_translate(lights[ii].position);
-        world.r0.x = world.r1.y = world.r2.z = lights[ii].size;
+        float size = lights[ii].size;
+        Mat4 world = mat4_scalef(size,size,size);
+        Vec4 position = vec4_from_vec3(lights[ii].position, 1.0f);
+        position = mat4_mul_vector(position, view_matrix);
+        world.r3 = vec4_from_vec3(lights[ii].position,1.0f);
         ASSERT_GL(glUniformMatrix4fv(R->pass2.u_World, 1, GL_FALSE, (float*)&world));
+        ASSERT_GL(glUniform3fv(R->pass2.u_LightPosition, 1, (float*)&position));
+        ASSERT_GL(glUniform3fv(R->pass2.u_LightColor, 1, (float*)&lights[ii].color));
+        ASSERT_GL(glUniform1f(R->pass2.u_LightSize, lights[ii].size));
         ASSERT_GL(glActiveTexture(GL_TEXTURE0));
         ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer_color_texture));
         ASSERT_GL(glActiveTexture(GL_TEXTURE1));
@@ -311,6 +330,7 @@ void render_light_prepass(LightPrepassRenderer* R, GLuint default_framebuffer,
         _draw_point_light(R);
     }
 
+    ASSERT_GL(glEnable(GL_DEPTH_TEST));
     ASSERT_GL(glDisable(GL_BLEND));
     ASSERT_GL(glDepthMask(GL_TRUE));
     ASSERT_GL(glDepthFunc(GL_LESS));
