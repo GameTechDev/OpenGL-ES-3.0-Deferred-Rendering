@@ -13,7 +13,7 @@
 
 /* Defines
  */
-#define NUM_LIGHTS 6
+#define NUM_LIGHTS 16
 
 /* Types
  */
@@ -48,6 +48,10 @@ struct Game
 
 /* Internal functions
  */
+static float _rand_float()
+{
+    return rand()/(float)RAND_MAX;
+}
 static void _control_camera(Game* G, float delta_time)
 {
     if(G->num_points == 1) {
@@ -88,6 +92,7 @@ static void _control_camera(Game* G, float delta_time)
  */
 Game* create_game(void)
 {
+    int ii;
     Game* G = (Game*)calloc(1, sizeof(Game));
     G->timer = create_timer();
     G->graphics = create_graphics();
@@ -112,6 +117,11 @@ Game* create_game(void)
     G->lights[3].color = vec3_create(1, 0, 1);
     G->lights[4].color = vec3_create(0, 0, 1);
     G->lights[5].color = vec3_create(0, 1, 1);
+
+    for(ii=6;ii<NUM_LIGHTS;++ii) {
+        G->lights[ii].color = vec3_create(_rand_float(), _rand_float(), _rand_float());
+        G->lights[ii].color = vec3_normalize(G->lights[ii].color);
+    }
 
     get_model(G->scene, 3)->material->specular_color = vec3_create(0.5f, 0.5f, 0.5f);
     get_model(G->scene, 3)->material->specular_coefficient = 1.0f;
