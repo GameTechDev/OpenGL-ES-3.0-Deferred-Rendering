@@ -147,7 +147,7 @@ void update_game(Game* G)
             Quaternion q = quat_from_euler(0, angle, 0);
             Vec3 direction = quat_get_z_axis(q);
             G->lights[ii].position = vec3_mul_scalar(direction, 7.0f);
-            G->lights[ii].position.y = 2.0f;
+            G->lights[ii].position.y = 1.0f;
             G->lights[ii].size = 4.0f;
 
             add_light(G->graphics, G->lights[ii]);
