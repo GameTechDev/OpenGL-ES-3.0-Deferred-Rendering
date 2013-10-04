@@ -13,14 +13,15 @@ LOCAL_MODULE    := libandroidinterface
 LOCAL_CFLAGS    := $(INCLUDES) $(WARNINGS) $(C_STD)
 LOCAL_CXXFLAGS  := $(INCLUDES) $(WARNINGS) $(CXX_STD)
 LOCAL_SRC_FILES := 	jni.c \
-					../../../src/android/system_android.c \
-					../../../src/graphics.c \
-					../../../src/timer.c \
+				../../../src/android/system_android.c \
+				../../../src/graphics.c \
+				../../../src/timer.c \
                     ../../../src/game.c \
                     ../../../src/mesh.c \
                     ../../../src/program.c \
                     ../../../src/forward.c \
                     ../../../src/light_prepass.c \
+                    ../../../src/deferred.c \
                     ../../../src/utility.c \
                     ../../../src/texture.c \
                     ../../../src/scene.cpp \
