@@ -6,11 +6,11 @@ uniform vec3    u_SpecularColor;
 uniform float   u_SpecularPower;
 uniform float   u_SpecularCoefficient;
 
-varying vec3 v_PositionVS;
 varying vec3 v_NormalVS;
 varying vec3 v_TangentVS;
 varying vec3 v_BitangentVS;
 varying vec2 v_TexCoord;
+varying vec2 v_Depth;
 
 void main(void) {
     /** Load texture values
@@ -25,8 +25,11 @@ void main(void) {
 
     mat3 TBN = mat3(T, B, N);
     normal = normalize(TBN*normal);
+    normal += 1.0;
+    normal *= 0.5;
 
-    gl_FragData[0] = vec4(albedo, u_SpecularCoefficient);
-    gl_FragData[1] = vec4(albedo, u_SpecularCoefficient);
-    gl_FragData[2] = vec4(albedo, u_SpecularCoefficient);
+    gl_FragData[0] = vec4(albedo, 1.0);
+    gl_FragData[1] = vec4(normal, u_SpecularCoefficient);
+    gl_FragData[2] = vec4(u_SpecularColor, u_SpecularPower);
+    gl_FragData[3] = vec4(v_Depth.x/v_Depth.y);
 }
