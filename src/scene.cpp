@@ -651,4 +651,9 @@ void _free_scene_data(SceneData* S)
     free(S->models);
     free(S);
 }
+Model* get_model(Scene* S, int model)
+{
+    assert(model < S->num_models);
+    return &S->models[model];
+}
 

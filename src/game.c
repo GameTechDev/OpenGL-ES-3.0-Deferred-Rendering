@@ -102,7 +102,7 @@ Game* create_game(void)
     /* Load scene */
     reset_timer(G->timer);
     G->scene = create_scene("lightHouse.obj");
-    G->sun_light.position = vec3_create(0.0f, 5.0f, 0.0f);
+    G->sun_light.position = vec3_create(-4.0f, 5.0f, 2.0f);
     G->sun_light.color = vec3_create(1, 1, 1);
     G->sun_light.size = 10.0f;
 
@@ -112,6 +112,9 @@ Game* create_game(void)
     G->lights[3].color = vec3_create(1, 0, 1);
     G->lights[4].color = vec3_create(0, 0, 1);
     G->lights[5].color = vec3_create(0, 1, 1);
+
+    get_model(G->scene, 3)->material->specular_color = vec3_create(0.5f, 0.5f, 0.5f);
+    get_model(G->scene, 3)->material->specular_coefficient = 1.0f;
 
     reset_timer(G->timer);
     return G;

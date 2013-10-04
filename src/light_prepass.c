@@ -245,7 +245,7 @@ void resize_light_prepass_renderer(LightPrepassRenderer* R, int width, int heigh
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, 0));
+    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RED, GL_FLOAT, 0));
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, 0));
 
     /* Color buffer */
@@ -305,7 +305,7 @@ void render_light_prepass(LightPrepassRenderer* R, GLuint default_framebuffer,
     ASSERT_GL(glUniformMatrix4fv(R->pass1.u_Projection, 1, GL_FALSE, (float*)&proj_matrix));
     ASSERT_GL(glUniformMatrix4fv(R->pass1.u_View, 1, GL_FALSE, (float*)&view_matrix));
 
-    for(ii=4;ii<num_models;++ii) {
+    for(ii=0;ii<num_models;++ii) {
         Mat4 world_matrix = transform_get_matrix(models[ii].transform);
         /* Material */
         ASSERT_GL(glUniform1f(R->pass1.u_SpecularPower, models[ii].material->specular_power));

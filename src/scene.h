@@ -33,6 +33,8 @@ Scene* create_scene(const char* filename);
 void destroy_scene(Scene* S);
 void render_scene(Scene* S, Graphics* G);
 
+Model* get_model(Scene* S, int model);
+
 SceneData* _load_scene_data(const char* filename);
 void _free_scene_data(SceneData* S);
 

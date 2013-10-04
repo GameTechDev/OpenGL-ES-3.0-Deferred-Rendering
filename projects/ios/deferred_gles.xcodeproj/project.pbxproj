@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2717053317FBBC76003977A4 /* forward.c in Sources */ = {isa = PBXBuildFile; fileRef = 2717053117FBBC76003977A4 /* forward.c */; };
+		271B7E3717FF3F4B002B0D63 /* deferred.c in Sources */ = {isa = PBXBuildFile; fileRef = 271B7E3517FF3F4B002B0D63 /* deferred.c */; };
 		2743853E17FB5F97008D9C2C /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2743853C17FB5F97008D9C2C /* scene.cpp */; };
 		2743854117FB6071008D9C2C /* utility.c in Sources */ = {isa = PBXBuildFile; fileRef = 2743853F17FB6071008D9C2C /* utility.c */; };
 		2782A00217FC7DD20032058F /* light_prepass.c in Sources */ = {isa = PBXBuildFile; fileRef = 2782A00017FC7DD20032058F /* light_prepass.c */; };
@@ -36,6 +37,8 @@
 /* Begin PBXFileReference section */
 		2717053117FBBC76003977A4 /* forward.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = forward.c; sourceTree = "<group>"; };
 		2717053217FBBC76003977A4 /* forward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = forward.h; sourceTree = "<group>"; };
+		271B7E3517FF3F4B002B0D63 /* deferred.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = deferred.c; sourceTree = "<group>"; };
+		271B7E3617FF3F4B002B0D63 /* deferred.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = deferred.h; sourceTree = "<group>"; };
 		2743853C17FB5F97008D9C2C /* scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scene.cpp; sourceTree = "<group>"; };
 		2743853D17FB5F97008D9C2C /* scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene.h; sourceTree = "<group>"; };
 		2743853F17FB6071008D9C2C /* utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utility.c; sourceTree = "<group>"; };
@@ -191,6 +194,8 @@
 				2717053217FBBC76003977A4 /* forward.h */,
 				2782A00017FC7DD20032058F /* light_prepass.c */,
 				2782A00117FC7DD20032058F /* light_prepass.h */,
+				271B7E3517FF3F4B002B0D63 /* deferred.c */,
+				271B7E3617FF3F4B002B0D63 /* deferred.h */,
 			);
 			name = src;
 			path = ../../src;
@@ -291,6 +296,7 @@
 				27FC1C0817FB498300D3C6B5 /* program.c in Sources */,
 				27E51F9517FBB353002ECEFE /* texture.c in Sources */,
 				27FC1C0917FB498300D3C6B5 /* timer.c in Sources */,
+				271B7E3717FF3F4B002B0D63 /* deferred.c in Sources */,
 				2782A00217FC7DD20032058F /* light_prepass.c in Sources */,
 				27FC1C0617FB498300D3C6B5 /* system_ios.m in Sources */,
 				279721C017FAA59D00EB40A8 /* main.m in Sources */,

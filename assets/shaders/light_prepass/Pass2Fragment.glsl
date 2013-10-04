@@ -43,7 +43,7 @@ void main(void) {
     vec3 diffuse = u_LightColor * n_dot_l;
     vec3 specular = vec3(1.0) * vec3(min(1.0, pow(r_dot_l, specular_power))) * u_LightColor;
 
-    vec3 final_color = attenuation * (diffuse);
+    vec3 final_color = attenuation * (diffuse+specular);
 
     gl_FragColor = vec4(final_color, 1.0);
 }

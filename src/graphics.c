@@ -220,7 +220,7 @@ void render_graphics(Graphics* G)
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &device_framebuffer));
 
     /* Render scene */
-    if(0) {
+    if(1) {
         render_forward(G->forward, G->framebuffer,
                        G->proj_matrix, G->view_matrix,
                        G->render_commands, G->num_render_commands,
