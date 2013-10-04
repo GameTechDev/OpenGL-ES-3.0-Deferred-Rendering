@@ -10,7 +10,8 @@ varying vec2 v_TexCoord;
 
 varying vec2 v_Depth;
 
-void main(void) {
+void main(void)
+{
     /** Load texture values
      */
     vec3 normal = normalize(texture2D(s_Normal, v_TexCoord).rgb*2.0 - 1.0);
@@ -24,6 +25,4 @@ void main(void) {
 
     gl_FragData[0] = vec4((normal + 1.0) * 0.5, u_SpecularPower);
     gl_FragData[1] = vec4(v_Depth.x/v_Depth.y);
-    //gl_FragData[1] = vec4(1.0);
-    //colors = vec4((normal + 1.0) * 0.5, u_SpecularPower);
 }

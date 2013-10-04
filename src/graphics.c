@@ -231,7 +231,7 @@ void render_graphics(Graphics* G)
                        G->proj_matrix, G->view_matrix,
                        G->render_commands, G->num_render_commands,
                        G->lights, G->num_lights);
-    } else if(0) {
+    } else if(1) {
         render_light_prepass(G->light_prepass, G->framebuffer,
                              G->proj_matrix, G->view_matrix,
                              G->render_commands, G->num_render_commands,

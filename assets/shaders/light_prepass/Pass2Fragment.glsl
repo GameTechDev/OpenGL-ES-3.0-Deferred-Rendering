@@ -12,7 +12,8 @@ uniform float   u_LightSize;
 
 varying vec4    v_Position;
 
-void main(void) {
+void main(void)
+{
     /** Load texture values
      */
     vec2 tex_coord = gl_FragCoord.xy/u_Viewport;
@@ -36,14 +37,9 @@ void main(void) {
 
     /* Calculate diffuse lighting */
     float n_dot_l = clamp(dot(light_dir, normal), 0.0, 1.0);
-    /* Calculate specular lighting */
-    vec3 reflection = reflect(vec3(0.0,0.0,-1.0), normal);
-    float r_dot_l = clamp(dot(reflection, -light_dir), 0.0, 1.0);
-    /* Calculate final colors */
     vec3 diffuse = u_LightColor * n_dot_l;
-    vec3 specular = vec3(1.0) * vec3(min(1.0, pow(r_dot_l, specular_power))) * u_LightColor;
 
-    vec3 final_color = attenuation * (diffuse+specular);
+    vec3 final_color = attenuation * (diffuse);
 
     gl_FragColor = vec4(final_color, 1.0);
 }
