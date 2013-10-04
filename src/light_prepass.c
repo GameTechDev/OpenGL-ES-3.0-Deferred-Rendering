@@ -337,6 +337,10 @@ void render_light_prepass(LightPrepassRenderer* R, GLuint default_framebuffer,
     ASSERT_GL(glUniformMatrix4fv(R->pass2.u_View, 1, GL_FALSE, (float*)&view_matrix));
     ASSERT_GL(glUniformMatrix4fv(R->pass2.u_InvProj, 1, GL_FALSE, (float*)&inv_proj));
     ASSERT_GL(glUniform2fv(R->pass2.u_Viewport, 1, viewport));
+    ASSERT_GL(glActiveTexture(GL_TEXTURE0));
+    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer_color_texture));
+    ASSERT_GL(glActiveTexture(GL_TEXTURE1));
+    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, temp_depth_buffer));
 
     for(ii=0;ii<num_lights;++ii) {
         float size = lights[ii].size;
@@ -353,10 +357,6 @@ void render_light_prepass(LightPrepassRenderer* R, GLuint default_framebuffer,
         ASSERT_GL(glUniform3fv(R->pass2.u_LightPosition, 1, (float*)&position));
         ASSERT_GL(glUniform3fv(R->pass2.u_LightColor, 1, (float*)&lights[ii].color));
         ASSERT_GL(glUniform1f(R->pass2.u_LightSize, lights[ii].size));
-        ASSERT_GL(glActiveTexture(GL_TEXTURE0));
-        ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer_color_texture));
-        ASSERT_GL(glActiveTexture(GL_TEXTURE1));
-        ASSERT_GL(glBindTexture(GL_TEXTURE_2D, temp_depth_buffer));
         _draw_point_light(R);
     }
 
