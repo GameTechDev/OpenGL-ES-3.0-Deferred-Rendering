@@ -10,6 +10,8 @@ uniform vec3    u_LightColor;
 uniform vec3    u_LightPosition;
 uniform float   u_LightSize;
 
+varying vec4    v_Position;
+
 void main(void) {
     /** Load texture values
      */
@@ -21,11 +23,12 @@ void main(void) {
     float depth = texture2D(s_Depth, tex_coord).r;
 
     /* Calculate the pixel's position in view space */
-    vec4 view_pos = vec4(tex_coord*2.0 - 1.0, depth, 1.0);
+    vec2 screen_pos = v_Position.xy/v_Position.w;
+    vec4 view_pos = vec4(screen_pos, depth, 1.0);
     view_pos = u_InvProj * view_pos;
     view_pos /= view_pos.w;
 
-    vec3 light_dir = u_LightPosition - vec3(view_pos);
+    vec3 light_dir = u_LightPosition - view_pos.xyz;
     float dist = length(light_dir);
     float size = u_LightSize;
     float attenuation = 1.0 - pow( clamp(dist/size, 0.0, 1.0), 2.0);

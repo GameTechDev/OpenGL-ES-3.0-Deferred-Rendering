@@ -12,7 +12,7 @@
 
     [super viewDidLoad];
 
-    self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+    self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
 
     if (!self.context) {
         NSLog(@"Failed to create ES context");
@@ -43,16 +43,6 @@
 {
     resize_game(self.game, (int)[self screenSize].size.width, (int)[self screenSize].size.height);
 }
-//- (void)setupDisplayLink {
-//    CADisplayLink* display_link = [CADisplayLink displayLinkWithTarget:self selector:@selector(render:)];
-//    [display_link addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-//}
-//-(void)render:(CADisplayLink*)display_link {
-//    update_game(self.game);
-//    render_game(self.game);
-//        
-//    [self.context presentRenderbuffer:GL_RENDERBUFFER];
-//}
 -(void)update
 {
     update_game(self.game);

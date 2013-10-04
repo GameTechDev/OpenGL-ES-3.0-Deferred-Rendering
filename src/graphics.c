@@ -134,7 +134,7 @@ static void _resize_framebuffer(Graphics* G)
 
     /* Depth buffer */
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, G->depth_texture));
-    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, G->width, G->height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
+    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, G->width, G->height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
 
     /* Framebuffer */
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, G->framebuffer));
@@ -220,7 +220,7 @@ void render_graphics(Graphics* G)
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &device_framebuffer));
 
     /* Render scene */
-    if(1) {
+    if(0) {
         render_forward(G->forward, G->framebuffer,
                        G->proj_matrix, G->view_matrix,
                        G->render_commands, G->num_render_commands,

@@ -8,6 +8,8 @@ varying vec3 v_TangentVS;
 varying vec3 v_BitangentVS;
 varying vec2 v_TexCoord;
 
+varying vec2 v_Depth;
+
 void main(void) {
     /** Load texture values
      */
@@ -20,5 +22,8 @@ void main(void) {
     mat3 TBN = mat3(T, B, N);
     normal = normalize(TBN*normal);
 
-    gl_FragColor = vec4((normal + 1.0) * 0.5, u_SpecularPower);
+    gl_FragData[0] = vec4((normal + 1.0) * 0.5, u_SpecularPower);
+    gl_FragData[1] = vec4(v_Depth.x/v_Depth.y,1.0,1.0,1.0);
+    gl_FragData[1] = vec4(1.0);
+    //colors = vec4((normal + 1.0) * 0.5, u_SpecularPower);
 }
