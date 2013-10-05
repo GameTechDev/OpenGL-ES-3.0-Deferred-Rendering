@@ -23,6 +23,8 @@ struct Graphics
 {
     int width;
     int height;
+    int major_version;
+    int minor_version;
 
     ForwardRenderer*        forward;
     LightPrepassRenderer*   light_prepass;
@@ -137,7 +139,10 @@ static void _resize_framebuffer(Graphics* G)
 
     /* Depth buffer */
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, G->depth_texture));
-    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, G->width, G->height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
+    if(G->major_version >= 3)
+        ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, G->width, G->height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
+    else
+        ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, G->width, G->height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
 
     /* Framebuffer */
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, G->framebuffer));
@@ -171,7 +176,10 @@ Graphics* create_graphics(void)
     ASSERT_GL(glEnable(GL_DEPTH_TEST));
     ASSERT_GL(glEnable(GL_CULL_FACE));
     ASSERT_GL(glFrontFace(GL_CW));
-    system_log("OpenGL version:\t%s\n", glGetString(GL_VERSION));
+    ASSERT_GL(glGetIntegerv(GL_MAJOR_VERSION, &G->major_version));
+    ASSERT_GL(glGetIntegerv(GL_MINOR_VERSION, &G->minor_version));
+    system_log("OpenGL version:\t%d.%d", G->major_version, G->minor_version);
+    system_log("OpenGL version string:\t%s\n", glGetString(GL_VERSION));
     system_log("OpenGL renderer:\t%s\n", glGetString(GL_RENDERER));
     system_log("OpenGL extensions:\n");
     { /* Print extensions */
@@ -191,8 +199,8 @@ Graphics* create_graphics(void)
 
     /* Set up renderers */
     G->forward = create_forward_renderer(G);
-    G->light_prepass = create_light_prepass_renderer(G);
-    G->deferred = create_deferred_renderer(G);
+    //G->light_prepass = create_light_prepass_renderer(G);
+    //G->deferred = create_deferred_renderer(G);
 
     return G;
 }
@@ -215,8 +223,8 @@ void resize_graphics(Graphics* G, int width, int height)
 
     _resize_framebuffer(G);
     resize_forward_renderer(G->forward, width, height);
-    resize_light_prepass_renderer(G->light_prepass, width, height);
-    resize_deferred_renderer(G->deferred, width, height);
+    //resize_light_prepass_renderer(G->light_prepass, width, height);
+    //resize_deferred_renderer(G->deferred, width, height);
 
     system_log("Graphics resized: %d, %d\n", width, height);
 }
@@ -226,7 +234,7 @@ void render_graphics(Graphics* G)
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &device_framebuffer));
 
     /* Render scene */
-    if(0) {
+    if(1) {
         render_forward(G->forward, G->framebuffer,
                        G->proj_matrix, G->view_matrix,
                        G->render_commands, G->num_render_commands,

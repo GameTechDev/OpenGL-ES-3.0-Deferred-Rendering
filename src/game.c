@@ -13,7 +13,7 @@
 
 /* Defines
  */
-#define NUM_LIGHTS 128
+#define NUM_LIGHTS 4
 
 /* Types
  */
@@ -122,7 +122,7 @@ Game* create_game(void)
         G->lights[ii].color = vec3_create(_rand_float(), _rand_float(), _rand_float());
         G->lights[ii].color = vec3_normalize(G->lights[ii].color);
     }
-    
+
     for(ii=0;ii<NUM_LIGHTS;++ii) {
         float x = (20.0f/NUM_LIGHTS) * ii - 8.0f;
         G->lights[ii].color = vec3_create(_rand_float(), _rand_float(), _rand_float());

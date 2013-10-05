@@ -7,7 +7,7 @@
 
 #include "scene.h"
 
-#define MAX_LIGHTS 256
+#define MAX_LIGHTS 128
 
 typedef struct Graphics Graphics;
 typedef struct Light

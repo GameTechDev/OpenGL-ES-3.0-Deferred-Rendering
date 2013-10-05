@@ -131,7 +131,7 @@ void render_forward(ForwardRenderer* R, GLuint default_framebuffer,
     
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, default_framebuffer)); 
     ASSERT_GL(glViewport(0, 0, R->width, R->height));
-    ASSERT_GL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+    ASSERT_GL(glClearColor(0.0f, 1.0f, 0.0f, 0.0f));
     ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT));
 
     ASSERT_GL(glUseProgram(R->program));

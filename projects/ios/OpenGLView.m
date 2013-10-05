@@ -15,7 +15,11 @@
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
 
     if (!self.context) {
-        NSLog(@"Failed to create ES context");
+        NSLog(@"Failed to create ES 3.0 context");
+        self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+        if (!self.context) {
+            NSLog(@"Failed to create ES 2.0 context");
+        }
     }
 
     view = (GLKView *)self.view;

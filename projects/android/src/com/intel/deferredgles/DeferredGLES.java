@@ -61,7 +61,7 @@ public class DeferredGLES extends Activity
             JNIWrapper.touch_down(pointerId, event.getX(), event.getY());
         } else if((action & MotionEvent.ACTION_POINTER_DOWN) == MotionEvent.ACTION_POINTER_DOWN) {
             JNIWrapper.touch_down(pointerId, event.getX(index), event.getY(index));
-        } if(action == MotionEvent.ACTION_UP) {
+        } else if(action == MotionEvent.ACTION_UP) {
             JNIWrapper.touch_up(pointerId, event.getX(), event.getY());
         } else if((action & MotionEvent.ACTION_POINTER_UP) == MotionEvent.ACTION_POINTER_UP) {
             JNIWrapper.touch_up(pointerId, event.getX(index), event.getY(index));
