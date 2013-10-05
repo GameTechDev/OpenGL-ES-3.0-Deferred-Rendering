@@ -13,7 +13,7 @@
 
 /* Defines
  */
-#define NUM_LIGHTS 16
+#define NUM_LIGHTS 128
 
 /* Types
  */
@@ -118,9 +118,16 @@ Game* create_game(void)
     G->lights[4].color = vec3_create(0, 0, 1);
     G->lights[5].color = vec3_create(0, 1, 1);
 
-    for(ii=6;ii<NUM_LIGHTS;++ii) {
+    for(ii=0;ii<NUM_LIGHTS;++ii) {
         G->lights[ii].color = vec3_create(_rand_float(), _rand_float(), _rand_float());
         G->lights[ii].color = vec3_normalize(G->lights[ii].color);
+    }
+    
+    for(ii=0;ii<NUM_LIGHTS;++ii) {
+        float x = (20.0f/NUM_LIGHTS) * ii - 8.0f;
+        G->lights[ii].color = vec3_create(_rand_float(), _rand_float(), _rand_float());
+        G->lights[ii].color = vec3_normalize(G->lights[ii].color);
+        G->lights[ii].position = vec3_create(x, _rand_float()*3, 0.0f);
     }
 
     get_model(G->scene, 3)->material->specular_color = vec3_create(0.5f, 0.5f, 0.5f);
@@ -149,15 +156,11 @@ void update_game(Game* G)
     render_scene(G->scene, G->graphics);
 
     if(1) { /* Lights */
-        static float rotate = 0.0f;
+        static float move = 0.0f;
         int ii;
-        rotate += delta_time*(k2Pi/32);
+        move += delta_time;
         for(ii=0;ii<NUM_LIGHTS;++ii) {
-            float angle = ii*(k2Pi/NUM_LIGHTS)+rotate;
-            Quaternion q = quat_from_euler(0, angle, 0);
-            Vec3 direction = quat_get_z_axis(q);
-            G->lights[ii].position = vec3_mul_scalar(direction, 7.0f);
-            G->lights[ii].position.y = 1.0f;
+            G->lights[ii].position.z = sinf(move + ii * 1.0f) * 8.0f - 1.0f;
             G->lights[ii].size = 4.0f;
 
             add_light(G->graphics, G->lights[ii]);

@@ -2,9 +2,9 @@ precision highp float;
 uniform sampler2D s_Albedo;
 uniform sampler2D s_Normal;
 
-uniform vec3    u_LightPositions[64];
-uniform vec3    u_LightColors[64];
-uniform float   u_LightSizes[64];
+uniform vec3    u_LightPositions[256];
+uniform vec3    u_LightColors[256];
+uniform float   u_LightSizes[256];
 uniform int     u_NumLights;
 
 uniform vec3    u_SpecularColor;

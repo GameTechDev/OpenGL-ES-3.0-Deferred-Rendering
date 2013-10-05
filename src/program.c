@@ -50,11 +50,12 @@ static GLuint _load_shader(const char* filename, GLenum type)
     ASSERT_GL(glShaderSource(shader, 1, (const char**)&data, &shader_size));
     ASSERT_GL(glCompileShader(shader));
     ASSERT_GL(glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status));
-    if(compile_status == GL_FALSE) {
+    if(compile_status == GL_FALSE && 0) {
         char message[1024] = {0};
         ASSERT_GL(glGetShaderInfoLog(shader, sizeof(message), 0, message));
         system_log("Error compiling %s: %s", filename, message);
         assert(compile_status != GL_FALSE);
+        free_file_data(data);
         return 0;
     }
 
