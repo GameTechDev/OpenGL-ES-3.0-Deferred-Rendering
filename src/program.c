@@ -93,7 +93,7 @@ Program create_program(const char* vertex_shader_filename,
         char message[1024];
         ASSERT_GL(glGetProgramInfoLog(program, sizeof(message), 0, message));
         system_log("Creating program: %s--%s failed: %s\n", vertex_shader_filename, fragment_shader_filename, message);
-        assert(link_status != GL_FALSE);
+        //assert(link_status != GL_FALSE);
         ASSERT_GL(glDetachShader(program, fragment_shader));
         ASSERT_GL(glDetachShader(program, vertex_shader));
         ASSERT_GL(glDeleteShader(fragment_shader));
