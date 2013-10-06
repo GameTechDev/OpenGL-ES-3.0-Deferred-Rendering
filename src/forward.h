@@ -11,7 +11,7 @@
 
 typedef struct ForwardRenderer ForwardRenderer;
 
-ForwardRenderer* create_forward_renderer(Graphics* G);
+ForwardRenderer* create_forward_renderer(Graphics* G, int major_version, int minor_version);
 void destroy_forward_renderer(ForwardRenderer* R);
 void resize_forward_renderer(ForwardRenderer* R, int width, int height);
 

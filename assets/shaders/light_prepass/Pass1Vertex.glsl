@@ -13,7 +13,6 @@ varying vec3 v_TangentVS;
 varying vec3 v_BitangentVS;
 varying vec2 v_TexCoord;
 
-varying vec2 v_Depth;
 
 void main(void) {
     mat3 world3 = mat3(u_World);
@@ -27,8 +26,5 @@ void main(void) {
     v_BitangentVS = view3 * world3 * a_Bitangent;
     v_TexCoord = a_TexCoord;
 
-    gl_Position = u_Projection * view_pos;
-    
-	v_Depth.x = gl_Position.z;
-	v_Depth.y = gl_Position.w;
+    gl_Position = u_Projection * u_View * u_World * a_Position;
 }

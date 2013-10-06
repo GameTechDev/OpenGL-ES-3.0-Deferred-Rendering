@@ -23,6 +23,5 @@ void main(void)
     mat3 TBN = mat3(T, B, N);
     normal = normalize(TBN*normal);
 
-    gl_FragData[0] = vec4((normal + 1.0) * 0.5, u_SpecularPower);
-    gl_FragData[1] = vec4(v_Depth.x/v_Depth.y);
+    gl_FragColor = vec4((normal + 1.0) * 0.5, u_SpecularPower);
 }

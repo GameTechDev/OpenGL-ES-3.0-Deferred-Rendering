@@ -12,7 +12,7 @@
 
 typedef struct LightPrepassRenderer LightPrepassRenderer;
 
-LightPrepassRenderer* create_light_prepass_renderer(Graphics* G);
+LightPrepassRenderer* create_light_prepass_renderer(Graphics* G, int major_version, int minor_version);
 void destroy_light_prepass_renderer(LightPrepassRenderer* R);
 void resize_light_prepass_renderer(LightPrepassRenderer* R, int width, int height);
 

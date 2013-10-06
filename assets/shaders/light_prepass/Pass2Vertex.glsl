@@ -6,4 +6,5 @@ attribute vec4 a_Position;
 
 void main(void)
 {
-    gl_Position = u_Projection * u_View * u_World * a_Position;}
+    gl_Position = u_Projection * u_View * u_World * a_Position;
+}

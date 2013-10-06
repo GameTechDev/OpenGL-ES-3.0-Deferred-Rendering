@@ -10,8 +10,6 @@ uniform vec3    u_LightColor;
 uniform vec3    u_LightPosition;
 uniform float   u_LightSize;
 
-varying vec4    v_PositionVS;
-
 /** GBuffer format
  *  [0] RGB: Albedo
  *  [1] RGB: VS Normal

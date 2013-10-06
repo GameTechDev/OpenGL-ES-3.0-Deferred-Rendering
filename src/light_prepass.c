@@ -19,6 +19,8 @@ struct LightPrepassRenderer
 {
     int width;
     int height;
+    int major_version;
+    int minor_version;
 
     GLuint  cube_vertex_buffer;
     GLuint  cube_index_buffer;
@@ -26,6 +28,7 @@ struct LightPrepassRenderer
     GLuint  gbuffer_framebuffer;
     GLuint  gbuffer_color_texture;
     GLuint  gbuffer_depth_texture;
+    GLuint  lighting_buffer;
 
     /* Pass 1 */
     struct {
@@ -60,6 +63,18 @@ struct LightPrepassRenderer
     } pass2;
 
     /* Pass 3 */
+    struct {
+        GLuint  program;
+
+        GLuint  u_World;
+        GLuint  u_View;
+        GLuint  u_Projection;
+
+        GLuint  u_Viewport;
+
+        GLuint  s_GBuffer;
+        GLuint  s_Albedo;
+    } pass3;
 };
 
 /* Constants
@@ -121,7 +136,7 @@ static void _draw_point_light(LightPrepassRenderer* R)
 
 /* External functions
  */
-LightPrepassRenderer* create_light_prepass_renderer(Graphics* G)
+LightPrepassRenderer* create_light_prepass_renderer(Graphics* G, int major_version, int minor_version)
 {
     AttributeSlot pass1_slots[] = {
         kPositionSlot,
@@ -135,8 +150,15 @@ LightPrepassRenderer* create_light_prepass_renderer(Graphics* G)
         kPositionSlot,
         kEmptySlot
     };
+    AttributeSlot pass3_slots[] = {
+        kPositionSlot,
+        kTexCoordSlot,
+        kEmptySlot
+    };
 
     LightPrepassRenderer* R = (LightPrepassRenderer*)calloc(1,sizeof(*R));
+    R->major_version = major_version;
+    R->minor_version = minor_version;
 
     /* Create vertex buffer */
     ASSERT_GL(glGenBuffers(1, &R->cube_vertex_buffer));
@@ -164,6 +186,15 @@ LightPrepassRenderer* create_light_prepass_renderer(Graphics* G)
     /* Depth buffer */
     ASSERT_GL(glGenTextures(1, &R->gbuffer_depth_texture));
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer_depth_texture));
+    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+
+    
+    /* Light buffer */
+    ASSERT_GL(glGenTextures(1, &R->lighting_buffer));
+    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->lighting_buffer));
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
@@ -223,6 +254,26 @@ LightPrepassRenderer* create_light_prepass_renderer(Graphics* G)
 
     /** Pass 3
      */
+    R->pass3.program = create_program("shaders/light_prepass/Pass3Vertex.glsl", "shaders/light_prepass/Pass3Fragment.glsl", pass3_slots);
+
+    ASSERT_GL(GetUniformLocation(R, pass3, program, u_Projection));
+    ASSERT_GL(GetUniformLocation(R, pass3, program, u_View));
+    ASSERT_GL(GetUniformLocation(R, pass3, program, u_World));
+
+    ASSERT_GL(GetUniformLocation(R, pass3, program, u_Viewport));
+
+    ASSERT_GL(GetUniformLocation(R, pass3, program, s_GBuffer));
+    ASSERT_GL(GetUniformLocation(R, pass3, program, s_Albedo));
+
+    ASSERT_GL(glUseProgram(R->pass3.program));
+
+    ASSERT_GL(glEnableVertexAttribArray(kPositionSlot));
+    ASSERT_GL(glEnableVertexAttribArray(kTexCoordSlot));
+
+
+    ASSERT_GL(glUniform1i(R->pass3.s_GBuffer, 0));
+    ASSERT_GL(glUniform1i(R->pass3.s_Albedo, 1));
+    ASSERT_GL(glUseProgram(0));
 
     return R;
 }
@@ -231,22 +282,11 @@ void destroy_light_prepass_renderer(LightPrepassRenderer* R)
     destroy_program(R->pass1.program);
     free(R);
 }
-GLuint temp_depth_buffer;
 void resize_light_prepass_renderer(LightPrepassRenderer* R, int width, int height)
 {
     GLenum framebuffer_status;
     R->width = width;
     R->height = height;
-
-
-    ASSERT_GL(glGenTextures(1, &temp_depth_buffer));
-    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, temp_depth_buffer));
-    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-    ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RED, GL_FLOAT, 0));
-    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, 0));
 
     /* Color buffer */
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer_color_texture));
@@ -254,12 +294,18 @@ void resize_light_prepass_renderer(LightPrepassRenderer* R, int width, int heigh
 
     /* Depth buffer */
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer_depth_texture));
-    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
+    if(R->major_version >= 3)
+        ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
+    else
+        ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
+    
+    /* Lighting buffer */
+    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->lighting_buffer));
+    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0));
 
     /* Framebuffer */
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, R->gbuffer_framebuffer));
     ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, R->gbuffer_color_texture, 0));
-    ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, temp_depth_buffer, 0));
     ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, R->gbuffer_depth_texture, 0));
 
     framebuffer_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -279,21 +325,14 @@ void render_light_prepass(LightPrepassRenderer* R, GLuint default_framebuffer,
                           const Model* models, int num_models,
                           const Light* lights, int num_lights)
 {
-    GLenum buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     Mat4 inv_proj = mat4_inverse(proj_matrix);
     float viewport[] = { R->width, R->height };
     int ii;
-    GLint framebuffer_status;
 
     /** Pass 1
      */
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, R->gbuffer_framebuffer));
-    ASSERT_GL(glDrawBuffers(2, buffers));
-    framebuffer_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if(framebuffer_status != GL_FRAMEBUFFER_COMPLETE) {
-        system_log("Framebuffer error: %s\n", _glStatusString(framebuffer_status));
-        assert(0);
-    }
+    ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, R->gbuffer_color_texture, 0));
     ASSERT_GL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
     ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     ASSERT_GL(glDepthMask(GL_TRUE));
@@ -316,12 +355,9 @@ void render_light_prepass(LightPrepassRenderer* R, GLuint default_framebuffer,
         draw_mesh(models[ii].mesh);
     }
 
-
     /** Pass 2
      */
-    ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, default_framebuffer));
-    ASSERT_GL(glDrawBuffers(1, buffers));
-    ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, R->gbuffer_depth_texture, 0));
+    ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, R->lighting_buffer, 0));
     ASSERT_GL(glViewport(0, 0, R->width, R->height));
     ASSERT_GL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
     ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT));
@@ -340,7 +376,7 @@ void render_light_prepass(LightPrepassRenderer* R, GLuint default_framebuffer,
     ASSERT_GL(glActiveTexture(GL_TEXTURE0));
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer_color_texture));
     ASSERT_GL(glActiveTexture(GL_TEXTURE1));
-    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, temp_depth_buffer));
+    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer_depth_texture));
 
     for(ii=0;ii<num_lights;++ii) {
         float size = lights[ii].size;
@@ -361,11 +397,34 @@ void render_light_prepass(LightPrepassRenderer* R, GLuint default_framebuffer,
     }
 
     ASSERT_GL(glDisable(GL_BLEND));
-    ASSERT_GL(glDepthMask(GL_TRUE));
-    ASSERT_GL(glDepthFunc(GL_LESS));
+    ASSERT_GL(glDepthMask(GL_FALSE));
+    ASSERT_GL(glDepthFunc(GL_EQUAL));
     ASSERT_GL(glCullFace(GL_BACK));
 
     /** Pass 3
      */
+    ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, default_framebuffer));
+    ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, R->gbuffer_depth_texture, 0));
+    ASSERT_GL(glViewport(0, 0, R->width, R->height));
+    ASSERT_GL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+    ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT));
+    ASSERT_GL(glUseProgram(R->pass3.program));
+    ASSERT_GL(glUniformMatrix4fv(R->pass3.u_Projection, 1, GL_FALSE, (float*)&proj_matrix));
+    ASSERT_GL(glUniformMatrix4fv(R->pass3.u_View, 1, GL_FALSE, (float*)&view_matrix));
+    ASSERT_GL(glUniform2fv(R->pass3.u_Viewport, 1, viewport));
+    ASSERT_GL(glActiveTexture(GL_TEXTURE0));
+    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->lighting_buffer));
 
+    for(ii=0;ii<num_models;++ii) {
+        Mat4 world_matrix = transform_get_matrix(models[ii].transform);
+        /* Material */
+        ASSERT_GL(glActiveTexture(GL_TEXTURE1));
+        ASSERT_GL(glBindTexture(GL_TEXTURE_2D, models[ii].material->albedo));
+        /* Mesh */
+        ASSERT_GL(glUniformMatrix4fv(R->pass3.u_World, 1, GL_FALSE, (float*)&world_matrix));
+        draw_mesh(models[ii].mesh);
+    }
+    
+    ASSERT_GL(glDepthMask(GL_TRUE));
+    ASSERT_GL(glDepthFunc(GL_LESS));
 }

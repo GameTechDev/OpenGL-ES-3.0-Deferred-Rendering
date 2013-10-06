@@ -13,7 +13,7 @@
 
 /* Defines
  */
-#define NUM_LIGHTS 63
+#define NUM_LIGHTS 31
 
 /* Types
  */

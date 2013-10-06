@@ -198,9 +198,10 @@ Graphics* create_graphics(void)
     _create_framebuffer(G);
 
     /* Set up renderers */
-    G->forward = create_forward_renderer(G);
-    //G->light_prepass = create_light_prepass_renderer(G);
-    G->deferred = create_deferred_renderer(G);
+    G->forward = create_forward_renderer(G, G->major_version, G->minor_version);
+    G->light_prepass = create_light_prepass_renderer(G, G->major_version, G->minor_version);
+    if(G->major_version >= 3)
+        G->deferred = create_deferred_renderer(G);
 
     return G;
 }
@@ -224,7 +225,8 @@ void resize_graphics(Graphics* G, int width, int height)
     _resize_framebuffer(G);
     if(G->forward)
         resize_forward_renderer(G->forward, width, height);
-    //resize_light_prepass_renderer(G->light_prepass, width, height);
+    if(G->light_prepass)
+        resize_light_prepass_renderer(G->light_prepass, width, height);
     if(G->deferred)
         resize_deferred_renderer(G->deferred, width, height);
 
@@ -241,12 +243,12 @@ void render_graphics(Graphics* G)
                         G->proj_matrix, G->view_matrix,
                         G->render_commands, G->num_render_commands,
                         G->lights, G->num_lights);
-    } else if(1) {
+    } else if(0) {
         render_forward(G->forward, G->framebuffer,
                        G->proj_matrix, G->view_matrix,
                        G->render_commands, G->num_render_commands,
                        G->lights, G->num_lights);
-    } else if(0) {
+    } else if(1) {
         render_light_prepass(G->light_prepass, G->framebuffer,
                              G->proj_matrix, G->view_matrix,
                              G->render_commands, G->num_render_commands,

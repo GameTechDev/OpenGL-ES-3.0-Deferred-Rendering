@@ -19,6 +19,8 @@ struct ForwardRenderer
 {
     int     width;
     int     height;
+    int     major_version;
+    int     minor_version;
 
     GLuint  program;
 
@@ -53,7 +55,7 @@ struct ForwardRenderer
 /* External functions
  */
 
-ForwardRenderer* create_forward_renderer(Graphics* G)
+ForwardRenderer* create_forward_renderer(Graphics* G, int major_version, int minor_version)
 {
     AttributeSlot slots[] = {
         kPositionSlot,
@@ -64,6 +66,9 @@ ForwardRenderer* create_forward_renderer(Graphics* G)
         kEmptySlot
     };
     ForwardRenderer* R = (ForwardRenderer*)calloc(1,sizeof(*R));
+    R->major_version = major_version;
+    R->minor_version = minor_version;
+
     R->program = create_program("shaders/forward/vertex.glsl", "shaders/forward/fragment.glsl", slots);
 
     ASSERT_GL(GetUniformLocation(R, program, u_Projection));
