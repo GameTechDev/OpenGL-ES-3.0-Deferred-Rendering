@@ -218,7 +218,7 @@ DeferredRenderer* create_deferred_renderer(Graphics* G)
     ASSERT_GL(glEnableVertexAttribArray(kPositionSlot));
 
     ASSERT_GL(glUniform1iv(R->light.s_GBuffer, GBUFFER_SIZE, i));
-    ASSERT_GL(glUniform1i(R->light.s_Depth, GBUFFER_SIZE+1));
+    ASSERT_GL(glUniform1i(R->light.s_Depth, GBUFFER_SIZE));
     ASSERT_GL(glUseProgram(0));
 
     if(R->geometry.program == 0 ||

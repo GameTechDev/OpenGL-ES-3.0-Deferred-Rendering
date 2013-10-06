@@ -38,7 +38,7 @@ int load_file_data(const char* filename, void** data, size_t* data_size)
     *data_size = ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    *data = malloc(*data_size);
+    *data = calloc(1,*data_size);
     assert(*data);
 
     fread(*data, *data_size, 1, file);

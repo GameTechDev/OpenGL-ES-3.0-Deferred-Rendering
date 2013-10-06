@@ -37,6 +37,7 @@ static GLuint _load_shader(const char* filename, GLenum type)
     GLint   compile_status = 0;
     int     result;
     GLint   shader_size = 0;
+    GLint   info_length = 0;
 
     result = (int)load_file_data(filename, (void*)&data, &data_size);
     if(result != 0) {
@@ -50,13 +51,19 @@ static GLuint _load_shader(const char* filename, GLenum type)
     ASSERT_GL(glShaderSource(shader, 1, (const char**)&data, &shader_size));
     ASSERT_GL(glCompileShader(shader));
     ASSERT_GL(glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status));
-    if(compile_status == GL_FALSE && 0) {
+    if(compile_status == GL_FALSE) {
         char message[1024] = {0};
         ASSERT_GL(glGetShaderInfoLog(shader, sizeof(message), 0, message));
         system_log("Error compiling %s: %s", filename, message);
         assert(compile_status != GL_FALSE);
         free_file_data(data);
         return 0;
+    }
+    ASSERT_GL(glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &info_length));
+    if(info_length > 0) {
+        char info_log[1024] = {0};
+        ASSERT_GL(glGetShaderInfoLog(shader, sizeof(info_log), NULL, info_log));
+        system_log("Info compiling %s: %s", filename, info_log);
     }
 
     free_file_data(data);
@@ -65,7 +72,7 @@ static GLuint _load_shader(const char* filename, GLenum type)
 }
 
 /* External functions
- */
+// */
 Program create_program(const char* vertex_shader_filename,
                        const char* fragment_shader_filename,
                        const AttributeSlot* slots)
