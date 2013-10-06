@@ -220,6 +220,13 @@ DeferredRenderer* create_deferred_renderer(Graphics* G)
     ASSERT_GL(glUniform1iv(R->light.s_GBuffer, GBUFFER_SIZE, i));
     ASSERT_GL(glUniform1i(R->light.s_Depth, GBUFFER_SIZE+1));
     ASSERT_GL(glUseProgram(0));
+
+    if(R->geometry.program == 0 ||
+       R->light.program == 0) {
+        /* Failed to create programs. Return NULL */
+        free(R);
+        return NULL;
+    }
     return R;
 }
 void destroy_deferred_renderer(DeferredRenderer* R)

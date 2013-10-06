@@ -222,9 +222,11 @@ void resize_graphics(Graphics* G, int width, int height)
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &G->default_framebuffer));
 
     _resize_framebuffer(G);
-    resize_forward_renderer(G->forward, width, height);
+    if(G->forward)
+        resize_forward_renderer(G->forward, width, height);
     //resize_light_prepass_renderer(G->light_prepass, width, height);
-    resize_deferred_renderer(G->deferred, width, height);
+    if(G->deferred)
+        resize_deferred_renderer(G->deferred, width, height);
 
     system_log("Graphics resized: %d, %d\n", width, height);
 }
@@ -234,7 +236,12 @@ void render_graphics(Graphics* G)
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &device_framebuffer));
 
     /* Render scene */
-    if(0) {
+    if(G->major_version >= 3 && G->deferred) {
+        render_deferred(G->deferred, G->framebuffer,
+                        G->proj_matrix, G->view_matrix,
+                        G->render_commands, G->num_render_commands,
+                        G->lights, G->num_lights);
+    } else if(1) {
         render_forward(G->forward, G->framebuffer,
                        G->proj_matrix, G->view_matrix,
                        G->render_commands, G->num_render_commands,
@@ -244,13 +251,6 @@ void render_graphics(Graphics* G)
                              G->proj_matrix, G->view_matrix,
                              G->render_commands, G->num_render_commands,
                              G->lights, G->num_lights);
-    } else if(1) {
-        static int x = 0;
-        if(x++ == 0)
-        render_deferred(G->deferred, G->framebuffer,
-                        G->proj_matrix, G->view_matrix,
-                        G->render_commands, G->num_render_commands,
-                        G->lights, G->num_lights);
     }
     G->num_render_commands = 0;
     G->num_lights = 0;

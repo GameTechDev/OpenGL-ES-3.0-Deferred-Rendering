@@ -11,6 +11,10 @@ import android.widget.Toast;
 import android.content.res.AssetManager;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.opengl.GLSurfaceView.EGLContextFactory;
+import javax.microedition.khronos.egl.EGLContext;
+import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.egl.EGL10;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;

@@ -55,7 +55,17 @@ static const char* _glStatusString(GLenum error)
                 }                                               \
             } while(__LINE__ == -1)
     #else
-        #define ASSERT_GL(x)
+        #define ASSERT_GL(x)                                    \
+            do {                                                \
+                GLenum _glError;                                \
+                x;                                              \
+                _glError = glGetError();                        \
+                if(_glError != GL_NO_ERROR) {                   \
+                    system_log("%s:%d:  %s Error: %s\n",        \
+                                __FILE__, __LINE__,             \
+                                #x, _glStatusString(_glError)); \
+                }                                               \
+            } while(__LINE__ == -1)
     #endif /* NDEBUG */
 #endif /* #ifndef ASSERT_GL */
 
