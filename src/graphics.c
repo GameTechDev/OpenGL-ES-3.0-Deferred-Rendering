@@ -257,6 +257,10 @@ void render_graphics(Graphics* G)
     G->num_render_commands = 0;
     G->num_lights = 0;
 
+    
+    ASSERT_GL(glDepthMask(GL_FALSE));
+    ASSERT_GL(glDepthFunc(GL_ALWAYS));
+
     /* Bind default framebuffer and render to the screen */
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, device_framebuffer));
     ASSERT_GL(glViewport(0, 0, G->width, G->height));
