@@ -13,7 +13,7 @@
 
 /* Defines
  */
-#define NUM_LIGHTS 4
+#define NUM_LIGHTS 63
 
 /* Types
  */
@@ -160,7 +160,7 @@ void update_game(Game* G)
         int ii;
         move += delta_time;
         for(ii=0;ii<NUM_LIGHTS;++ii) {
-            G->lights[ii].position.z = sinf(move + ii * 1.0f) * 8.0f - 1.0f;
+            G->lights[ii].position.z = sinf((move + ii * 1.0f)/2.0f) * 8.0f - 1.0f;
             G->lights[ii].size = 4.0f;
 
             add_light(G->graphics, G->lights[ii]);
