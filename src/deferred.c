@@ -134,7 +134,7 @@ DeferredRenderer* create_deferred_renderer(Graphics* G)
     DeferredRenderer* R = (DeferredRenderer*)calloc(1, sizeof(DeferredRenderer));
     int i[] = {0,1,2};
     int ii;
-    
+
     /* Create vertex buffer */
     ASSERT_GL(glGenBuffers(1, &R->cube_vertex_buffer));
     ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, R->cube_vertex_buffer));
@@ -260,7 +260,7 @@ void resize_deferred_renderer(DeferredRenderer* R, int width, int height)
 
     framebuffer_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if(framebuffer_status != GL_FRAMEBUFFER_COMPLETE) {
-        system_log("Framebuffer error: %s\n", _glStatusString(framebuffer_status));
+        system_log("%s:%d Framebuffer error: %s\n", __FILE__, __LINE__, _glStatusString(framebuffer_status));
         assert(0);
     }
 
@@ -287,12 +287,12 @@ void render_deferred(DeferredRenderer* R, GLuint default_framebuffer,
     /** Geometry
      */
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, R->gbuffer_framebuffer));
-    ASSERT_GL(glDrawBuffers(GBUFFER_SIZE, buffers));
     framebuffer_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if(framebuffer_status != GL_FRAMEBUFFER_COMPLETE) {
-        system_log("Framebuffer error: %s\n", _glStatusString(framebuffer_status));
+        system_log("%s:%d Framebuffer error: %s\n", __FILE__, __LINE__, _glStatusString(framebuffer_status));
         assert(0);
     }
+    ASSERT_GL(glDrawBuffers(GBUFFER_SIZE, buffers));
     ASSERT_GL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
     ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     ASSERT_GL(glDepthMask(GL_TRUE));

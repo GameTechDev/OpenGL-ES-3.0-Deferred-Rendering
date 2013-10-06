@@ -26,6 +26,6 @@ LOCAL_SRC_FILES := 	jni.c \
                     ../../../src/texture.c \
                     ../../../src/scene.cpp \
                     ../../../external/stb_image.c
-LOCAL_LDLIBS := -lGLESv2 -lEGL -llog -landroid
+LOCAL_LDLIBS := -lGLESv3 -lEGL -llog -landroid
 
 include $(BUILD_SHARED_LIBRARY)

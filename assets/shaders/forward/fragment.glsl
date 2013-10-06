@@ -2,9 +2,9 @@ precision highp float;
 uniform sampler2D s_Albedo;
 uniform sampler2D s_Normal;
 
-uniform vec3    u_LightPositions[128];
-uniform vec3    u_LightColors[128];
-uniform float   u_LightSizes[128];
+uniform vec3    u_LightPositions[64];
+uniform vec3    u_LightColors[64];
+uniform float   u_LightSizes[64];
 uniform int     u_NumLights;
 
 uniform vec3    u_SpecularColor;
@@ -23,7 +23,7 @@ void main(void) {
     vec3 albedo = texture2D(s_Albedo, v_TexCoord).rgb;
     vec3 normal = normalize(texture2D(s_Normal, v_TexCoord).rgb*2.0 - 1.0);
     vec3 specular_color = u_SpecularCoefficient * u_SpecularColor;
-    
+
     vec3 N = normalize(v_NormalVS);
     vec3 T = normalize(v_TangentVS);
     vec3 B = normalize(v_BitangentVS);

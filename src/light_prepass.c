@@ -237,8 +237,8 @@ void resize_light_prepass_renderer(LightPrepassRenderer* R, int width, int heigh
     GLenum framebuffer_status;
     R->width = width;
     R->height = height;
-    
-    
+
+
     ASSERT_GL(glGenTextures(1, &temp_depth_buffer));
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, temp_depth_buffer));
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));

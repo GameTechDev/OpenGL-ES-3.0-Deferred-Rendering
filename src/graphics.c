@@ -151,7 +151,7 @@ static void _resize_framebuffer(Graphics* G)
 
     framebuffer_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if(framebuffer_status != GL_FRAMEBUFFER_COMPLETE) {
-        system_log("Framebuffer error: %s\n", _glStatusString(framebuffer_status));
+        system_log("%s:%d Framebuffer error: %s\n", __FILE__, __LINE__, _glStatusString(framebuffer_status));
         assert(0);
     }
 
@@ -183,7 +183,7 @@ Graphics* create_graphics(void)
     system_log("OpenGL renderer:\t%s\n", glGetString(GL_RENDERER));
     system_log("OpenGL extensions:\n");
     { /* Print extensions */
-        char buffer[1024*16] = {0};
+        char buffer[1024*32] = {0};
         uint32_t ii;
         strlcpy(buffer,(const char*)glGetString(GL_EXTENSIONS), sizeof(buffer));
         for(ii=0;ii<strlen(buffer);++ii) {
@@ -200,7 +200,7 @@ Graphics* create_graphics(void)
     /* Set up renderers */
     G->forward = create_forward_renderer(G);
     //G->light_prepass = create_light_prepass_renderer(G);
-    //G->deferred = create_deferred_renderer(G);
+    G->deferred = create_deferred_renderer(G);
 
     return G;
 }
@@ -224,7 +224,7 @@ void resize_graphics(Graphics* G, int width, int height)
     _resize_framebuffer(G);
     resize_forward_renderer(G->forward, width, height);
     //resize_light_prepass_renderer(G->light_prepass, width, height);
-    //resize_deferred_renderer(G->deferred, width, height);
+    resize_deferred_renderer(G->deferred, width, height);
 
     system_log("Graphics resized: %d, %d\n", width, height);
 }
@@ -234,7 +234,7 @@ void render_graphics(Graphics* G)
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &device_framebuffer));
 
     /* Render scene */
-    if(1) {
+    if(0) {
         render_forward(G->forward, G->framebuffer,
                        G->proj_matrix, G->view_matrix,
                        G->render_commands, G->num_render_commands,
@@ -245,6 +245,8 @@ void render_graphics(Graphics* G)
                              G->render_commands, G->num_render_commands,
                              G->lights, G->num_lights);
     } else if(1) {
+        static int x = 0;
+        if(x++ == 0)
         render_deferred(G->deferred, G->framebuffer,
                         G->proj_matrix, G->view_matrix,
                         G->render_commands, G->num_render_commands,
