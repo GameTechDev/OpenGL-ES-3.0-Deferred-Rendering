@@ -1,69 +1,65 @@
 #! /bin/sh
 
-mkdir -p lib
+IOS_BASE_SDK="7.0"
+IOS_DEPLOY_TARGET="7.0"
+OUTPUT_DIR="."
 
-cd freetype-2.5.0.1
+mkdir -p $OUTPUT_DIR/include $OUTPUT_DIR/lib
+
+setenv_all()
+{
+        # Add internal libs
+        export CFLAGS="$CFLAGS -I$GLOBAL_OUTDIR/include -L$GLOBAL_OUTDIR/lib"
+
+        export CPP="$TOOLCHAIN/usr/bin/cpp-4.2"
+        export CXX="$TOOLCHAIN/usr/bin/g++-4.2"
+        export CXXCPP="$TOOLCHAIN/usr/bin/cpp-4.2"
+        export CC="$TOOLCHAIN/usr/bin/gcc-4.2"
+        export LD=$TOOLCHAIN/usr/bin/ld
+        export AR=$TOOLCHAIN/usr/bin/ar
+        export AS=$TOOLCHAIN/usr/bin/as
+        export NM=$TOOLCHAIN/usr/bin/nm
+        export RANLIB=$TOOLCHAIN/usr/bin/ranlib
+        export LDFLAGS="-L$SDKROOT/usr/lib/"
+
+        export CPPFLAGS=$CFLAGS
+        export CXXFLAGS=$CFLAGS
+}
+
+setenv_arm7()
+{
+        unset DEVROOT SDKROOT CFLAGS CC LD CPP CXX AR AS NM CXXCPP RANLIB LDFLAGS CPPFLAGS CXXFLAGS
+
+        export TOOLCHAIN=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
+        export DEVROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer
+        export SDKROOT=$DEVROOT/SDKs/iPhoneOS$IOS_BASE_SDK.sdk
+
+        export CFLAGS="-arch armv7 -pipe -no-cpp-precomp -isysroot $SDKROOT -miphoneos-version-min=$IOS_DEPLOY_TGT -I$SDKROOT/usr/include/"
+
+        setenv_all
+}
+
+setenv_i386()
+{
+        unset DEVROOT SDKROOT CFLAGS CC LD CPP CXX AR AS NM CXXCPP RANLIB LDFLAGS CPPFLAGS CXXFLAGS
+
+        export DEVROOT=/Developer/Platforms/iPhoneSimulator.platform/Developer
+        export SDKROOT=$DEVROOT/SDKs/iPhoneSimulator$IOS_BASE_SDK.sdk
+
+        export CFLAGS="-arch i386 -pipe -no-cpp-precomp -isysroot $SDKROOT -miphoneos-version-min=$IOS_DEPLOY_TGT"
+
+        setenv_all
+}
+
+#
+# libpng
+#
+cd libpng-1.6.6
 
 # x86
-./configure CFLAGS="-arch i386"
-make clean
-make
-cp objs/.libs/libfreetype.a ../lib/libfreetype-i386.a
-exit
-
-# x64
-./configure CFLAGS="-arch x86_64"
-make clean
-make
-cp objs/.libs/libfreetype.a ../lib/libfreetype-x86_64.a
-
-# armv7
-./configure '--without-bzip2' \
-            '--prefix=/usr/local/iphone' \
-            '--host=arm-apple-darwin' \
-            '--enable-static=yes' \
-            '--enable-shared=no' \
-            'CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang' \
-            'CFLAGS=-arch armv7 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden \
-                    -miphoneos-version-min=7.0 \
-                    -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/usr/include/libxml2/ \
-                    -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/' \
-            'AR=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ar' \
-            'LDFLAGS=-arch armv7 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/ -miphoneos-version-min=7.0'
-make clean
-make
-cp objs/.libs/libfreetype.a ../lib/libfreetype-arm7.a
-
-# armv7s
-./configure '--without-bzip2' \
-            '--prefix=/usr/local/iphone' \
-            '--host=arm-apple-darwin' \
-            '--enable-static=yes' \
-            '--enable-shared=no' \
-            'CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang' \
-            'CFLAGS=-arch armv7s -pipe -std=c99 -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden \
-                    -miphoneos-version-min=7.0 \
-                    -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/usr/include/libxml2/ \
-                    -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/' \
-            'AR=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ar' \
-            'LDFLAGS=-arch armv7s -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/ -miphoneos-version-min=7.0'
-make clean
-make
-cp objs/.libs/libfreetype.a ../lib/libfreetype-arm7s.a
-
-# iOS
-./configure '--without-bzip2' \
-            '--prefix=/usr/local/iphone' \
-            '--host=arm-apple-darwin' \
-            '--enable-static=yes' \
-            '--enable-shared=no' \
-            'CC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang' \
-            'CFLAGS=-arch arm64 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden \
-                    -miphoneos-version-min=7.0 \
-                    -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/usr/include/libxml2/ \
-                    -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/' \
-            'AR=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ar' \
-            'LDFLAGS=-arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/ -miphoneos-version-min=7.0'
-make clean
-make
-cp objs/.libs/libfreetype.a ../lib/libfreetype-arm64.a
+setenv_i386
+./configure '--enable-static=yes' \
+            '--enable-shared=no'
+make -j clean
+make -j
+cp .libs/libpng16.a ../lib/libpng-i386.a
