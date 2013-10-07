@@ -230,3 +230,8 @@ gen/
 libs/
 *.sublime-workspace
 tools/*.mesh
+objs/
+builds/
+*.lo
+
+external/freetype-2.5.0.1/config.mk
