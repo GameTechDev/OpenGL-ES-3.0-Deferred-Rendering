@@ -9,6 +9,7 @@ cd freetype-2.5.0.1
 make clean
 make
 cp objs/.libs/libfreetype.a ../lib/libfreetype-i386.a
+exit
 
 # x64
 ./configure CFLAGS="-arch x86_64"
