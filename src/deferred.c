@@ -54,7 +54,6 @@ struct DeferredRenderer
         GLuint  u_LightSize;
 
         GLuint  s_GBuffer;
-        GLuint  s_Depth;
     } light;
 };
 
@@ -206,7 +205,6 @@ DeferredRenderer* create_deferred_renderer(Graphics* G)
     ASSERT_GL(GetUniformLocation(R, light, program, u_Viewport));
 
     ASSERT_GL(GetUniformLocation(R, light, program, s_GBuffer));
-    ASSERT_GL(GetUniformLocation(R, light, program, s_Depth));
 
 
     ASSERT_GL(GetUniformLocation(R, light, program, u_LightColor));
@@ -218,7 +216,6 @@ DeferredRenderer* create_deferred_renderer(Graphics* G)
     ASSERT_GL(glEnableVertexAttribArray(kPositionSlot));
 
     ASSERT_GL(glUniform1iv(R->light.s_GBuffer, GBUFFER_SIZE, i));
-    ASSERT_GL(glUniform1i(R->light.s_Depth, GBUFFER_SIZE));
     ASSERT_GL(glUseProgram(0));
 
     if(R->geometry.program == 0 ||
@@ -348,7 +345,7 @@ void render_deferred(DeferredRenderer* R, GLuint default_framebuffer,
         ASSERT_GL(glActiveTexture(GL_TEXTURE0+ii));
         ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer[ii]));
     }
-    ASSERT_GL(glActiveTexture(GL_TEXTURE0+ii));
+    ASSERT_GL(glActiveTexture(GL_TEXTURE0+ii -1));
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->depth_buffer));
 
     for(ii=0;ii<num_lights;++ii) {
