@@ -243,23 +243,19 @@ void render_graphics(Graphics* G)
                         G->proj_matrix, G->view_matrix,
                         G->render_commands, G->num_render_commands,
                         G->lights, G->num_lights);
-    }  else if(1) {
-        render_light_prepass(G->light_prepass, G->framebuffer,
-                             G->proj_matrix, G->view_matrix,
-                             G->render_commands, G->num_render_commands,
-                             G->lights, G->num_lights);
-    } else {
+    } else if(0) {
         render_forward(G->forward, G->framebuffer,
                        G->proj_matrix, G->view_matrix,
                        G->render_commands, G->num_render_commands,
                        G->lights, G->num_lights);
+    } else if(1) {
+        render_light_prepass(G->light_prepass, G->framebuffer,
+                             G->proj_matrix, G->view_matrix,
+                             G->render_commands, G->num_render_commands,
+                             G->lights, G->num_lights);
     }
     G->num_render_commands = 0;
     G->num_lights = 0;
-
-    
-    ASSERT_GL(glDepthMask(GL_FALSE));
-    ASSERT_GL(glDepthFunc(GL_ALWAYS));
 
     /* Bind default framebuffer and render to the screen */
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, device_framebuffer));

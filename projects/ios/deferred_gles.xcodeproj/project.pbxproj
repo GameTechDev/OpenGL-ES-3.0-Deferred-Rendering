@@ -43,7 +43,6 @@
 		2743853D17FB5F97008D9C2C /* scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene.h; sourceTree = "<group>"; };
 		2743853F17FB6071008D9C2C /* utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utility.c; sourceTree = "<group>"; };
 		2743854017FB6071008D9C2C /* utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utility.h; sourceTree = "<group>"; };
-		276438911803304A00880314 /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = ../../../../../../usr/local/Cellar/freetype/2.5.0.1/lib/libfreetype.a; sourceTree = "<group>"; };
 		2782A00017FC7DD20032058F /* light_prepass.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = light_prepass.c; sourceTree = "<group>"; };
 		2782A00117FC7DD20032058F /* light_prepass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = light_prepass.h; sourceTree = "<group>"; };
 		2797218117FAA53B00EB40A8 /* deferred_gles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deferred_gles.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -124,7 +123,6 @@
 		2797218317FAA53B00EB40A8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				276438911803304A00880314 /* libfreetype.a */,
 				279721C817FAA71800EB40A8 /* OpenGLES.framework */,
 				279721C617FAA71000EB40A8 /* GLKit.framework */,
 				2797218417FAA53B00EB40A8 /* Foundation.framework */,
@@ -249,11 +247,6 @@
 			attributes = {
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = Intel;
-				TargetAttributes = {
-					2797218017FAA53B00EB40A8 = {
-						DevelopmentTeam = 2A7FWPQDHA;
-					};
-				};
 			};
 			buildConfigurationList = 2797217C17FAA53B00EB40A8 /* Build configuration list for PBXProject "deferred_gles" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -436,8 +429,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++98";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -445,9 +436,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_PEDANTIC = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/deferred_gles-Info.plist";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -458,8 +447,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++98";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -467,9 +454,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_PEDANTIC = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/deferred_gles-Info.plist";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
