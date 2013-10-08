@@ -8,8 +8,8 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "vertex.h"
+#include "graphics_types.h"
 
-typedef struct Mesh Mesh;
 
 Mesh* create_mesh(const Vertex* vertex_data, size_t vertex_data_size,
                   const uint32_t* index_data, size_t index_data_size,

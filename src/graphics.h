@@ -6,16 +6,9 @@
 #define __graphics_h__
 
 #include "scene.h"
+#include "graphics_types.h"
 
 #define MAX_LIGHTS 64
-
-typedef struct Graphics Graphics;
-typedef struct Light
-{
-    Vec3    position;
-    Vec3    color;
-    float   size;
-} Light;
 
 Graphics* create_graphics(void);
 void destroy_graphics(Graphics* G);

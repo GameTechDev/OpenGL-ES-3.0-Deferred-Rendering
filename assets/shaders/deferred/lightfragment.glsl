@@ -1,6 +1,5 @@
 precision highp float;
 uniform sampler2D s_GBuffer[3];
-uniform sampler2D s_Depth;
 
 uniform mat4    u_InvProj;
 
@@ -25,10 +24,8 @@ void main(void)
     vec3 normal = texture2D(s_GBuffer[1], tex_coord).rgb * 2.0 - 1.0;
     float depth = texture2D(s_GBuffer[2], tex_coord).r;
 
-    float hardware_depth = texture2D(s_Depth, tex_coord).r;
-
     /* Calculate the pixel's position in view space */
-    vec4 view_pos = vec4(tex_coord*2.0-1.0, hardware_depth*2.0 - 1.0, 1.0);
+    vec4 view_pos = vec4(tex_coord*2.0-1.0, depth*2.0 - 1.0, 1.0);
     view_pos = u_InvProj * view_pos;
     view_pos /= view_pos.w;
 

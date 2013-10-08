@@ -7,9 +7,8 @@
 
 #include "texture.h"
 #include "vec_math.h"
-#include "mesh.h"
+#include "graphics_types.h"
 
-typedef struct Graphics Graphics;
 typedef struct Scene Scene;
 typedef struct SceneData SceneData;
 typedef struct Material

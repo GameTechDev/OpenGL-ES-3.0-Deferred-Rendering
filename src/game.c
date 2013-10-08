@@ -8,8 +8,8 @@
 #include "graphics.h"
 #include "vec_math.h"
 #include "scene.h"
+#include "ui.h"
 
-#include "utility.h"
 
 /* Defines
  */
@@ -22,6 +22,7 @@ struct Game
     /* Engine objects */
     Timer*      timer;
     Graphics*   graphics;
+    UI*         ui;
 
     /* Game objects */
     Transform   camera;
@@ -96,6 +97,7 @@ Game* create_game(void)
     Game* G = (Game*)calloc(1, sizeof(Game));
     G->timer = create_timer();
     G->graphics = create_graphics();
+    G->ui = create_ui(G->graphics);
 
     /* Set up camera */
     G->camera = transform_zero;
@@ -145,6 +147,7 @@ void destroy_game(Game* G)
 void resize_game(Game* G, int width, int height)
 {
     resize_graphics(G->graphics, width, height);
+    //resize_ui(G->ui, width, height);
 }
 void update_game(Game* G)
 {
@@ -180,6 +183,7 @@ void update_game(Game* G)
 void render_game(Game* G)
 {
     render_graphics(G->graphics);
+    draw_string(G->ui, "Test");
 }
 void add_touch_points(Game* G, int num_touch_points, TouchPoint* points)
 {

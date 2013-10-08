@@ -12,7 +12,7 @@
 /* Defines
  */
 #define GetUniformLocation(R, pass, program, uniform) R->pass.uniform = glGetUniformLocation(R->pass.program, #uniform)
-#define GBUFFER_SIZE 3
+#define GBUFFER_SIZE 2
 
 /* Types
  */
@@ -54,7 +54,6 @@ struct DeferredRenderer
         GLuint  u_LightSize;
 
         GLuint  s_GBuffer;
-        GLuint  s_Depth;
     } light;
 };
 
@@ -206,7 +205,6 @@ DeferredRenderer* create_deferred_renderer(Graphics* G)
     ASSERT_GL(GetUniformLocation(R, light, program, u_Viewport));
 
     ASSERT_GL(GetUniformLocation(R, light, program, s_GBuffer));
-    ASSERT_GL(GetUniformLocation(R, light, program, s_Depth));
 
 
     ASSERT_GL(GetUniformLocation(R, light, program, u_LightColor));
@@ -218,7 +216,6 @@ DeferredRenderer* create_deferred_renderer(Graphics* G)
     ASSERT_GL(glEnableVertexAttribArray(kPositionSlot));
 
     ASSERT_GL(glUniform1iv(R->light.s_GBuffer, GBUFFER_SIZE, i));
-    ASSERT_GL(glUniform1i(R->light.s_Depth, GBUFFER_SIZE));
     ASSERT_GL(glUseProgram(0));
 
     if(R->geometry.program == 0 ||
@@ -251,9 +248,6 @@ void resize_deferred_renderer(DeferredRenderer* R, int width, int height)
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer[1]));
     ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, 0));
 
-    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer[2]));
-    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RED, GL_FLOAT, 0));
-
     /* Depth texture */
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->depth_buffer));
     ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
@@ -262,7 +256,6 @@ void resize_deferred_renderer(DeferredRenderer* R, int width, int height)
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, R->gbuffer_framebuffer));
     ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, R->gbuffer[0], 0));
     ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, R->gbuffer[1], 0));
-    ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, R->gbuffer[2], 0));
     ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, R->depth_buffer, 0));
 
     framebuffer_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -284,7 +277,6 @@ void render_deferred(DeferredRenderer* R, GLuint default_framebuffer,
     GLenum buffers[] = {
         GL_COLOR_ATTACHMENT0,
         GL_COLOR_ATTACHMENT1,
-        GL_COLOR_ATTACHMENT2,
     };
     Mat4 inv_proj = mat4_inverse(proj_matrix);
     float viewport[] = { R->width, R->height };

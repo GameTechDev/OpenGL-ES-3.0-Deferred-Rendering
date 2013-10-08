@@ -23,6 +23,7 @@
 		279721C917FAA71800EB40A8 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 279721C817FAA71800EB40A8 /* OpenGLES.framework */; };
 		279721CC17FAA79300EB40A8 /* OpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 279721CB17FAA79300EB40A8 /* OpenGLView.m */; };
 		27A3FC6217FBF24D000DAC71 /* main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 27A3FC6117FBF24D000DAC71 /* main.storyboard */; };
+		27B8DF9518049FAD00AB3DBD /* ui.c in Sources */ = {isa = PBXBuildFile; fileRef = 27B8DF9318049FAD00AB3DBD /* ui.c */; };
 		27E51F9517FBB353002ECEFE /* texture.c in Sources */ = {isa = PBXBuildFile; fileRef = 27E51F9317FBB353002ECEFE /* texture.c */; };
 		27FC1C0517FB498300D3C6B5 /* game.c in Sources */ = {isa = PBXBuildFile; fileRef = 27FC1BF517FB498300D3C6B5 /* game.c */; };
 		27FC1C0617FB498300D3C6B5 /* system_ios.m in Sources */ = {isa = PBXBuildFile; fileRef = 27FC1BF917FB498300D3C6B5 /* system_ios.m */; };
@@ -61,6 +62,9 @@
 		279721CA17FAA79300EB40A8 /* OpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenGLView.h; sourceTree = "<group>"; };
 		279721CB17FAA79300EB40A8 /* OpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenGLView.m; sourceTree = "<group>"; };
 		27A3FC6117FBF24D000DAC71 /* main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = main.storyboard; sourceTree = "<group>"; };
+		27B8DF9318049FAD00AB3DBD /* ui.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ui.c; sourceTree = "<group>"; };
+		27B8DF9418049FAD00AB3DBD /* ui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ui.h; sourceTree = "<group>"; };
+		27B8DF961804A02900AB3DBD /* graphics_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = graphics_types.h; sourceTree = "<group>"; };
 		27E51F9317FBB353002ECEFE /* texture.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = texture.c; sourceTree = "<group>"; };
 		27E51F9417FBB353002ECEFE /* texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = texture.h; sourceTree = "<group>"; };
 		27FC1BF117FB498300D3C6B5 /* assert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = assert.h; sourceTree = "<group>"; };
@@ -196,6 +200,9 @@
 				2743854017FB6071008D9C2C /* utility.h */,
 				27FC1C0117FB498300D3C6B5 /* vec_math.h */,
 				27FC1C0217FB498300D3C6B5 /* vertex.h */,
+				27B8DF9318049FAD00AB3DBD /* ui.c */,
+				27B8DF9418049FAD00AB3DBD /* ui.h */,
+				27B8DF961804A02900AB3DBD /* graphics_types.h */,
 			);
 			name = src;
 			path = ../../src;
@@ -226,6 +233,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 279721AD17FAA53B00EB40A8 /* Build configuration list for PBXNativeTarget "deferred_gles" */;
 			buildPhases = (
+				27A81A1718046FFB0066ABB3 /* ShellScript */,
 				2797217D17FAA53B00EB40A8 /* Sources */,
 				2797217E17FAA53B00EB40A8 /* Frameworks */,
 				2797217F17FAA53B00EB40A8 /* Resources */,
@@ -279,11 +287,28 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		27A81A1718046FFB0066ABB3 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "touch ../../assets";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		2797217D17FAA53B00EB40A8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				27B8DF9518049FAD00AB3DBD /* ui.c in Sources */,
 				27FC1C0C17FB4A1600D3C6B5 /* graphics.c in Sources */,
 				27FC1C1017FB4D8A00D3C6B5 /* stb_image.c in Sources */,
 				2743853E17FB5F97008D9C2C /* scene.cpp in Sources */,
