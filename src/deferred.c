@@ -12,7 +12,7 @@
 /* Defines
  */
 #define GetUniformLocation(R, pass, program, uniform) R->pass.uniform = glGetUniformLocation(R->pass.program, #uniform)
-#define GBUFFER_SIZE 3
+#define GBUFFER_SIZE 2
 
 /* Types
  */
@@ -215,7 +215,7 @@ DeferredRenderer* create_deferred_renderer(Graphics* G)
 
     ASSERT_GL(glEnableVertexAttribArray(kPositionSlot));
 
-    ASSERT_GL(glUniform1iv(R->light.s_GBuffer, GBUFFER_SIZE, i));
+    ASSERT_GL(glUniform1iv(R->light.s_GBuffer, GBUFFER_SIZE+1, i));
     ASSERT_GL(glUseProgram(0));
 
     if(R->geometry.program == 0 ||
@@ -248,9 +248,6 @@ void resize_deferred_renderer(DeferredRenderer* R, int width, int height)
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer[1]));
     ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, 0));
 
-    ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer[2]));
-    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RED, GL_FLOAT, 0));
-
     /* Depth texture */
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->depth_buffer));
     ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
@@ -259,7 +256,6 @@ void resize_deferred_renderer(DeferredRenderer* R, int width, int height)
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, R->gbuffer_framebuffer));
     ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, R->gbuffer[0], 0));
     ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, R->gbuffer[1], 0));
-    ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, R->gbuffer[2], 0));
     ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, R->depth_buffer, 0));
 
     framebuffer_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -345,7 +341,7 @@ void render_deferred(DeferredRenderer* R, GLuint default_framebuffer,
         ASSERT_GL(glActiveTexture(GL_TEXTURE0+ii));
         ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer[ii]));
     }
-    ASSERT_GL(glActiveTexture(GL_TEXTURE0+ii -1));
+    ASSERT_GL(glActiveTexture(GL_TEXTURE0+ii));
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->depth_buffer));
 
     for(ii=0;ii<num_lights;++ii) {
