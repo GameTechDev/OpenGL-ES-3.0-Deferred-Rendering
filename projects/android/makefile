@@ -80,7 +80,7 @@ run: install
 release:
 	ndk-build NDK_DEBUG=0
 	ant release
-	adb $(TARGET_DEVICE) install -r bin/DeferredGLES-release.apk
+	adb $(TARGET_DEVICE) install -r bin/DeferredGLES-release-unsigned.apk
 
 # > make kill
 #
