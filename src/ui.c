@@ -19,6 +19,7 @@ enum {
     kBMFontCharsBlock = 4,
     kBMFontKerningBlock = 5
 };
+#define MAX_STRINGS 128
 
 /* Types
  */
@@ -111,6 +112,13 @@ struct UI
     GLuint  s_Texture;
 
     Font    font;
+
+    struct {
+        float x;
+        float y;
+        char string[256];
+    }       strings[MAX_STRINGS];
+    int num_strings;
 };
 
 /* Constants
@@ -126,12 +134,12 @@ static const uint16_t kQuadIndices[] =
 
 /* Internal functions
  */
-void* mread(void* dest, size_t size, size_t count, const void* src)
+static void* mread(void* dest, size_t size, size_t count, const void* src)
 {
     memcpy(dest, src, size*count);
     return ((char*)src) + size*count;
 }
-FontData _load_font(const char* filename)
+static FontData _load_font(const char* filename)
 {
     FontData    font = {0};
     void*   file_data = NULL;
@@ -201,6 +209,28 @@ FontData _load_font(const char* filename)
 
     return font;
 }
+static void _draw_string(UI* U, float x, float y, char* string)
+{
+    Vec4 color = {1.0f, 1.0f, 1.0f, 1.0f};
+    ASSERT_GL(glUniform4fv(U->u_Color, 1, (float*)&color));
+    while(string && *string) {
+        float* ptr = 0;
+        char c = *string;
+        bmfont_char_t glyph = U->font.data.chars[c];
+
+        if(c != ' ') {
+            Mat4 world = mat4_translatef(x+glyph.xoffset, y-(glyph.height + glyph.yoffset - U->font.data.common.lineHeight), 0.0f);
+            ASSERT_GL(glUniformMatrix4fv(U->u_World, 1, GL_FALSE, (float*)&world));
+            ASSERT_GL(glBindTexture(GL_TEXTURE_2D, U->font.textures[glyph.page]));
+            ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, U->font.char_vertices[c]));
+            ASSERT_GL(glVertexAttribPointer(kPositionSlot,    3, GL_FLOAT, GL_FALSE, sizeof(float)*5, (void*)(ptr+=0)));
+            ASSERT_GL(glVertexAttribPointer(kTexCoordSlot,    2, GL_FLOAT, GL_FALSE, sizeof(float)*5, (void*)(ptr+=3)));
+            ASSERT_GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL));
+        }
+        x += glyph.xadvance;
+        ++string;
+    }
+}
 
 /* External functions
  */
@@ -232,8 +262,8 @@ UI* create_ui(Graphics* G)
 
     /* Create character meshes */
     for(ii=0;ii<256;++ii) {
-    int jj;
-    Vec2 scale = { U->font.data.common.scaleW, U->font.data.common.scaleW };
+        int jj;
+        Vec2 scale = { U->font.data.common.scaleW, U->font.data.common.scaleW };
         bmfont_char_t c = U->font.data.chars[ii];
         struct {
             Vec3    pos;
@@ -248,8 +278,8 @@ UI* create_ui(Graphics* G)
         if(c.id == 0)
             continue;
         for (jj=0; jj<4; ++jj) {
-  quad_vertices[jj].tex = vec2_div(quad_vertices[jj].tex, scale);
-}
+            quad_vertices[jj].tex = vec2_div(quad_vertices[jj].tex, scale);
+        }
         ASSERT_GL(glGenBuffers(1, &U->font.char_vertices[ii]));
         ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, U->font.char_vertices[ii]));
         ASSERT_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW));
@@ -258,14 +288,14 @@ UI* create_ui(Graphics* G)
 
     /* Create shader */
     U->program = create_program("shaders/ui/vertex.glsl",
-                            "shaders/ui/fragment.glsl",
-                             slots);
+                                "shaders/ui/fragment.glsl",
+                                slots);
 
     ASSERT_GL(U->u_ViewProjection = glGetUniformLocation(U->program, "u_ViewProjection"));
     ASSERT_GL(U->u_World = glGetUniformLocation(U->program, "u_World"));
     ASSERT_GL(U->u_Color = glGetUniformLocation(U->program, "u_Color"));
     ASSERT_GL(U->s_Texture = glGetUniformLocation(U->program, "s_Texture"));
-
+    
     return U;
 }
 void destroy_ui(UI* U)
@@ -279,37 +309,29 @@ void resize_ui(UI* U, int width, int height)
     U->proj_matrix = mat4_ortho(width, height, 0.0f, 1.0f);
 }
 
-void draw_string(UI* U, const char* string)
+void add_string(UI* U, float x, float y, const char* string)
 {
-    Vec4 color = {1.0f, 1.0f, 1.0f, 1.0f};
-    float x = -U->width/2.0f;
-    float y = 0.0f;
+    int index = U->num_strings++;
+    assert(index <= MAX_STRINGS);
+    U->strings[index].x = x;
+    U->strings[index].y = y;
+    strlcpy(U->strings[index].string, string, sizeof(U->strings[index].string));
+}
+void draw_ui(UI* U)
+{
+    int ii;
     ASSERT_GL(glDepthMask(GL_FALSE));
     ASSERT_GL(glDepthFunc(GL_ALWAYS));
     ASSERT_GL(glEnable(GL_BLEND));
     ASSERT_GL(glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA));
     ASSERT_GL(glUseProgram(U->program));
     ASSERT_GL(glUniformMatrix4fv(U->u_ViewProjection, 1, GL_FALSE, (float*)&U->proj_matrix));
-    ASSERT_GL(glUniform4fv(U->u_Color, 1, (float*)&color));
     ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, U->font.char_indices));
     ASSERT_GL(glActiveTexture(GL_TEXTURE0));
-    while(string && *string) {
-        float* ptr = 0;
-        char c = *string;
-        bmfont_char_t glyph = U->font.data.chars[c];
-
-        if(c != ' ') {
-            Mat4 world = mat4_translatef(x, y, 0.0f);
-            ASSERT_GL(glUniformMatrix4fv(U->u_World, 1, GL_FALSE, (float*)&world));
-            ASSERT_GL(glBindTexture(GL_TEXTURE_2D, U->font.textures[glyph.page]));
-            ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, U->font.char_vertices[c]));
-            ASSERT_GL(glVertexAttribPointer(kPositionSlot,    3, GL_FLOAT, GL_FALSE, sizeof(float)*5, (void*)(ptr+=0)));
-            ASSERT_GL(glVertexAttribPointer(kTexCoordSlot,    2, GL_FLOAT, GL_FALSE, sizeof(float)*5, (void*)(ptr+=3)));
-            ASSERT_GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL));
-        }
-        x += glyph.xadvance;
-        ++string;
+    for (ii=0; ii<U->num_strings; ++ii) {
+        _draw_string(U, U->strings[ii].x, U->strings[ii].y, U->strings[ii].string);
     }
+    U->num_strings = 0;
     ASSERT_GL(glDepthMask(GL_TRUE));
     ASSERT_GL(glDepthFunc(GL_LESS));
     ASSERT_GL(glDisable(GL_BLEND));

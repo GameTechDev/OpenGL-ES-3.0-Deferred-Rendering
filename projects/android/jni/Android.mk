@@ -22,6 +22,7 @@ LOCAL_SRC_FILES := 	jni.c \
                     ../../../src/forward.c \
                     ../../../src/light_prepass.c \
                     ../../../src/deferred.c \
+                    ../../../src/ui.c \
                     ../../../src/utility.c \
                     ../../../src/texture.c \
                     ../../../src/scene.cpp \

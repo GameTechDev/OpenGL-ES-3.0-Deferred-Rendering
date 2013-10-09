@@ -3,6 +3,8 @@
  */
 #include "game.h"
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "system.h"
 #include "timer.h"
 #include "graphics.h"
@@ -19,6 +21,8 @@
  */
 struct Game
 {
+    int width;
+    int height;
     /* Engine objects */
     Timer*      timer;
     Graphics*   graphics;
@@ -39,6 +43,7 @@ struct Game
     /* FPS Counting */
     float       fps_time;
     int         fps_count;
+    float       fps;
 };
 
 /* Constants
@@ -146,6 +151,8 @@ void destroy_game(Game* G)
 }
 void resize_game(Game* G, int width, int height)
 {
+    G->width = width;
+    G->height = height;
     resize_graphics(G->graphics, width, height);
     resize_ui(G->ui, width, height);
 }
@@ -175,15 +182,21 @@ void update_game(Game* G)
     G->fps_count++;
 
     if(G->fps_time >= 1.0f) {
-        system_log("FPS: %f\n", G->fps_count/G->fps_time);
+        G->fps = G->fps_count/G->fps_time;
+        system_log("FPS: %f\n", G->fps);
         G->fps_time -= 1.0f;
         G->fps_count = 0;
+    }
+    {
+        char buffer[32] = {0};
+        sprintf(buffer, "%.2f", G->fps);
+        add_string(G->ui, -G->width/2.0f, -G->height/2.0f, buffer);
     }
 }
 void render_game(Game* G)
 {
     render_graphics(G->graphics);
-    draw_string(G->ui, "Test");
+    draw_ui(G->ui);
 }
 void add_touch_points(Game* G, int num_touch_points, TouchPoint* points)
 {
