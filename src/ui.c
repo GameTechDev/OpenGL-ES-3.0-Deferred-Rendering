@@ -232,6 +232,8 @@ UI* create_ui(Graphics* G)
 
     /* Create character meshes */
     for(ii=0;ii<256;++ii) {
+    int jj;
+    Vec2 scale = { U->font.data.common.scaleW, U->font.data.common.scaleW };
         bmfont_char_t c = U->font.data.chars[ii];
         struct {
             Vec3    pos;
@@ -245,6 +247,9 @@ UI* create_ui(Graphics* G)
         };
         if(c.id == 0)
             continue;
+        for (jj=0; jj<4; ++jj) {
+  quad_vertices[jj].tex = vec2_div(quad_vertices[jj].tex, scale);
+}
         ASSERT_GL(glGenBuffers(1, &U->font.char_vertices[ii]));
         ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, U->font.char_vertices[ii]));
         ASSERT_GL(glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW));
@@ -280,13 +285,14 @@ void draw_string(UI* U, const char* string)
     float x = -U->width/2.0f;
     float y = 0.0f;
     ASSERT_GL(glDepthMask(GL_FALSE));
-    ASSERT_GL(glDepthFunc(GL_GEQUAL));
+    ASSERT_GL(glDepthFunc(GL_ALWAYS));
     ASSERT_GL(glEnable(GL_BLEND));
     ASSERT_GL(glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA));
     ASSERT_GL(glUseProgram(U->program));
     ASSERT_GL(glUniformMatrix4fv(U->u_ViewProjection, 1, GL_FALSE, (float*)&U->proj_matrix));
     ASSERT_GL(glUniform4fv(U->u_Color, 1, (float*)&color));
     ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, U->font.char_indices));
+    ASSERT_GL(glActiveTexture(GL_TEXTURE0));
     while(string && *string) {
         float* ptr = 0;
         char c = *string;

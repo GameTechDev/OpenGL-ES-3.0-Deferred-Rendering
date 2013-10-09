@@ -147,7 +147,7 @@ void destroy_game(Game* G)
 void resize_game(Game* G, int width, int height)
 {
     resize_graphics(G->graphics, width, height);
-    //resize_ui(G->ui, width, height);
+    resize_ui(G->ui, width, height);
 }
 void update_game(Game* G)
 {
