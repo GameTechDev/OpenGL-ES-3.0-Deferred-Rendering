@@ -46,7 +46,9 @@
 }
 -(void)viewDidLayoutSubviews
 {
-    resize_game(self.game, (int)[self screenSize].size.width, (int)[self screenSize].size.height);
+    int width = (int)[self screenSize].size.width;
+    int height = (int)[self screenSize].size.height;
+    resize_game(self.game, width, height);
 }
 -(void)update
 {

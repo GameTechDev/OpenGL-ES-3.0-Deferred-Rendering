@@ -23,6 +23,8 @@ struct Graphics
 {
     int width;
     int height;
+    int real_width;
+    int real_height;
     int major_version;
     int minor_version;
 
@@ -217,18 +219,21 @@ void resize_graphics(Graphics* G, int width, int height)
 {
     G->width = width;
     G->height = height;
+    G->real_width = width;
+    G->real_height = height;
+
     G->proj_matrix = mat4_perspective_fov(kPiDiv2, width/(float)height, 1.0f, 100.0f);
 
-    ASSERT_GL(glViewport(0, 0, width, height));
+    ASSERT_GL(glViewport(0, 0, G->real_width, G->real_height));
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &G->default_framebuffer));
 
     _resize_framebuffer(G);
     if(G->forward)
-        resize_forward_renderer(G->forward, width, height);
+        resize_forward_renderer(G->forward, G->width, G->height);
     if(G->light_prepass)
-        resize_light_prepass_renderer(G->light_prepass, width, height);
+        resize_light_prepass_renderer(G->light_prepass, G->width, G->height);
     if(G->deferred)
-        resize_deferred_renderer(G->deferred, width, height);
+        resize_deferred_renderer(G->deferred, G->width, G->height);
 
     system_log("Graphics resized: %d, %d\n", width, height);
 }
@@ -259,7 +264,7 @@ void render_graphics(Graphics* G)
 
     /* Bind default framebuffer and render to the screen */
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, device_framebuffer));
-    ASSERT_GL(glViewport(0, 0, G->width, G->height));
+    ASSERT_GL(glViewport(0, 0, G->real_width, G->real_height));
     ASSERT_GL(glClearColor(1.0f, 0.0f, 1.0f, 1.0f));
     ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     ASSERT_GL(glUseProgram(G->fullscreen_program));
