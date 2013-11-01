@@ -16,6 +16,8 @@
 /* Defines
  */
 #define MAX_RENDER_COMMANDS 1024
+#define STATIC_WIDTH 1280
+#define STATIC_HEIGHT 720
 
 /* Types
  */
@@ -217,14 +219,18 @@ void destroy_graphics(Graphics* G)
 }
 void resize_graphics(Graphics* G, int width, int height)
 {
-    G->width = width;
-    G->height = height;
+    if(width > height) {
+        G->width = STATIC_WIDTH;// width;
+        G->height = STATIC_HEIGHT; //height;
+    } else {
+        G->width = STATIC_HEIGHT;
+        G->height = STATIC_WIDTH;
+    }
     G->real_width = width;
     G->real_height = height;
 
     G->proj_matrix = mat4_perspective_fov(kPiDiv2, width/(float)height, 1.0f, 100.0f);
 
-    ASSERT_GL(glViewport(0, 0, G->real_width, G->real_height));
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &G->default_framebuffer));
 
     _resize_framebuffer(G);
@@ -242,6 +248,7 @@ void render_graphics(Graphics* G)
     GLint device_framebuffer;
     ASSERT_GL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &device_framebuffer));
 
+    ASSERT_GL(glViewport(0, 0, G->width, G->height));
     /* Render scene */
     if(G->major_version >= 3 && G->deferred) {
         render_deferred(G->deferred, G->framebuffer,
