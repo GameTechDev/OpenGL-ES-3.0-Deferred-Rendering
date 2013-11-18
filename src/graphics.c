@@ -16,6 +16,7 @@
 /* Defines
  */
 #define MAX_RENDER_COMMANDS 1024
+#define STATIC_SIZE 0
 #define STATIC_WIDTH 1280
 #define STATIC_HEIGHT 720
 
@@ -52,6 +53,8 @@ struct Graphics
     Light   lights[MAX_LIGHTS];
     int     num_render_commands;
     int     num_lights;
+
+    RendererType active_renderer;
 };
 
 /* Constants
@@ -171,8 +174,8 @@ Graphics* create_graphics(void)
 
     /* Allocate graphics */
     G = (Graphics*)calloc(1, sizeof(Graphics));
-    G->width = 1024;
-    G->height = 1024;
+    G->width = 2;
+    G->height = 2;
 
     /* Set up OpenGL */
     ASSERT_GL(glClearColor(1.0f, 0.0f, 1.0f, 1.0f));
@@ -207,6 +210,11 @@ Graphics* create_graphics(void)
     if(G->major_version >= 3)
         G->deferred = create_deferred_renderer(G);
 
+    if(G->deferred)
+        G->active_renderer = kDeferred;
+    else
+        G->active_renderer = kLightPrePass;
+
     return G;
 }
 void destroy_graphics(Graphics* G)
@@ -219,6 +227,7 @@ void destroy_graphics(Graphics* G)
 }
 void resize_graphics(Graphics* G, int width, int height)
 {
+#if STATIC_SIZE
     if(width > height) {
         G->width = STATIC_WIDTH;// width;
         G->height = STATIC_HEIGHT; //height;
@@ -226,6 +235,10 @@ void resize_graphics(Graphics* G, int width, int height)
         G->width = STATIC_HEIGHT;
         G->height = STATIC_WIDTH;
     }
+#else
+    G->width = width;
+    G->height = height;
+#endif
     G->real_width = width;
     G->real_height = height;
 
@@ -250,21 +263,23 @@ void render_graphics(Graphics* G)
 
     ASSERT_GL(glViewport(0, 0, G->width, G->height));
     /* Render scene */
-    if(G->major_version >= 3 && G->deferred) {
+    if(G->major_version >= 3 && G->deferred && G->active_renderer == kDeferred) {
         render_deferred(G->deferred, G->framebuffer,
                         G->proj_matrix, G->view_matrix,
                         G->render_commands, G->num_render_commands,
                         G->lights, G->num_lights);
-    } else if(0) {
+    } else if(G->active_renderer == kForward) {
         render_forward(G->forward, G->framebuffer,
                        G->proj_matrix, G->view_matrix,
                        G->render_commands, G->num_render_commands,
                        G->lights, G->num_lights);
-    } else if(1) {
+    } else if(G->active_renderer == kLightPrePass) {
         render_light_prepass(G->light_prepass, G->framebuffer,
                              G->proj_matrix, G->view_matrix,
                              G->render_commands, G->num_render_commands,
                              G->lights, G->num_lights);
+    } else {
+        assert(!"No Active Renderer");
     }
     G->num_render_commands = 0;
     G->num_lights = 0;
@@ -296,4 +311,17 @@ void add_light(Graphics* G, Light light)
     int index = G->num_lights++;
     assert(index <= MAX_LIGHTS);
     G->lights[index] = light;
+}
+RendererType renderer_type(const Graphics* G)
+{
+    return G->active_renderer;
+}
+void cycle_renderers(Graphics* G)
+{
+    G->active_renderer++;
+    if(G->active_renderer == kDeferred && (G->major_version < 3 || G->deferred == NULL))
+        G->active_renderer++;
+
+    if(G->active_renderer == MAX_RENDERERS)
+        G->active_renderer = 0;
 }

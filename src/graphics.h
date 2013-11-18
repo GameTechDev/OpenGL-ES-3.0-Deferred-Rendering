@@ -10,6 +10,14 @@
 
 #define MAX_LIGHTS 64
 
+typedef enum {
+    kForward,
+    kLightPrePass,
+    kDeferred,
+    
+    MAX_RENDERERS
+} RendererType;
+
 Graphics* create_graphics(void);
 void destroy_graphics(Graphics* G);
 
@@ -20,5 +28,8 @@ void add_render_command(Graphics* G, Model model);
 void add_light(Graphics* G, Light light);
 
 void render_graphics(Graphics* G);
+
+RendererType renderer_type(const Graphics* G);
+void cycle_renderers(Graphics* G);
 
 #endif /* include guard */

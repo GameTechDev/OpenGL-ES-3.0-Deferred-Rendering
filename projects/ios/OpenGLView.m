@@ -8,6 +8,7 @@
 
 -(void)viewDidLoad
 {
+    UITapGestureRecognizer* tap_recognizer = nil;
     GLKView *view = nil;
 
     [super viewDidLoad];
@@ -32,7 +33,12 @@
     self.preferredFramesPerSecond = 60;
     
     [self setupGL];
-    //[self setupDisplayLink];
+
+    // Add single tap recognizer
+    tap_recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                             action:@selector(handleTap:)];
+    tap_recognizer.numberOfTapsRequired = 1;
+    [self.view addGestureRecognizer:tap_recognizer];
 
     self.game = create_game();
 }
@@ -67,8 +73,7 @@
     rect.size.height *= [self deviceScale];
     rect.size.width *= [self deviceScale];
 
-    if ([[UIDevice currentDevice] orientation] == UIInterfaceOrientationLandscapeLeft ||
-        [[UIDevice currentDevice] orientation] == UIInterfaceOrientationLandscapeRight) {
+    if (UIDeviceOrientationIsLandscape(self.interfaceOrientation)) {
         CGRect temp = rect;
         rect.size.width = temp.size.height;
         rect.size.height = temp.size.width;
@@ -152,5 +157,11 @@
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
     [self touchesEnded:touches withEvent:event];
 }
-
+- (void)handleTap:(UITapGestureRecognizer *)sender
+{
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        // handling code
+        single_tap(_game);
+    }
+}
 @end

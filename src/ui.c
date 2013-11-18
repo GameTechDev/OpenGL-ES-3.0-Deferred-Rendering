@@ -116,6 +116,7 @@ struct UI
     struct {
         float x;
         float y;
+        float scale;
         char string[256];
     }       strings[MAX_STRINGS];
     int num_strings;
@@ -209,17 +210,20 @@ static FontData _load_font(const char* filename)
 
     return font;
 }
-static void _draw_string(UI* U, float x, float y, char* string)
+static void _draw_string(UI* U, float x, float y, float scale, char* string)
 {
     Vec4 color = {1.0f, 1.0f, 1.0f, 1.0f};
     ASSERT_GL(glUniform4fv(U->u_Color, 1, (float*)&color));
     while(string && *string) {
-        float* ptr = 0;
         char c = *string;
         bmfont_char_t glyph = U->font.data.chars[c];
 
         if(c != ' ') {
-            Mat4 world = mat4_translatef(x+glyph.xoffset, y-(glyph.height + glyph.yoffset - U->font.data.common.lineHeight), 0.0f);
+            float* ptr = 0;
+            Mat4 world = mat4_scalef(scale,scale,1.0f);
+            world.r3.x = x;
+            world.r3.y = y;
+
             ASSERT_GL(glUniformMatrix4fv(U->u_World, 1, GL_FALSE, (float*)&world));
             ASSERT_GL(glBindTexture(GL_TEXTURE_2D, U->font.textures[glyph.page]));
             ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, U->font.char_vertices[c]));
@@ -227,7 +231,7 @@ static void _draw_string(UI* U, float x, float y, char* string)
             ASSERT_GL(glVertexAttribPointer(kTexCoordSlot,    2, GL_FLOAT, GL_FALSE, sizeof(float)*5, (void*)(ptr+=3)));
             ASSERT_GL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL));
         }
-        x += glyph.xadvance;
+        x += (glyph.xadvance/(float)U->font.data.common.lineHeight)*scale;
         ++string;
     }
 }
@@ -262,8 +266,10 @@ UI* create_ui(Graphics* G)
 
     /* Create character meshes */
     for(ii=0;ii<256;++ii) {
+        Vec3 pos_transform;
+        Vec3 pos_scale;
+        Vec2 tex_scale;
         int jj;
-        Vec2 scale = { U->font.data.common.scaleW, U->font.data.common.scaleW };
         bmfont_char_t c = U->font.data.chars[ii];
         struct {
             Vec3    pos;
@@ -277,8 +283,17 @@ UI* create_ui(Graphics* G)
         };
         if(c.id == 0)
             continue;
-        for (jj=0; jj<4; ++jj) {
-            quad_vertices[jj].tex = vec2_div(quad_vertices[jj].tex, scale);
+        // Pre-transform the vertices
+        pos_transform = vec3_create(c.xoffset, -(c.height+c.yoffset) + U->font.data.common.lineHeight, 0.0f);
+        for(jj=0; jj<4; ++jj) {
+            quad_vertices[jj].pos = vec3_add(quad_vertices[jj].pos, pos_transform);
+        }
+        // Scale the characters into the [-1..1] range
+        pos_scale = vec3_create(U->font.data.common.lineHeight, U->font.data.common.lineHeight, 1.0f);
+        tex_scale = vec2_create(U->font.data.common.scaleW, U->font.data.common.scaleH);
+        for(jj=0; jj<4; ++jj) {
+            quad_vertices[jj].pos = vec3_div(quad_vertices[jj].pos, pos_scale);
+            quad_vertices[jj].tex = vec2_div(quad_vertices[jj].tex, tex_scale);
         }
         ASSERT_GL(glGenBuffers(1, &U->font.char_vertices[ii]));
         ASSERT_GL(glBindBuffer(GL_ARRAY_BUFFER, U->font.char_vertices[ii]));
@@ -295,7 +310,7 @@ UI* create_ui(Graphics* G)
     ASSERT_GL(U->u_World = glGetUniformLocation(U->program, "u_World"));
     ASSERT_GL(U->u_Color = glGetUniformLocation(U->program, "u_Color"));
     ASSERT_GL(U->s_Texture = glGetUniformLocation(U->program, "s_Texture"));
-    
+
     return U;
 }
 void destroy_ui(UI* U)
@@ -309,12 +324,13 @@ void resize_ui(UI* U, int width, int height)
     U->proj_matrix = mat4_ortho(width, height, 0.0f, 1.0f);
 }
 
-void add_string(UI* U, float x, float y, const char* string)
+void add_string(UI* U, float x, float y, float scale, const char* string)
 {
     int index = U->num_strings++;
     assert(index <= MAX_STRINGS);
     U->strings[index].x = x;
     U->strings[index].y = y;
+    U->strings[index].scale = scale;
     strlcpy(U->strings[index].string, string, sizeof(U->strings[index].string));
 }
 void draw_ui(UI* U)
@@ -329,7 +345,7 @@ void draw_ui(UI* U)
     ASSERT_GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, U->font.char_indices));
     ASSERT_GL(glActiveTexture(GL_TEXTURE0));
     for (ii=0; ii<U->num_strings; ++ii) {
-        _draw_string(U, U->strings[ii].x, U->strings[ii].y, U->strings[ii].string);
+        _draw_string(U, U->strings[ii].x, U->strings[ii].y, U->strings[ii].scale, U->strings[ii].string);
     }
     U->num_strings = 0;
     ASSERT_GL(glDepthMask(GL_TRUE));

@@ -11,7 +11,7 @@
 #include "vec_math.h"
 #include "scene.h"
 #include "ui.h"
-
+#include "assert.h"
 
 /* Defines
  */
@@ -188,9 +188,19 @@ void update_game(Game* G)
         G->fps_count = 0;
     }
     {
-        char buffer[32] = {0};
-        sprintf(buffer, "%.2f", G->fps);
-        add_string(G->ui, -G->width/2.0f, -G->height/2.0f, buffer);
+        float scale = 50.0f;
+        float x = -G->width/2.0f;
+        float y = G->height/2.0f-scale;
+        char buffer[256] = {0};
+        sprintf(buffer, "FPS: %.2f", G->fps);
+        add_string(G->ui, x, y, scale, buffer);
+        y -= scale;
+        switch(renderer_type(G->graphics)) {
+        case kForward: add_string(G->ui, x, y, scale, "Forward renderer"); break;
+        case kLightPrePass: add_string(G->ui, x, y, scale, "Deferred Lighting"); break;
+        case kDeferred: add_string(G->ui, x, y, scale, "Deferred Shading"); break;
+        default: assert(!"Invalid renderer"); break;
+        }
     }
 }
 void render_game(Game* G)
@@ -247,4 +257,7 @@ void remove_touch_points(Game* G, int num_touch_points, TouchPoint* points)
         G->prev_double = avg;
     }
 }
-
+void single_tap(Game* G)
+{
+    cycle_renderers(G->graphics);
+}
