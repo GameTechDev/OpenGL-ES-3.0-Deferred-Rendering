@@ -16,7 +16,6 @@
 /* Defines
  */
 #define MAX_RENDER_COMMANDS 1024
-#define STATIC_SIZE 0
 #define STATIC_WIDTH 1280
 #define STATIC_HEIGHT 720
 
@@ -30,6 +29,7 @@ struct Graphics
     int real_height;
     int major_version;
     int minor_version;
+    int static_size;
 
     ForwardRenderer*        forward;
     LightPrepassRenderer*   light_prepass;
@@ -214,6 +214,7 @@ Graphics* create_graphics(void)
         G->active_renderer = kDeferred;
     else
         G->active_renderer = kLightPrePass;
+    G->static_size = 1;
 
     return G;
 }
@@ -227,18 +228,18 @@ void destroy_graphics(Graphics* G)
 }
 void resize_graphics(Graphics* G, int width, int height)
 {
-#if STATIC_SIZE
-    if(width > height) {
-        G->width = STATIC_WIDTH;// width;
-        G->height = STATIC_HEIGHT; //height;
+    if(G->static_size) {
+        if(width > height) {
+            G->width = STATIC_WIDTH;// width;
+            G->height = STATIC_HEIGHT; //height;
+        } else {
+            G->width = STATIC_HEIGHT;
+            G->height = STATIC_WIDTH;
+        }
     } else {
-        G->width = STATIC_HEIGHT;
-        G->height = STATIC_WIDTH;
+        G->width = width;
+        G->height = height;
     }
-#else
-    G->width = width;
-    G->height = height;
-#endif
     G->real_width = width;
     G->real_height = height;
 
@@ -324,4 +325,14 @@ void cycle_renderers(Graphics* G)
 
     if(G->active_renderer == MAX_RENDERERS)
         G->active_renderer = 0;
+}
+void graphics_size(const Graphics* G, int* width, int* height)
+{
+    *width = G->width;
+    *height = G->height;
+}
+void toggle_static_size(Graphics* G)
+{
+    G->static_size = !G->static_size;
+    resize_graphics(G, G->real_width, G->real_height);
 }

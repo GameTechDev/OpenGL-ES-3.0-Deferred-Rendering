@@ -15,7 +15,7 @@
 
 /* Defines
  */
-#define NUM_LIGHTS 31
+#define NUM_LIGHTS 63
 
 /* Types
  */
@@ -39,6 +39,7 @@ struct Game
     int         num_points;
     Vec2        prev_single;
     Vec2        prev_double;
+    float       tap_timer[5];
 
     /* FPS Counting */
     float       fps_time;
@@ -116,7 +117,7 @@ Game* create_game(void)
     G->scene = create_scene("lightHouse.obj");
     G->sun_light.position = vec3_create(-4.0f, 5.0f, 2.0f);
     G->sun_light.color = vec3_create(1, 1, 1);
-    G->sun_light.size = 10.0f;
+    G->sun_light.size = 25.0f;
 
     G->lights[0].color = vec3_create(1, 0, 0);
     G->lights[1].color = vec3_create(1, 1, 0);
@@ -126,15 +127,14 @@ Game* create_game(void)
     G->lights[5].color = vec3_create(0, 1, 1);
 
     for(ii=0;ii<NUM_LIGHTS;++ii) {
-        G->lights[ii].color = vec3_create(_rand_float(), _rand_float(), _rand_float());
-        G->lights[ii].color = vec3_normalize(G->lights[ii].color);
-    }
-
-    for(ii=0;ii<NUM_LIGHTS;++ii) {
         float x = (20.0f/NUM_LIGHTS) * ii - 8.0f;
         G->lights[ii].color = vec3_create(_rand_float(), _rand_float(), _rand_float());
         G->lights[ii].color = vec3_normalize(G->lights[ii].color);
-        G->lights[ii].position = vec3_create(x, _rand_float()*3, 0.0f);
+        if(ii % 2)
+            G->lights[ii].position = vec3_create(x, _rand_float()*3 + 2.0f, 0.0f);
+        else
+            G->lights[ii].position = vec3_create(0.0f, _rand_float()*3 + 2.0f, x);
+        G->lights[ii].size = 5;
     }
 
     get_model(G->scene, 3)->material->specular_color = vec3_create(0.5f, 0.5f, 0.5f);
@@ -170,8 +170,11 @@ void update_game(Game* G)
         int ii;
         move += delta_time;
         for(ii=0;ii<NUM_LIGHTS;++ii) {
-            G->lights[ii].position.z = sinf((move + ii * 1.0f)/2.0f) * 8.0f - 1.0f;
-            G->lights[ii].size = 4.0f;
+            if(ii % 2)
+                G->lights[ii].position.z = sinf((move + ii * 1.0f)/2.0f) * 10.0f;
+            else
+                G->lights[ii].position.x = sinf((move + ii * 1.0f)/2.0f) * 10.0f;
+
 
             add_light(G->graphics, G->lights[ii]);
         }
@@ -188,19 +191,29 @@ void update_game(Game* G)
         G->fps_count = 0;
     }
     {
+        int width, height;
         float scale = 50.0f;
         float x = -G->width/2.0f;
         float y = G->height/2.0f-scale;
         char buffer[256] = {0};
+        // FPS
         sprintf(buffer, "FPS: %.2f", G->fps);
         add_string(G->ui, x, y, scale, buffer);
         y -= scale;
+        // Renderer
         switch(renderer_type(G->graphics)) {
         case kForward: add_string(G->ui, x, y, scale, "Forward renderer"); break;
         case kLightPrePass: add_string(G->ui, x, y, scale, "Deferred Lighting"); break;
         case kDeferred: add_string(G->ui, x, y, scale, "Deferred Shading"); break;
         default: assert(!"Invalid renderer"); break;
         }
+        y -= scale;
+        // Resolution
+        graphics_size(G->graphics, &width, &height);
+        sprintf(buffer, "%dx%d", width, height);
+        add_string(G->ui, x, y, scale, buffer);
+        y -= scale;
+
     }
 }
 void render_game(Game* G)
@@ -217,10 +230,12 @@ void add_touch_points(Game* G, int num_touch_points, TouchPoint* points)
 
     if(G->num_points == 1) {
         G->prev_single = G->points[0].pos;
+        G->tap_timer[0] = (float)get_running_time(G->timer);
     } else if(G->num_points == 2) {
         Vec2 avg = vec2_add(G->points[0].pos, G->points[1].pos);
         avg = vec2_mul_scalar(avg, 0.5f);
         G->prev_double = avg;
+        G->tap_timer[1] = (float)get_running_time(G->timer);
     }
 }
 void update_touch_points(Game* G, int num_touch_points, TouchPoint* points)
@@ -255,9 +270,22 @@ void remove_touch_points(Game* G, int num_touch_points, TouchPoint* points)
         Vec2 avg = vec2_add(G->points[0].pos, G->points[1].pos);
         avg = vec2_mul_scalar(avg, 0.5f);
         G->prev_double = avg;
+    } else {
+        float current_time = (float)get_running_time(G->timer);
+        if(current_time - G->tap_timer[0] < 0.1f)
+            handle_tap(G, 1);
+        if(current_time - G->tap_timer[1] < 0.1f)
+            handle_tap(G, 2);
     }
 }
-void single_tap(Game* G)
+void handle_tap(Game* G, int count)
 {
-    cycle_renderers(G->graphics);
+    switch(count) {
+    case 1:
+        cycle_renderers(G->graphics);
+        break;
+    case 2:
+        toggle_static_size(G->graphics);
+        break;
+    }
 }

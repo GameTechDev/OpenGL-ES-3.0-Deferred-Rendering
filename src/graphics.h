@@ -8,7 +8,7 @@
 #include "scene.h"
 #include "graphics_types.h"
 
-#define MAX_LIGHTS 64
+#define MAX_LIGHTS 128
 
 typedef enum {
     kForward,
@@ -31,5 +31,9 @@ void render_graphics(Graphics* G);
 
 RendererType renderer_type(const Graphics* G);
 void cycle_renderers(Graphics* G);
+
+void graphics_size(const Graphics* G, int* width, int* height);
+
+void toggle_static_size(Graphics* G);
 
 #endif /* include guard */

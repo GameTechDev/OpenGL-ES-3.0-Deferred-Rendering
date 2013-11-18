@@ -8,7 +8,6 @@
 
 -(void)viewDidLoad
 {
-    UITapGestureRecognizer* tap_recognizer = nil;
     GLKView *view = nil;
 
     [super viewDidLoad];
@@ -33,12 +32,6 @@
     self.preferredFramesPerSecond = 60;
     
     [self setupGL];
-
-    // Add single tap recognizer
-    tap_recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
-                                                             action:@selector(handleTap:)];
-    tap_recognizer.numberOfTapsRequired = 1;
-    [self.view addGestureRecognizer:tap_recognizer];
 
     self.game = create_game();
 }
@@ -156,12 +149,5 @@
 }
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
     [self touchesEnded:touches withEvent:event];
-}
-- (void)handleTap:(UITapGestureRecognizer *)sender
-{
-    if (sender.state == UIGestureRecognizerStateEnded) {
-        // handling code
-        single_tap(_game);
-    }
 }
 @end
