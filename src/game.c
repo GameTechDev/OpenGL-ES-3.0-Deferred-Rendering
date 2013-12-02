@@ -34,6 +34,7 @@ struct Game
     Light       sun_light;
     Light       lights[NUM_LIGHTS];
     float       light_transform;
+    int         dynamic_lights;
 
     /* Input */
     TouchPoint  points[16];
@@ -141,6 +142,8 @@ Game* create_game(void)
     get_model(G->scene, 3)->material->specular_color = vec3_create(0.5f, 0.5f, 0.5f);
     get_model(G->scene, 3)->material->specular_coefficient = 1.0f;
 
+    G->dynamic_lights = 1;
+
     reset_timer(G->timer);
     return G;
 }
@@ -167,14 +170,16 @@ void update_game(Game* G)
     add_light(G->graphics, G->sun_light);
 
     /* Dynamic Lights */
-    G->light_transform += delta_time;
+    if(G->dynamic_lights) {
+        G->light_transform += delta_time;
+        for(ii=0;ii<NUM_LIGHTS;++ii) {
+            if(ii % 2)
+                G->lights[ii].position.z = sinf((G->light_transform + ii * 1.0f)/2.0f) * 10.0f;
+            else
+                G->lights[ii].position.x = sinf((G->light_transform + ii * 1.0f)/2.0f) * 10.0f;
+        }
+    }
     for(ii=0;ii<NUM_LIGHTS;++ii) {
-        if(ii % 2)
-            G->lights[ii].position.z = sinf((G->light_transform + ii * 1.0f)/2.0f) * 10.0f;
-        else
-            G->lights[ii].position.x = sinf((G->light_transform + ii * 1.0f)/2.0f) * 10.0f;
-
-
         add_light(G->graphics, G->lights[ii]);
     }
     render_scene(G->scene, G->graphics);
@@ -276,11 +281,12 @@ void remove_touch_points(Game* G, int num_touch_points, TouchPoint* points)
                 if(G->prev_single.y < G->height/2) { // Top Left
                     cycle_renderers(G->graphics);
                 } else { // bottom left
+                    G->dynamic_lights = !G->dynamic_lights;
                 }
 
             } else {
                 if(G->prev_single.y < G->height/2) { // Top right
-                    cycle_renderers(G->graphics);
+                    toggle_static_size(G->graphics);
                 } else { // bottom right
                 }
             }
