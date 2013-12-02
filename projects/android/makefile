@@ -46,7 +46,7 @@ init:
 #
 # Remove all the auto generated files
 clean:
-	ndk-build clean
+	ndk-build NDK_DEBUG=1 clean
 	ant clean
 
 # > make native

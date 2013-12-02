@@ -214,7 +214,7 @@ Graphics* create_graphics(void)
         G->active_renderer = kDeferred;
     else
         G->active_renderer = kLightPrePass;
-    G->static_size = 1;
+    G->static_size = 0;
 
     return G;
 }

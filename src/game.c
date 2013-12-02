@@ -33,13 +33,14 @@ struct Game
     Scene*      scene;
     Light       sun_light;
     Light       lights[NUM_LIGHTS];
+    float       light_transform;
 
     /* Input */
     TouchPoint  points[16];
     int         num_points;
     Vec2        prev_single;
     Vec2        prev_double;
-    float       tap_timer[5];
+    float       tap_timer;
 
     /* FPS Counting */
     float       fps_time;
@@ -159,26 +160,26 @@ void resize_game(Game* G, int width, int height)
 void update_game(Game* G)
 {
     float delta_time = (float)get_delta_time(G->timer);
+    int ii;
 
     _control_camera(G, delta_time);
     set_view_matrix(G->graphics, mat4_inverse(transform_get_matrix(G->camera)));
     add_light(G->graphics, G->sun_light);
+
+    /* Dynamic Lights */
+    G->light_transform += delta_time;
+    for(ii=0;ii<NUM_LIGHTS;++ii) {
+        if(ii % 2)
+            G->lights[ii].position.z = sinf((G->light_transform + ii * 1.0f)/2.0f) * 10.0f;
+        else
+            G->lights[ii].position.x = sinf((G->light_transform + ii * 1.0f)/2.0f) * 10.0f;
+
+
+        add_light(G->graphics, G->lights[ii]);
+    }
     render_scene(G->scene, G->graphics);
 
-    if(1) { /* Lights */
-        static float move = 0.0f;
-        int ii;
-        move += delta_time;
-        for(ii=0;ii<NUM_LIGHTS;++ii) {
-            if(ii % 2)
-                G->lights[ii].position.z = sinf((move + ii * 1.0f)/2.0f) * 10.0f;
-            else
-                G->lights[ii].position.x = sinf((move + ii * 1.0f)/2.0f) * 10.0f;
-
-
-            add_light(G->graphics, G->lights[ii]);
-        }
-    }
+    G->tap_timer += delta_time;
 
     /* Calculate FPS */
     G->fps_time += delta_time;
@@ -230,12 +231,11 @@ void add_touch_points(Game* G, int num_touch_points, TouchPoint* points)
 
     if(G->num_points == 1) {
         G->prev_single = G->points[0].pos;
-        G->tap_timer[0] = (float)get_running_time(G->timer);
+        G->tap_timer = 0.0f;
     } else if(G->num_points == 2) {
         Vec2 avg = vec2_add(G->points[0].pos, G->points[1].pos);
         avg = vec2_mul_scalar(avg, 0.5f);
         G->prev_double = avg;
-        G->tap_timer[1] = (float)get_running_time(G->timer);
     }
 }
 void update_touch_points(Game* G, int num_touch_points, TouchPoint* points)
@@ -271,21 +271,19 @@ void remove_touch_points(Game* G, int num_touch_points, TouchPoint* points)
         avg = vec2_mul_scalar(avg, 0.5f);
         G->prev_double = avg;
     } else {
-        float current_time = (float)get_running_time(G->timer);
-        if(current_time - G->tap_timer[0] < 0.1f)
-            handle_tap(G, 1);
-        if(current_time - G->tap_timer[1] < 0.1f)
-            handle_tap(G, 2);
-    }
-}
-void handle_tap(Game* G, int count)
-{
-    switch(count) {
-    case 1:
-        cycle_renderers(G->graphics);
-        break;
-    case 2:
-        toggle_static_size(G->graphics);
-        break;
+        if(G->tap_timer < 0.5f) {
+            if(G->prev_single.x < G->width/2) {
+                if(G->prev_single.y < G->height/2) { // Top Left
+                    cycle_renderers(G->graphics);
+                } else { // bottom left
+                }
+
+            } else {
+                if(G->prev_single.y < G->height/2) { // Top right
+                    cycle_renderers(G->graphics);
+                } else { // bottom right
+                }
+            }
+        }
     }
 }

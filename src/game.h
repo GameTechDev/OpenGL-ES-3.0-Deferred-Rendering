@@ -27,6 +27,4 @@ void add_touch_points(Game* G, int num_touch_points, TouchPoint* points);
 void update_touch_points(Game* G, int num_touch_points, TouchPoint* points);
 void remove_touch_points(Game* G, int num_touch_points, TouchPoint* points);
 
-void handle_tap(Game* G, int count);
-
 #endif /* include guard */
