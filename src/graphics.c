@@ -229,13 +229,8 @@ void destroy_graphics(Graphics* G)
 void resize_graphics(Graphics* G, int width, int height)
 {
     if(G->static_size) {
-        if(width > height) {
-            G->width = STATIC_WIDTH;// width;
-            G->height = STATIC_HEIGHT; //height;
-        } else {
-            G->width = STATIC_HEIGHT;
-            G->height = STATIC_WIDTH;
-        }
+        G->width = STATIC_WIDTH;// width;
+        G->height = STATIC_HEIGHT; //height;
     } else {
         G->width = width;
         G->height = height;
