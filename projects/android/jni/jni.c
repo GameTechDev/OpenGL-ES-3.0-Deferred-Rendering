@@ -1,4 +1,5 @@
 #include <jni.h>
+#include <sys/types.h>
 #include <android/asset_manager_jni.h>
 #include "game.h"
 #include "system.h"
