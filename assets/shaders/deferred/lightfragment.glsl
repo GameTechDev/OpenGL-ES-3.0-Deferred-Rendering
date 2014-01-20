@@ -9,6 +9,15 @@ uniform vec3    u_LightColor;
 uniform vec3    u_LightPosition;
 uniform float   u_LightSize;
 
+
+vec3 decode(vec2 encoded)
+{
+    vec3 norm;
+    norm.xy = (encoded*2.0) - 1.0;
+    norm.z = sqrt(1.0-dot(norm.xy,norm.xy));
+    return norm;
+}
+
 /** GBuffer format
  *  [0] RGB: Albedo
  *  [1] RGB: VS Normal
@@ -21,7 +30,7 @@ void main(void)
     vec2 tex_coord = gl_FragCoord.xy/u_Viewport; // map to [0..1]
 
     vec3 albedo = texture2D(s_GBuffer[0], tex_coord).rgb;
-    vec3 normal = texture2D(s_GBuffer[1], tex_coord).rgb * 2.0 - 1.0;
+    vec3 normal = decode(texture2D(s_GBuffer[1], tex_coord).rg);
     float depth = texture2D(s_GBuffer[2], tex_coord).r;
 
     /* Calculate the pixel's position in view space */

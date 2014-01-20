@@ -239,14 +239,14 @@ void resize_deferred_renderer(DeferredRenderer* R, int width, int height)
 
     /** GBuffer format
      *  [0] RGB: Albedo
-     *  [1] RGB: VS Normal
+     *  [1] RG: VS Normal (encoded)
      *  [2] R: Depth
      */
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer[0]));
     ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0));
 
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer[1]));
-    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, 0));
+    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, width, height, 0, GL_RG, GL_FLOAT, 0));
 
     /* Depth texture */
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->depth_buffer));

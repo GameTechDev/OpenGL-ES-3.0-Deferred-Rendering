@@ -11,6 +11,11 @@ varying vec3 v_TangentVS;
 varying vec3 v_BitangentVS;
 varying vec2 v_TexCoord;
 
+vec4 encode(vec3 normal)
+{
+    return vec4(normal.xy*0.5+0.5, 0,0);
+}
+
 void main(void) {
     /** Load texture values
      */
@@ -24,8 +29,6 @@ void main(void) {
 
     mat3 TBN = mat3(T, B, N);
     normal = normalize(TBN*normal);
-    normal += 1.0;
-    normal *= 0.5;
 
     /** GBuffer format
      *  [0] RGB: Albedo
@@ -33,5 +36,5 @@ void main(void) {
      *  [2] R: Depth
      */
     gl_FragData[0] = vec4(albedo, 1.0);
-    gl_FragData[1] = vec4(normal, 1.0);
+    gl_FragData[1] = encode(normal);
 }
