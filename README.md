@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-# OpenGL ES 3.0 Deferred Renderer
-=======
 OpenGL ES 3.0 Deferred Renderer
 ===============================
->>>>>>> 606e9101dc7ee4d025261e0c3d64716b18972b16
 
 This is a sample demonstrating how to create a deferred renderer on OpenGL ES 3.0 devices. The sample shows off three differerent renderers: forward rendering, deferred lighting and deferrred shading.
 
@@ -31,8 +27,4 @@ The sample has a few important controls:
 
 ## Known Issues
 
-<<<<<<< HEAD
 * Toggling resolution on certain Android devices leads to inconsistant screen size.
-=======
-* Toggling resolution on certain Android devices leads to inconsistant screen size.
->>>>>>> 606e9101dc7ee4d025261e0c3d64716b18972b16
