@@ -266,7 +266,6 @@ void resize_deferred_renderer(DeferredRenderer* R, int width, int height)
 
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, 0));
-
 }
 
 void render_deferred(DeferredRenderer* R, GLuint default_framebuffer,
@@ -314,7 +313,6 @@ void render_deferred(DeferredRenderer* R, GLuint default_framebuffer,
         ASSERT_GL(glUniformMatrix4fv(R->geometry.u_World, 1, GL_FALSE, (float*)&world_matrix));
         draw_mesh(models[ii].mesh);
     }
-
 
     /** Light
      */
@@ -366,5 +364,4 @@ void render_deferred(DeferredRenderer* R, GLuint default_framebuffer,
     ASSERT_GL(glDepthMask(GL_TRUE));
     ASSERT_GL(glDepthFunc(GL_LESS));
     ASSERT_GL(glCullFace(GL_BACK));
-
 }
