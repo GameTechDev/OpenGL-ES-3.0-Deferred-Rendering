@@ -115,6 +115,7 @@ static void _draw_fullscreen_quad(Graphics* G)
 }
 static void _create_framebuffer(Graphics* G)
 {
+    GLenum framebuffer_status;
     /* Color buffer */
     ASSERT_GL(glGenTextures(1, &G->color_texture));
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, G->color_texture));
@@ -122,6 +123,7 @@ static void _create_framebuffer(Graphics* G)
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0));
 
     /* Depth buffer */
     ASSERT_GL(glGenTextures(1, &G->depth_texture));
@@ -130,16 +132,27 @@ static void _create_framebuffer(Graphics* G)
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
     ASSERT_GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    if(G->major_version >= 3)
+        ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, 4, 4, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
+    else
+        ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 4, 4, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
 
     /* Framebuffer */
     ASSERT_GL(glGenFramebuffers(1, &G->framebuffer));
+    ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, G->framebuffer));
+    ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, G->color_texture, 0));
+    ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, G->depth_texture, 0));
+
+    framebuffer_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if(framebuffer_status != GL_FRAMEBUFFER_COMPLETE) {
+        system_log("%s:%d Framebuffer error: %s\n", __FILE__, __LINE__, _glStatusString(framebuffer_status));
+        assert(0);
+    }
 
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, 0));
 }
 static void _resize_framebuffer(Graphics* G)
 {
-    GLenum framebuffer_status;
-
     /* Color buffer */
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, G->color_texture));
     ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, G->width, G->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0));
@@ -150,17 +163,6 @@ static void _resize_framebuffer(Graphics* G)
         ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, G->width, G->height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
     else
         ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, G->width, G->height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
-
-    /* Framebuffer */
-    ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, G->framebuffer));
-    ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, G->color_texture, 0));
-    ASSERT_GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, G->depth_texture, 0));
-
-    framebuffer_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if(framebuffer_status != GL_FRAMEBUFFER_COMPLETE) {
-        system_log("%s:%d Framebuffer error: %s\n", __FILE__, __LINE__, _glStatusString(framebuffer_status));
-        assert(0);
-    }
 
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, 0));
@@ -214,7 +216,7 @@ Graphics* create_graphics(void)
         G->active_renderer = kDeferred;
     else
         G->active_renderer = kLightPrePass;
-    G->static_size = 0;
+    G->static_size = 1;
 
     return G;
 }
@@ -283,7 +285,7 @@ void render_graphics(Graphics* G)
     /* Bind default framebuffer and render to the screen */
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, device_framebuffer));
     ASSERT_GL(glViewport(0, 0, G->real_width, G->real_height));
-    ASSERT_GL(glClearColor(1.0f, 0.0f, 1.0f, 1.0f));
+    ASSERT_GL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
     ASSERT_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     ASSERT_GL(glUseProgram(G->fullscreen_program));
     ASSERT_GL(glActiveTexture(GL_TEXTURE0));
