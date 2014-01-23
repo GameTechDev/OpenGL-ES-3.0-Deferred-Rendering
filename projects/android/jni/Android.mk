@@ -16,17 +16,17 @@ LOCAL_SRC_FILES := 	jni.c \
 				../../../src/android/system_android.c \
 				../../../src/graphics.c \
 				../../../src/timer.c \
-                    ../../../src/game.c \
-                    ../../../src/mesh.c \
-                    ../../../src/program.c \
-                    ../../../src/forward.c \
-                    ../../../src/light_prepass.c \
-                    ../../../src/deferred.c \
-                    ../../../src/ui.c \
-                    ../../../src/utility.c \
-                    ../../../src/texture.c \
-                    ../../../src/scene.cpp \
-                    ../../../external/stb_image.c
+                ../../../src/game.c \
+                ../../../src/mesh.c \
+                ../../../src/program.c \
+                ../../../src/forward.c \
+                ../../../src/light_prepass.c \
+                ../../../src/deferred.c \
+                ../../../src/ui.c \
+                ../../../src/utility.c \
+                ../../../src/texture.c \
+                ../../../src/scene.cpp \
+                ../../../external/stb_image.c
 LOCAL_LDLIBS := -lGLESv3 -lEGL -llog -landroid
 
 include $(BUILD_SHARED_LIBRARY)
