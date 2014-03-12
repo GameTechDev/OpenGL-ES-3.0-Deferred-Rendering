@@ -13,7 +13,7 @@ in vec3 v_TangentVS;
 in vec3 v_BitangentVS;
 in vec2 v_TexCoord;
 
-out vec4 FragColor;
+out vec4 FragData[2];
 
 vec4 encode(vec3 normal)
 {
@@ -39,6 +39,6 @@ void main(void) {
      *  [1] RGB: VS Normal
      *  [2] R: Depth
      */
-    gl_FragData[0] = vec4(albedo, 1.0);
-    gl_FragData[1] = encode(normal);
+    FragData[0] = vec4(albedo, 1.0);
+    FragData[1] = encode(normal);
 }
