@@ -218,7 +218,6 @@ void update_game(Game* G)
         graphics_size(G->graphics, &width, &height);
         sprintf(buffer, "%dx%d", width, height);
         add_string(G->ui, x, y, scale, buffer);
-        y -= scale;
 
     }
 }

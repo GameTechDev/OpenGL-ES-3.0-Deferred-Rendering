@@ -13,6 +13,9 @@
     /* MSVC doens't define fminf and fmaxf */
     static float fminf(float a, float b) { return (a < b ? a : b); }
     static float fmaxf(float a, float b) { return (a > b ? a : b); }
+#else
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wc99-extensions" /* Non-constant aggregate initializer */
 #endif
 
 /**
@@ -1282,6 +1285,9 @@ INLINE Mat4 transform_get_matrix(TRANSFORM_INPUT t)
 
 #ifdef _MSC_VER
     #pragma warning(pop)
+#else
+    #pragma GCC diagnostic pop
 #endif
+
 
 #endif /* include guard */
