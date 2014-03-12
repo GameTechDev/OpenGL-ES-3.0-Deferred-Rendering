@@ -10,6 +10,8 @@ uniform vec3    u_LightColor;
 uniform vec3    u_LightPosition;
 uniform float   u_LightSize;
 
+out vec4 FragColor;
+
 
 vec3 decode(vec2 encoded)
 {
@@ -30,9 +32,9 @@ void main(void)
      */
     vec2 tex_coord = gl_FragCoord.xy/u_Viewport; // map to [0..1]
 
-    vec3 albedo = texture2D(s_GBuffer[0], tex_coord).rgb;
-    vec3 normal = decode(texture2D(s_GBuffer[1], tex_coord).rg);
-    float depth = texture2D(s_GBuffer[2], tex_coord).r;
+    vec3 albedo = texture(s_GBuffer[0], tex_coord).rgb;
+    vec3 normal = decode(texture(s_GBuffer[1], tex_coord).rg);
+    float depth = texture(s_GBuffer[2], tex_coord).r;
 
     /* Calculate the pixel's position in view space */
     vec4 view_pos = vec4(tex_coord*2.0-1.0, depth*2.0 - 1.0, 1.0);
@@ -51,5 +53,5 @@ void main(void)
 
     vec3 final_lighting = attenuation * (diffuse);
 
-    gl_FragColor = vec4(final_lighting * albedo,1.0);
+    FragColor = vec4(final_lighting * albedo,1.0);
 }

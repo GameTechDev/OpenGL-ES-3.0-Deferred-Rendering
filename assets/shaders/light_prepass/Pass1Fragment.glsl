@@ -11,11 +11,13 @@ in vec2 v_TexCoord;
 
 in vec2 v_Depth;
 
+out vec4 FragColor;
+
 void main(void)
 {
     /** Load texture values
      */
-    vec3 normal = normalize(texture2D(s_Normal, v_TexCoord).rgb*2.0 - 1.0);
+    vec3 normal = normalize(texture(s_Normal, v_TexCoord).rgb*2.0 - 1.0);
     
     vec3 N = normalize(v_NormalVS);
     vec3 T = normalize(v_TangentVS);
@@ -24,5 +26,5 @@ void main(void)
     mat3 TBN = mat3(T, B, N);
     normal = normalize(TBN*normal);
 
-    gl_FragColor = vec4((normal + 1.0) * 0.5, u_SpecularPower);
+    FragColor = vec4((normal + 1.0) * 0.5, u_SpecularPower);
 }
