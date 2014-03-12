@@ -1,8 +1,9 @@
+#version 300 es
 uniform mat4 u_Projection;
 uniform mat4 u_View;
 uniform mat4 u_World;
 
-attribute vec4 a_Position;
+in vec4 a_Position;
 
 void main(void)
 {

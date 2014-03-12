@@ -1,3 +1,4 @@
+#version 300 es
 precision highp float;
 uniform sampler2D s_GBuffer[3];
 

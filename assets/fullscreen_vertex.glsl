@@ -1,7 +1,8 @@
-attribute vec4 a_Position;
-attribute vec2 a_TexCoord;
+#version 300 es
+in vec4 a_Position;
+in vec2 a_TexCoord;
 
-varying vec2 v_TexCoord;
+out vec2 v_TexCoord;
 
 void main()
 {

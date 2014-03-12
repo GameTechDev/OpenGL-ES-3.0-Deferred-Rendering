@@ -1,3 +1,4 @@
+#version 300 es
 precision highp float;
 uniform sampler2D s_Albedo;
 uniform sampler2D s_Normal;
@@ -11,11 +12,11 @@ uniform vec3    u_SpecularColor;
 uniform float   u_SpecularPower;
 uniform float   u_SpecularCoefficient;
 
-varying vec3 v_PositionVS;
-varying vec3 v_NormalVS;
-varying vec3 v_TangentVS;
-varying vec3 v_BitangentVS;
-varying vec2 v_TexCoord;
+in vec3 v_PositionVS;
+in vec3 v_NormalVS;
+in vec3 v_TangentVS;
+in vec3 v_BitangentVS;
+in vec2 v_TexCoord;
 
 void main(void) {
     /** Load texture values

@@ -31,7 +31,7 @@ public class DeferredGLES extends Activity
         super.onCreate(savedInstanceState);
 
         _view = new GLSurfaceView(this);
-        _view.setEGLContextClientVersion(2);
+        _view.setEGLContextClientVersion(3);
         _view.setEGLConfigChooser(8,8,8,8,16,0);
         _view.setRenderer(new Renderer());
         setContentView(_view);

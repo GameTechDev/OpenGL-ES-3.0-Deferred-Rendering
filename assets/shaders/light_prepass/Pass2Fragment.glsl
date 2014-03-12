@@ -1,3 +1,4 @@
+#version 300 es
 precision highp float;
 uniform sampler2D s_GBuffer;
 uniform sampler2D s_Depth;
@@ -10,7 +11,7 @@ uniform vec3    u_LightColor;
 uniform vec3    u_LightPosition;
 uniform float   u_LightSize;
 
-varying vec4    v_Position;
+in vec4    v_Position;
 
 void main(void)
 {

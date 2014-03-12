@@ -1,14 +1,15 @@
+#version 300 es
 precision highp float;
 uniform sampler2D s_Normal;
 
 uniform float   u_SpecularPower;
 
-varying vec3 v_NormalVS;
-varying vec3 v_TangentVS;
-varying vec3 v_BitangentVS;
-varying vec2 v_TexCoord;
+in vec3 v_NormalVS;
+in vec3 v_TangentVS;
+in vec3 v_BitangentVS;
+in vec2 v_TexCoord;
 
-varying vec2 v_Depth;
+in vec2 v_Depth;
 
 void main(void)
 {

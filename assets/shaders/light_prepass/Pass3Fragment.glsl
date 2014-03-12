@@ -1,10 +1,11 @@
+#version 300 es
 precision highp float;
 uniform sampler2D s_GBuffer;
 uniform sampler2D s_Albedo;
 
 uniform vec2 u_Viewport;
 
-varying vec2 v_TexCoord;
+in vec2 v_TexCoord;
 
 /** GBuffer format
  *  [0] RGB: Albedo

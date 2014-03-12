@@ -220,6 +220,7 @@ DeferredRenderer* create_deferred_renderer(Graphics* G)
 
     if(R->geometry.program == 0 ||
        R->light.program == 0) {
+        system_log("Failed to create deferred programs\n");
         /* Failed to create programs. Return NULL */
         free(R);
         return NULL;

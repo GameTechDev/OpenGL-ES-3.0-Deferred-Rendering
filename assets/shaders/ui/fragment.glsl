@@ -1,9 +1,10 @@
+#version 300 es
 precision highp float;
 uniform sampler2D s_Texture;
 
 uniform vec4 u_Color;
 
-varying vec2 v_TexCoord;
+in vec2 v_TexCoord;
 
 void main()
 {
