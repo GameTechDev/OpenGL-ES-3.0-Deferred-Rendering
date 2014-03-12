@@ -8,7 +8,7 @@
 #include "scene.h"
 #include "graphics_types.h"
 
-#define MAX_LIGHTS 64
+#define MAX_LIGHTS 16
 
 typedef enum {
     kForward,
