@@ -1,12 +1,11 @@
-#version 300 es
 uniform mat4 u_Projection;
 uniform mat4 u_View;
 uniform mat4 u_World;
 
-in vec4 a_Position;
-in vec2 a_TexCoord;
+attribute vec4 a_Position;
+attribute vec2 a_TexCoord;
 
-out vec2 v_TexCoord;
+varying vec2 v_TexCoord;
 
 void main(void)
 {

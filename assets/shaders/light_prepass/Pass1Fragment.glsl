@@ -1,23 +1,20 @@
-#version 300 es
 precision highp float;
 uniform sampler2D s_Normal;
 
 uniform float   u_SpecularPower;
 
-in vec3 v_NormalVS;
-in vec3 v_TangentVS;
-in vec3 v_BitangentVS;
-in vec2 v_TexCoord;
+varying vec3 v_NormalVS;
+varying vec3 v_TangentVS;
+varying vec3 v_BitangentVS;
+varying vec2 v_TexCoord;
 
-in vec2 v_Depth;
-
-out vec4 FragColor;
+varying vec2 v_Depth;
 
 void main(void)
 {
     /** Load texture values
      */
-    vec3 normal = normalize(texture(s_Normal, v_TexCoord).rgb*2.0 - 1.0);
+    vec3 normal = normalize(texture2D(s_Normal, v_TexCoord).rgb*2.0 - 1.0);
     
     vec3 N = normalize(v_NormalVS);
     vec3 T = normalize(v_TangentVS);
@@ -26,5 +23,5 @@ void main(void)
     mat3 TBN = mat3(T, B, N);
     normal = normalize(TBN*normal);
 
-    FragColor = vec4((normal + 1.0) * 0.5, u_SpecularPower);
+    gl_FragColor = vec4((normal + 1.0) * 0.5, u_SpecularPower);
 }

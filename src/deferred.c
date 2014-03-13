@@ -220,7 +220,6 @@ DeferredRenderer* create_deferred_renderer(Graphics* G)
 
     if(R->geometry.program == 0 ||
        R->light.program == 0) {
-        system_log("Failed to create deferred programs\n");
         /* Failed to create programs. Return NULL */
         free(R);
         return NULL;
@@ -244,10 +243,10 @@ void resize_deferred_renderer(DeferredRenderer* R, int width, int height)
      *  [2] R: Depth
      */
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer[0]));
-    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0));
+    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0));
 
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer[1]));
-    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0));
+    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, width, height, 0, GL_RG, GL_FLOAT, 0));
 
     /* Depth texture */
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->depth_buffer));

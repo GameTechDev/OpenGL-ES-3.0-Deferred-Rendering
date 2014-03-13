@@ -1,5 +1,3 @@
-#version 300 es
-
 precision highp float;
 uniform sampler2D s_Albedo;
 uniform sampler2D s_Normal;
@@ -8,13 +6,10 @@ uniform vec3    u_SpecularColor;
 uniform float   u_SpecularPower;
 uniform float   u_SpecularCoefficient;
 
-in vec3 v_NormalVS;
-in vec3 v_TangentVS;
-in vec3 v_BitangentVS;
-in vec2 v_TexCoord;
-
-layout(location=0) out vec4 FragData0;
-layout(location=1) out vec4 FragData1;
+varying vec3 v_NormalVS;
+varying vec3 v_TangentVS;
+varying vec3 v_BitangentVS;
+varying vec2 v_TexCoord;
 
 vec4 encode(vec3 normal)
 {
@@ -24,8 +19,8 @@ vec4 encode(vec3 normal)
 void main(void) {
     /** Load texture values
      */
-    vec3 albedo = texture(s_Albedo, v_TexCoord).rgb;
-    vec3 normal = normalize(texture(s_Normal, v_TexCoord).rgb*2.0 - 1.0);
+    vec3 albedo = texture2D(s_Albedo, v_TexCoord).rgb;
+    vec3 normal = normalize(texture2D(s_Normal, v_TexCoord).rgb*2.0 - 1.0);
     vec3 specular_color = u_SpecularCoefficient * u_SpecularColor;
     
     vec3 N = normalize(v_NormalVS);
@@ -40,7 +35,6 @@ void main(void) {
      *  [1] RGB: VS Normal
      *  [2] R: Depth
      */
-    FragData0 = vec4(albedo, 1.0);
-    //FragData1 = encode(normal);
-    FragData1 = vec4(normal, 1.0);
+    gl_FragData[0] = vec4(albedo, 1.0);
+    gl_FragData[1] = encode(normal);
 }

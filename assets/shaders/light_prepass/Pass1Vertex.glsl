@@ -1,18 +1,17 @@
-#version 300 es
 uniform mat4 u_Projection;
 uniform mat4 u_View;
 uniform mat4 u_World;
 
-in vec4 a_Position;
-in vec3 a_Normal;
-in vec3 a_Tangent;
-in vec3 a_Bitangent;
-in vec2 a_TexCoord;
+attribute vec4 a_Position;
+attribute vec3 a_Normal;
+attribute vec3 a_Tangent;
+attribute vec3 a_Bitangent;
+attribute vec2 a_TexCoord;
 
-out vec3 v_NormalVS;
-out vec3 v_TangentVS;
-out vec3 v_BitangentVS;
-out vec2 v_TexCoord;
+varying vec3 v_NormalVS;
+varying vec3 v_TangentVS;
+varying vec3 v_BitangentVS;
+varying vec2 v_TexCoord;
 
 
 void main(void) {

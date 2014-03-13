@@ -67,8 +67,8 @@ debug: native
 # Deploy the APK to a device (or emulator)
 # Will trigger "make debug" to build the APK
 install: debug
-	#	adb $(TARGET_DEVICE) install -r bin/DeferredGLES-debug.apk
-	ant installd
+	adb $(TARGET_DEVICE) install -r bin/DeferredGLES-debug.apk
+	#ant installd
 
 # > make run
 #

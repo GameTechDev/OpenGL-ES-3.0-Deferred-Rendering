@@ -1,4 +1,3 @@
-#version 300 es
 precision highp float;
 uniform sampler2D s_GBuffer;
 uniform sampler2D s_Depth;
@@ -11,9 +10,7 @@ uniform vec3    u_LightColor;
 uniform vec3    u_LightPosition;
 uniform float   u_LightSize;
 
-in vec4    v_Position;
-
-out vec4 FragColor;
+varying vec4    v_Position;
 
 void main(void)
 {
@@ -21,10 +18,10 @@ void main(void)
      */
     vec2 tex_coord = gl_FragCoord.xy/u_Viewport;
 
-    vec4 gbuffer_val = texture(s_GBuffer, tex_coord);
+    vec4 gbuffer_val = texture2D(s_GBuffer, tex_coord);
     vec3 normal = gbuffer_val.rgb * 2.0 - 1.0;
     float specular_power = gbuffer_val.a;
-    float depth = texture(s_Depth, tex_coord).r;
+    float depth = texture2D(s_Depth, tex_coord).r;
 
     /* Calculate the pixel's position in view space */
     vec4 view_pos = vec4(tex_coord*2.0-1.0, depth * 2.0 - 1.0, 1.0);
@@ -43,5 +40,5 @@ void main(void)
 
     vec3 final_color = attenuation * (diffuse);
 
-    FragColor = vec4(final_color, 1.0);
+    gl_FragColor = vec4(final_color, 1.0);
 }
