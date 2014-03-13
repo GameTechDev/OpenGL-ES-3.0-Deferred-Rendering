@@ -9,7 +9,6 @@
 #include "Graphics.h"
 #include "gl_include.h"
 #include "program.h"
-#pragma GCC diagnostic ignored "-Wc99-extensions" /* Non-constant aggregate initializer */
 
 /* Defines
  */
