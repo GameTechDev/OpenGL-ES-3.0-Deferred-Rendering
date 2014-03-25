@@ -286,7 +286,6 @@ void remove_touch_points(Game* G, int num_touch_points, TouchPoint* points)
 
             } else {
                 if(G->prev_single.y < G->height/2) { // Top right
-                    toggle_static_size(G->graphics);
                 } else { // bottom right
                 }
             }
