@@ -15,7 +15,7 @@
 
 /* Defines
  */
-#define NUM_LIGHTS 63
+#define NUM_LIGHTS 15
 
 /* Types
  */
@@ -119,7 +119,7 @@ Game* create_game(void)
     G->scene = create_scene("lightHouse.obj");
     G->sun_light.position = vec3_create(-4.0f, 5.0f, 2.0f);
     G->sun_light.color = vec3_create(1, 1, 1);
-    G->sun_light.size = 25.0f;
+    G->sun_light.size = 35.0f;
 
     G->lights[0].color = vec3_create(1, 0, 0);
     G->lights[1].color = vec3_create(1, 1, 0);
@@ -167,10 +167,10 @@ void update_game(Game* G)
 
     _control_camera(G, delta_time);
     set_view_matrix(G->graphics, mat4_inverse(transform_get_matrix(G->camera)));
-    add_light(G->graphics, G->sun_light);
 
     /* Dynamic Lights */
     if(G->dynamic_lights) {
+        G->sun_light.position = mat3_mul_vector(vec3_create(5,5,0), mat3_rotation_y((float)get_running_time(G->timer)*0.5f));
         G->light_transform += delta_time;
         for(ii=0;ii<NUM_LIGHTS;++ii) {
             if(ii % 2)
@@ -179,6 +179,8 @@ void update_game(Game* G)
                 G->lights[ii].position.x = sinf((G->light_transform + ii * 1.0f)/2.0f) * 10.0f;
         }
     }
+
+    add_light(G->graphics, G->sun_light);
     for(ii=0;ii<NUM_LIGHTS;++ii) {
         add_light(G->graphics, G->lights[ii]);
     }
@@ -218,8 +220,6 @@ void update_game(Game* G)
         graphics_size(G->graphics, &width, &height);
         sprintf(buffer, "%dx%d", width, height);
         add_string(G->ui, x, y, scale, buffer);
-        y -= scale;
-
     }
 }
 void render_game(Game* G)

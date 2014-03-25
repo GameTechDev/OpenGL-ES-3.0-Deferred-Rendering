@@ -9,13 +9,15 @@ uniform vec3    u_LightColor;
 uniform vec3    u_LightPosition;
 uniform float   u_LightSize;
 
-
 vec3 decode(vec2 encoded)
 {
-    vec3 norm;
-    norm.xy = (encoded*2.0) - 1.0;
-    norm.z = sqrt(1.0-dot(norm.xy,norm.xy));
-    return norm;
+    vec2 fenc = encoded*4.0 - 2.0;
+    float f = dot(fenc,fenc);
+    float g = sqrt(1.0 - f/4.0);
+    vec3 normal;
+    normal.xy = fenc*g;
+    normal.z = 1.0 - f/2.0;
+    return normal;
 }
 
 /** GBuffer format

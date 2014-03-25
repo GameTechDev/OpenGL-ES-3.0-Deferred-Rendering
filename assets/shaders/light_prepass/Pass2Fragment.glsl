@@ -12,6 +12,17 @@ uniform float   u_LightSize;
 
 varying vec4    v_Position;
 
+vec3 decode(vec2 encoded)
+{
+    vec2 fenc = encoded*4.0 - 2.0;
+    float f = dot(fenc,fenc);
+    float g = sqrt(1.0 - f/4.0);
+    vec3 normal;
+    normal.xy = fenc*g;
+    normal.z = 1.0 - f/2.0;
+    return normal;
+}
+
 void main(void)
 {
     /** Load texture values
@@ -19,7 +30,7 @@ void main(void)
     vec2 tex_coord = gl_FragCoord.xy/u_Viewport;
 
     vec4 gbuffer_val = texture2D(s_GBuffer, tex_coord);
-    vec3 normal = gbuffer_val.rgb * 2.0 - 1.0;
+    vec3 normal = decode(gbuffer_val.rg);
     float specular_power = gbuffer_val.a;
     float depth = texture2D(s_Depth, tex_coord).r;
 

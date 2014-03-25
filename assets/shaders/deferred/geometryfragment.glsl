@@ -11,9 +11,10 @@ varying vec3 v_TangentVS;
 varying vec3 v_BitangentVS;
 varying vec2 v_TexCoord;
 
-vec4 encode(vec3 normal)
+vec4 encode (vec3 normal)
 {
-    return vec4(normal.xy*0.5+0.5, 0,0);
+    float p = sqrt(normal.z*8.0+8.0);
+    return vec4(normal.xy/p + 0.5,0,0);
 }
 
 void main(void) {

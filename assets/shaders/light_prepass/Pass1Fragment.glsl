@@ -10,6 +10,12 @@ varying vec2 v_TexCoord;
 
 varying vec2 v_Depth;
 
+vec4 encode (vec3 normal)
+{
+    float p = sqrt(normal.z*8.0+8.0);
+    return vec4(normal.xy/p + 0.5,0,0);
+}
+
 void main(void)
 {
     /** Load texture values
@@ -23,5 +29,6 @@ void main(void)
     mat3 TBN = mat3(T, B, N);
     normal = normalize(TBN*normal);
 
-    gl_FragColor = vec4((normal + 1.0) * 0.5, u_SpecularPower);
+    vec4 encoded = encode(normal);
+    gl_FragColor = vec4(encoded.rgb, u_SpecularPower);
 }
