@@ -295,7 +295,7 @@ void resize_light_prepass_renderer(LightPrepassRenderer* R, int width, int heigh
     /* Depth buffer */
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->gbuffer_depth_texture));
     if(R->major_version >= 3)
-        ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
+        ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0));
     else
         ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
     

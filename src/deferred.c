@@ -250,7 +250,7 @@ void resize_deferred_renderer(DeferredRenderer* R, int width, int height)
 
     /* Depth texture */
     ASSERT_GL(glBindTexture(GL_TEXTURE_2D, R->depth_buffer));
-    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0));
+    ASSERT_GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0));
 
     /* Framebuffer */
     ASSERT_GL(glBindFramebuffer(GL_FRAMEBUFFER, R->gbuffer_framebuffer));
