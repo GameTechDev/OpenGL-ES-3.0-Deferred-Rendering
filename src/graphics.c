@@ -1,6 +1,3 @@
-/*! @file graphics.c
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #include "graphics.h"
 #include <stdlib.h>
 #include <string.h>

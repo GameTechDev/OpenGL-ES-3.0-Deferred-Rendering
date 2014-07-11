@@ -1,6 +1,3 @@
-/*! @file scene.cpp
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 extern "C" {
 #include "scene.h"
 #include "vertex.h"

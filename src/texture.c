@@ -1,6 +1,3 @@
-/*! @file texture.c
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #include "texture.h"
 #include "system.h"
 #include "external/stb_image.h"

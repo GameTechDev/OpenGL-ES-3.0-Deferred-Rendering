@@ -1,7 +1,3 @@
-/** @file vec_math.h
- *  @brief 3D Linear math library
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __vec_math_h__
 #define __vec_math_h__
 #include <math.h>

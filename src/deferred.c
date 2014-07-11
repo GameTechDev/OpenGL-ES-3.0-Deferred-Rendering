@@ -1,6 +1,3 @@
-/*! @file deferred.c
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #include "deferred.h"
 #include <stdlib.h>
 #include "gl_include.h"

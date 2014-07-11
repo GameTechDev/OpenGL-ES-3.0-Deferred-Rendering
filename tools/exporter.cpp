@@ -1,6 +1,3 @@
-/** @file exporter.cpp
- *  @copyright Copyright (c) 2013. All rights reserved.
- */
 #include "../src/vec_math.h"
 #include "../src/assert.h"
 extern "C" {

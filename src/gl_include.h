@@ -1,7 +1,3 @@
-/*! @file gl_include.h
- *  @brief Abstract out platform OpenGL include files
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __gl_include_h__
 #define __gl_include_h__
 

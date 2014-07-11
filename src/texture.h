@@ -1,7 +1,3 @@
-/*! @file texture.h
- *  @brief 2D texture interface
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __texture_h__
 #define __texture_h__
 

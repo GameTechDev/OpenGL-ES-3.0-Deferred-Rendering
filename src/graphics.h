@@ -1,7 +1,3 @@
-/*! @file graphics.h
- *  @brief Graphics interface
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __graphics_h__
 #define __graphics_h__
 

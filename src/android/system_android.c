@@ -1,6 +1,3 @@
-/*! @file system_android.c
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #include "system.h"
 #include <stdlib.h>
 #include <android/log.h>

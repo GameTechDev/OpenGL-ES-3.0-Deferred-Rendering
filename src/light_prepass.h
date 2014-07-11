@@ -1,7 +1,3 @@
-/*! @file light_prepass.h
- *  @brief TODO: Enter description of the file
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __light_prepass_h__
 #define __light_prepass_h__
 

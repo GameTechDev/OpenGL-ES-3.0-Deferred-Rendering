@@ -1,6 +1,3 @@
-/*! @file utility.c
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #include "utility.h"
 #include <string.h>
 

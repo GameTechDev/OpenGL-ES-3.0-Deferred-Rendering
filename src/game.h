@@ -1,7 +1,3 @@
-/*! @file game.h
- *  @brief Main game code
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __game_h__
 #define __game_h__
 

@@ -1,7 +1,3 @@
-/*! @file utility.h
- *  @brief Various C utility functions
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __utility_h__
 #define __utility_h__
 

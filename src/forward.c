@@ -1,6 +1,3 @@
-/*! @file forward.c
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #include "forward.h"
 #include <stdlib.h>
 #include "gl_include.h"

@@ -1,6 +1,3 @@
-/*! @file program.c
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #include "program.h"
 #include "gl_include.h"
 #include "system.h"

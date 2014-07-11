@@ -1,6 +1,3 @@
-/*! @file OpenGLView.m
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #import "OpenGLView.h"
 #include "game.h"
 

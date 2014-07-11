@@ -1,7 +1,3 @@
-/*! @file deferred.h
- *  @brief TODO: Enter description of the file
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __deferred_h__
 #define __deferred_h__
 

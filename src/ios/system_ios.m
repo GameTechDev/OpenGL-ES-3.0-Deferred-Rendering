@@ -1,6 +1,3 @@
-/*! @file system_ios.m
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #include "system.h"
 #import <Foundation/Foundation.h>
 #include <stdlib.h>

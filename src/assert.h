@@ -1,6 +1,3 @@
-/*! @file assert.h
- *  @copyright Copyright (c) 2013 kcweicht. All rights reserved.
- */
 #ifndef __assert_h__
 #define __assert_h__
 

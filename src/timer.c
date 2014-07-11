@@ -1,6 +1,3 @@
-/*! @file timer.c
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #include "timer.h"
 
 #if defined(__APPLE__)

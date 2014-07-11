@@ -1,7 +1,3 @@
-/*! @file system.h
- *  @brief Interfacing with the OS
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __system_h__
 #define __system_h__
 

@@ -1,7 +1,3 @@
-/*! @file timer.h
- *  @brief High-performance, high-resolution timer
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __timer_h__
 #define __timer_h__
 

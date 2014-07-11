@@ -1,6 +1,3 @@
-/*! @file graphics_types.h
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __graphics_types_h__
 #define __graphics_types_h__
 

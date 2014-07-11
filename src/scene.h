@@ -1,7 +1,3 @@
-/*! @file scene.h
- *  @brief Scene loading
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __scene_h__
 #define __scene_h__
 

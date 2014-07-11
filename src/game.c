@@ -1,6 +1,3 @@
-/*! @file game.c
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #include "game.h"
 #include <stdlib.h>
 #include <stdio.h>

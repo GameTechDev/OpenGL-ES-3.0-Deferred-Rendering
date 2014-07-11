@@ -1,7 +1,3 @@
-/*! @file forward.h
- *  @brief forward renderer
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __forward_h__
 #define __forward_h__
 #include "gl_include.h"

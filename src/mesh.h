@@ -1,7 +1,3 @@
-/*! @file mesh.h
- *  @brief Geometry definition
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __mesh_h__
 #define __mesh_h__
 

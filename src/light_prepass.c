@@ -1,6 +1,3 @@
-/*! @file light_prepass.c
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #include "light_prepass.h"
 #include <stdlib.h>
 #include "gl_include.h"

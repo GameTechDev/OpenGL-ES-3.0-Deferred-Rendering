@@ -1,7 +1,3 @@
-/*! @file vertex.h
- *  @brief Needed ver manipulation of vertices
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __vertex_h__
 #define __vertex_h__
 

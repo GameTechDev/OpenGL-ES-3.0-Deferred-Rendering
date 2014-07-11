@@ -1,7 +1,3 @@
-/*! @file program.h
- *  @brief OpenGL program
- *  @copyright Copyright (c) 2013 Kyle Weicht. All rights reserved.
- */
 #ifndef __program_h__
 #define __program_h__
 
