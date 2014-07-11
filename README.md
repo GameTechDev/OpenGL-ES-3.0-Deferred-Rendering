@@ -7,7 +7,7 @@ This is a sample demonstrating how to create a deferred renderer on OpenGL ES 3.
 
 ### Android
 
-There's a makefile in `projects/android/` used to simplify calling all the Android commands. 
+There's a makefile in `projects/android/` used to simplify calling all the Android build commands. 
 
 1. Run `make init` to call `android update project`, updating the project for your environment
 2. `make all` will call both `ndk-build` and `ant debug`
