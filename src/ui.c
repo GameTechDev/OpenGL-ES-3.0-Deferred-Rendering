@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "system.h"
-#include "Graphics.h"
+#include "graphics.h"
 #include "gl_include.h"
 #include "program.h"
 
